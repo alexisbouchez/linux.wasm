@@ -26,61 +26,64 @@ cd "$DMENU_DIR"
 # Source Emscripten
 if [ -z "$EMSDK" ]; then
     if [ -f "../../../emsdk/emsdk_env.sh" ]; then
-        source ../../../emsdk/emsdk_env.sh >/dev/null 2>&1
+        . ../../../emsdk/emsdk_env.sh >/dev/null 2>&1
     else
         echo "Error: Emscripten not found. Please set up EMSDK."
         exit 1
     fi
 fi
 
-# Create WASM-compatible config.h
-cat > config.h << 'EOF'
-/* dmenu config for WASM */
-static const char *fonts[] = { "monospace:size=10" };
-static const char *prompt      = NULL;
-static const unsigned int barheight = 25;
-static const unsigned int borderwidth = 1;
-static const unsigned int snap      = 32;
-static const int showbar            = 1;
-static const int topbar             = 1;
-static const char *colors[SchemeLast][2] = {
-	[SchemeNorm] = { "#bbbbbb", "#222222" },
-	[SchemeSel]  = { "#eeeeee", "#005577" },
-	[SchemeOut]  = { "#000000", "#00ffff" },
-};
-static const unsigned int alphas[SchemeLast][2] = {
-	[SchemeNorm] = { OPAQUE, OPAQUE },
-	[SchemeSel]  = { OPAQUE, OPAQUE },
-	[SchemeOut]  = { OPAQUE, OPAQUE },
-};
-static const char worddelim[] = " ";
-static unsigned int lines      = 0;
-static unsigned int columns    = 0;
-EOF
+# Compile X11 stubs
+echo "Compiling X11 stubs..."
+if [ -f "../include/X11/x11_stubs.c" ]; then
+    emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>&1 || {
+        echo "Warning: Could not compile X11 stubs"
+    }
+else
+    echo "Warning: x11_stubs.c not found"
+fi
 
-# Modify Makefile for WASM
-sed -i 's/^CC =.*/CC = emcc/' config.mk 2>/dev/null || echo "CC = emcc" >> config.mk
-sed -i 's/^LD =.*/LD = emcc/' config.mk 2>/dev/null || echo "LD = emcc" >> config.mk
-sed -i 's/-lX11//g' config.mk
-sed -i 's/-lXinerama//g' config.mk
-sed -i 's/-lXft//g' config.mk
-sed -i 's/-lfontconfig//g' config.mk
-sed -i 's/-lfreetype//g' config.mk
+# Modify config.mk for WASM
+sed -i 's|^CC =|CC = emcc|' config.mk
+sed -i 's|^LD =|LD = emcc|' config.mk
+sed -i 's|^AR =|AR = emar|' config.mk
+sed -i 's|^STRIP =|STRIP = llvm-strip|' config.mk
+sed -i 's|^LIBS =|LIBS = |' config.mk
+sed -i 's|-lX11||g' config.mk
+sed -i 's|-lXinerama||g' config.mk
 
-# Add WASM flags
-echo "LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\"]' --no-entry" >> config.mk
+# Add include path
+sed -i "s|^INCS =|INCS = -I../include |" config.mk
 
 # Build
 echo "Compiling dmenu..."
 CC=emcc CXX=em++ AR=emar LD=emcc STRIP=llvm-strip make clean 2>/dev/null || true
 CC=emcc CXX=em++ AR=emar LD=emcc STRIP=llvm-strip make -j$(nproc) 2>&1 | tee build.log
 
+# Manual link if needed
+if [ ! -f "dmenu" ] && [ ! -f "dmenu.wasm" ]; then
+    if [ -f "x11_stubs.o" ]; then
+        echo "Build failed, manually linking with x11_stubs.o..."
+        WASM_LD=$(which wasm-ld 2>/dev/null || echo "$(dirname $(which emcc))/wasm-ld")
+        if "$WASM_LD" dmenu.o x11_stubs.o \
+            -o dmenu.wasm \
+            --no-entry \
+            --export-all \
+            --allow-undefined \
+            2>&1 | tee -a build.log; then
+            echo "✓ dmenu.wasm created successfully!"
+            mkdir -p ../packages
+            cp dmenu.wasm ../packages/dmenu.wasm 2>/dev/null || mv dmenu.wasm ../packages/dmenu.wasm
+        fi
+    fi
+fi
+
 # Check if build succeeded
 if [ -f "dmenu" ] || [ -f "dmenu.wasm" ]; then
-    echo "✅ dmenu compiled successfully!"
+    echo "✓ dmenu compiled successfully!"
     mkdir -p ../packages
     cp dmenu dmenu.wasm ../packages/ 2>/dev/null || cp dmenu ../packages/dmenu.wasm
-    echo "✅ Copied to ../packages/dmenu.wasm"
+    echo "✓ Copied to ../packages/dmenu.wasm"
 else
     echo "❌ dmenu compilation failed. Check build.log"
     exit 1
