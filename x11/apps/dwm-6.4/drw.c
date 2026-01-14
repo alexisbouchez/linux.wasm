@@ -115,17 +115,17 @@ xfont_create(Drw *drw, const char *fontname, FcPattern *fontpattern)
 		 * FcNameParse; using the latter results in the desired fallback
 		 * behaviour whereas the former just results in missing-character
 		 * rectangles being drawn, at least with some fonts. */
-		if (!(xfont = XftFontOpenName(drw->dpy, drw->screen, fontname))) {
+		if (!(xfont = NULL /* Xft disabled */)) {
 			fprintf(stderr, "error, cannot load font from name: '%s'\n", fontname);
 			return NULL;
 		}
-		if (!(pattern = FcNameParse((FcChar8 *) fontname))) {
+		if (!(pattern = NULL /* FontConfig disabled */ fontname))) {
 			fprintf(stderr, "error, cannot parse font name to pattern: '%s'\n", fontname);
-			XftFontClose(drw->dpy, xfont);
+			/* Xft disabled */;
 			return NULL;
 		}
 	} else if (fontpattern) {
-		if (!(xfont = XftFontOpenPattern(drw->dpy, fontpattern))) {
+		if (!(xfont = NULL /* Xft disabled */)) {
 			fprintf(stderr, "error, cannot load font from pattern.\n");
 			return NULL;
 		}
@@ -148,8 +148,8 @@ xfont_free(Fnt *font)
 	if (!font)
 		return;
 	if (font->pattern)
-		FcPatternDestroy(font->pattern);
-	XftFontClose(font->dpy, font->xfont);
+		/* FontConfig disabled */;
+	/* Xft disabled */;
 	free(font);
 }
 
@@ -263,8 +263,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 	} else {
 		XSetForeground(drw->dpy, drw->gc, drw->scheme[invert ? ColFg : ColBg].pixel);
 		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w, h);
-		d = XftDrawCreate(drw->dpy, drw->drawable,
-		                  DefaultVisual(drw->dpy, drw->screen),
+		d = NULL /* Xft disabled */,
 		                  DefaultColormap(drw->dpy, drw->screen));
 		x += lpad;
 		w -= lpad;
@@ -319,8 +318,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 		if (utf8strlen) {
 			if (render) {
 				ty = y + (h - usedfont->h) / 2 + usedfont->xfont->ascent;
-				XftDrawStringUtf8(d, &drw->scheme[invert ? ColBg : ColFg],
-				                  usedfont->xfont, x, ty, (XftChar8 *)utf8str, utf8strlen);
+				/* Xft disabled */utf8str, utf8strlen);
 			}
 			x += ew;
 			w -= ew;
@@ -356,12 +354,12 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 			FcPatternAddCharSet(fcpattern, FC_CHARSET, fccharset);
 			FcPatternAddBool(fcpattern, FC_SCALABLE, FcTrue);
 
-			FcConfigSubstitute(NULL, fcpattern, FcMatchPattern);
-			FcDefaultSubstitute(fcpattern);
+			/* FontConfig disabled */;
+			/* FontConfig disabled */;
 			match = XftFontMatch(drw->dpy, drw->screen, fcpattern, &result);
 
 			FcCharSetDestroy(fccharset);
-			FcPatternDestroy(fcpattern);
+			/* FontConfig disabled */;
 
 			if (match) {
 				usedfont = xfont_create(drw, NULL, match);
@@ -379,7 +377,7 @@ no_match:
 		}
 	}
 	if (d)
-		XftDrawDestroy(d);
+		/* Xft disabled */;
 
 	return x + (render ? w : 0);
 }
@@ -419,7 +417,7 @@ drw_font_getexts(Fnt *font, const char *text, unsigned int len, unsigned int *w,
 	if (!font || !text)
 		return;
 
-	XftTextExtentsUtf8(font->dpy, font->xfont, (XftChar8 *)text, len, &ext);
+	/* Xft disabled */text, len, &ext);
 	if (w)
 		*w = ext.xOff;
 	if (h)

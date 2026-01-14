@@ -132,9 +132,42 @@ sed -i "s|-I/usr/include/freetype2||g" config.mk
 sed -i 's/-DXINERAMA//g' config.mk
 sed -i 's/XINERAMA//g' config.mk
 
-# Comment out Xft includes in source
+# Patch source files to remove Xft/Xinerama dependencies
+# Comment out Xft includes and related code
 sed -i 's/#include <X11\/Xft\/Xft.h>/\/\/ #include <X11\/Xft\/Xft.h> \/\/ Disabled for WASM/g' drw.c 2>/dev/null || true
+sed -i 's/#include <X11\/Xft\/Xft.h>/\/\/ #include <X11\/Xft\/Xft.h> \/\/ Disabled for WASM/g' dwm.c 2>/dev/null || true
 sed -i 's/#include <X11\/extensions\/Xinerama.h>/\/\/ #include <X11\/extensions\/Xinerama.h> \/\/ Disabled for WASM/g' dwm.c 2>/dev/null || true
+sed -i 's/#include <fontconfig\/fontconfig.h>/\/\/ #include <fontconfig\/fontconfig.h> \/\/ Disabled for WASM/g' drw.c 2>/dev/null || true
+
+# Disable Xft functions in drw.c - replace with stubs
+python3 << 'PYEOF'
+import re
+
+# Read drw.c
+with open('drw.c', 'r') as f:
+    content = f.read()
+
+# Replace XftFontOpenName with stub
+content = re.sub(r'XftFontOpenName\([^)]+\)', 'NULL /* Xft disabled */', content)
+content = re.sub(r'XftFontClose\([^)]+\)', '/* Xft disabled */', content)
+content = re.sub(r'XftFontOpenPattern\([^)]+\)', 'NULL /* Xft disabled */', content)
+content = re.sub(r'FcNameParse\([^)]+\)', 'NULL /* FontConfig disabled */', content)
+content = re.sub(r'FcPatternDestroy\([^)]+\)', '/* FontConfig disabled */', content)
+content = re.sub(r'FcConfigSubstitute\([^)]+\)', '/* FontConfig disabled */', content)
+content = re.sub(r'FcDefaultSubstitute\([^)]+\)', '/* FontConfig disabled */', content)
+content = re.sub(r'FcFontMatch\([^)]+\)', 'NULL /* FontConfig disabled */', content)
+content = re.sub(r'FcPatternGet\([^)]+\)', 'FcResultNoMatch /* FontConfig disabled */', content)
+
+# Comment out Xft drawing functions
+content = re.sub(r'XftDrawCreate\([^)]+\)', 'NULL /* Xft disabled */', content)
+content = re.sub(r'XftDrawDestroy\([^)]+\)', '/* Xft disabled */', content)
+content = re.sub(r'XftDrawStringUtf8\([^)]+\)', '/* Xft disabled */', content)
+content = re.sub(r'XftTextExtentsUtf8\([^)]+\)', '/* Xft disabled */', content)
+
+# Write back
+with open('drw.c', 'w') as f:
+    f.write(content)
+PYEOF
 
 # Add WASM flags to LDFLAGS
 sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["_main"]'\'' --no-entry |' config.mk || echo "LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\"]' --no-entry" >> config.mk

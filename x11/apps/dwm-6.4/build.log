@@ -46,53 +46,129 @@ drw.c:110:13: error: use of undeclared identifier 'pattern'
   110 |         FcPattern *pattern = NULL;
       |                    ^~~~~~~
 drw.c:118:9: error: use of undeclared identifier 'xfont'; did you mean 'font'?
-  118 |                 if (!(xfont = XftFontOpenName(drw->dpy, drw->screen, fontname))) {
+  118 |                 if (!(xfont = NULL /* Xft disabled */)) {
       |                       ^~~~~
       |                       font
 drw.c:108:7: note: 'font' declared here
   108 |         Fnt *font;
       |              ^
-drw.c:118:17: error: call to undeclared function 'XftFontOpenName'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  118 |                 if (!(xfont = XftFontOpenName(drw->dpy, drw->screen, fontname))) {
-      |                               ^
-drw.c:118:15: error: incompatible integer to pointer conversion assigning to 'Fnt *' (aka 'struct Fnt *') from 'int' [-Wint-conversion]
-  118 |                 if (!(xfont = XftFontOpenName(drw->dpy, drw->screen, fontname))) {
-      |                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 drw.c:122:9: error: use of undeclared identifier 'pattern'
-  122 |                 if (!(pattern = FcNameParse((FcChar8 *) fontname))) {
+  122 |                 if (!(pattern = NULL /* FontConfig disabled */ fontname))) {
       |                       ^~~~~~~
-drw.c:122:19: error: call to undeclared function 'FcNameParse'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  122 |                 if (!(pattern = FcNameParse((FcChar8 *) fontname))) {
-      |                                 ^
-drw.c:122:32: error: use of undeclared identifier 'FcChar8'
-  122 |                 if (!(pattern = FcNameParse((FcChar8 *) fontname))) {
-      |                                              ^~~~~~~
-drw.c:122:41: error: expected expression
-  122 |                 if (!(pattern = FcNameParse((FcChar8 *) fontname))) {
-      |                                                       ^
-drw.c:124:4: error: call to undeclared function 'XftFontClose'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  124 |                         XftFontClose(drw->dpy, xfont);
-      |                         ^
-drw.c:124:27: error: use of undeclared identifier 'xfont'; did you mean 'font'?
-  124 |                         XftFontClose(drw->dpy, xfont);
-      |                                                ^~~~~
-      |                                                font
-drw.c:108:7: note: 'font' declared here
-  108 |         Fnt *font;
-      |              ^
+drw.c:122:60: error: extraneous ')' after condition, expected a statement
+  122 |                 if (!(pattern = NULL /* FontConfig disabled */ fontname))) {
+      |                                                                          ^
 drw.c:128:9: error: use of undeclared identifier 'xfont'; did you mean 'font'?
-  128 |                 if (!(xfont = XftFontOpenPattern(drw->dpy, fontpattern))) {
+  128 |                 if (!(xfont = NULL /* Xft disabled */)) {
       |                       ^~~~~
       |                       font
 drw.c:108:7: note: 'font' declared here
   108 |         Fnt *font;
       |              ^
+drw.c:137:16: error: use of undeclared identifier 'xfont'; did you mean 'font'?
+  137 |         font->xfont = xfont;
+      |                       ^~~~~
+      |                       font
+drw.c:108:7: note: 'font' declared here
+  108 |         Fnt *font;
+      |              ^
+drw.c:138:18: error: use of undeclared identifier 'pattern'
+  138 |         font->pattern = pattern;
+      |                         ^~~~~~~
+drw.c:139:12: error: use of undeclared identifier 'xfont'; did you mean 'font'?
+  139 |         font->h = xfont->ascent + xfont->descent;
+      |                   ^~~~~
+      |                   font
+drw.c:108:7: note: 'font' declared here
+  108 |         Fnt *font;
+      |              ^
+drw.c:139:19: error: no member named 'ascent' in 'struct Fnt'
+  139 |         font->h = xfont->ascent + xfont->descent;
+      |                   ~~~~~  ^
+drw.c:139:28: error: use of undeclared identifier 'xfont'; did you mean 'font'?
+  139 |         font->h = xfont->ascent + xfont->descent;
+      |                                   ^~~~~
+      |                                   font
+drw.c:108:7: note: 'font' declared here
+  108 |         Fnt *font;
+      |              ^
+drw.c:139:35: error: no member named 'descent' in 'struct Fnt'
+  139 |         font->h = xfont->ascent + xfont->descent;
+      |                                   ~~~~~  ^
 fatal error: too many errors emitted, stopping now [-ferror-limit=]
-dwm.c:42:10: fatal error: 'X11/Xft/Xft.h' file not found
-   42 | #include <X11/Xft/Xft.h>
-      |          ^~~~~~~~~~~~~~~
+In file included from dwm.c:44:
+./drw.h:10:2: error: unknown type name 'XftFont'
+   10 |         XftFont *xfont;
+      |         ^
+./drw.h:11:2: error: unknown type name 'FcPattern'
+   11 |         FcPattern *pattern;
+      |         ^
 20 errors generated.
+./drw.h:16:9: error: unknown type name 'XftColor'; did you mean 'XColor'?
+   16 | typedef XftColor Clr;
+      |         ^~~~~~~~
+      |         XColor
+/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/cache/sysroot/include/X11/Xlib.h:423:3: note: 'XColor' declared here
+  423 | } XColor;
+      |   ^
+In file included from dwm.c:273:
+./config.h:36:67: error: use of undeclared identifier 'dmenucmd'
+   36 |         { MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+      |                                                                          ^~~~~~~~
+./config.h:37:67: error: use of undeclared identifier 'termcmd'
+   37 |         { MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+      |                                                                          ^~~~~~~
 make: *** [Makefile:18: drw.o] Error 1
 make: *** Waiting for unfinished jobs....
-1 error generated.
+dwm.c:295:25: error: use of undeclared identifier 'rules'
+  295 |         for (i = 0; i < LENGTH(rules); i++) {
+      |                                ^~~~~
+dwm.c:295:25: error: use of undeclared identifier 'rules'
+  295 |         for (i = 0; i < LENGTH(rules); i++) {
+      |                                ^~~~~
+dwm.c:296:8: error: use of undeclared identifier 'rules'
+  296 |                 r = &rules[i];
+      |                      ^~~~~
+dwm.c:455:25: error: use of undeclared identifier 'buttons'
+  455 |         for (i = 0; i < LENGTH(buttons); i++)
+      |                                ^~~~~~~
+dwm.c:455:25: error: use of undeclared identifier 'buttons'
+  455 |         for (i = 0; i < LENGTH(buttons); i++)
+      |                                ^~~~~~~
+dwm.c:456:16: error: use of undeclared identifier 'buttons'
+  456 |                 if (click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
+      |                              ^~~~~~~
+dwm.c:456:36: error: use of undeclared identifier 'buttons'
+  456 |                 if (click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
+      |                                                  ^~~~~~~
+dwm.c:456:55: error: use of undeclared identifier 'buttons'
+  456 |                 if (click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
+      |                                                                     ^~~~~~~
+dwm.c:457:16: error: use of undeclared identifier 'buttons'; did you mean 'Button'?
+  457 |                 && CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state))
+      |                              ^~~~~~~
+dwm.c:83:3: note: 'Button' declared here
+   83 | } Button;
+      |   ^
+dwm.c:458:4: error: unknown type name 'buttons'; did you mean 'Button'?
+  458 |                         buttons[i].func(click == ClkTagBar && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
+      |                         ^~~~~~~
+      |                         Button
+dwm.c:83:3: note: 'Button' declared here
+   83 | } Button;
+      |   ^
+dwm.c:458:4: error: expected expression
+  458 |                         buttons[i].func(click == ClkTagBar && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
+      |                         ^
+dwm.c:641:13: error: use of undeclared identifier 'mfact'
+  641 |         m->mfact = mfact;
+      |                    ^~~~~
+dwm.c:943:26: error: use of undeclared identifier 'buttons'
+  943 |                 for (i = 0; i < LENGTH(buttons); i++)
+      |                                        ^~~~~~~
+dwm.c:943:26: error: use of undeclared identifier 'buttons'
+  943 |                 for (i = 0; i < LENGTH(buttons); i++)
+      |                                        ^~~~~~~
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
 make: *** [Makefile:18: dwm.o] Error 1

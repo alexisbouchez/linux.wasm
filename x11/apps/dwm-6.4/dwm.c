@@ -39,7 +39,7 @@
 #ifdef XINERAMA
 // #include <X11/extensions/Xinerama.h> // Disabled for WASM
 #endif /* XINERAMA */
-#include <X11/Xft/Xft.h>
+// #include <X11/Xft/Xft.h> // Disabled for WASM
 
 #include "drw.h"
 #include "util.h"
