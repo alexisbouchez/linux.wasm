@@ -409,25 +409,29 @@ if [ ! -f "dwm" ] && [ ! -f "dwm.wasm" ]; then
             2>&1 | tee -a build.log
     else
         echo "x11_stubs.o not found, trying to compile it..."
-        cd dwm-6.4
-        if [ -f "x11_stubs.o" ]; then
-            echo "x11_stubs.o found, linking..."
-            # Link directly with wasm-ld to avoid Emscripten's automatic flags
-            WASM_LD=$(which wasm-ld 2>/dev/null || echo "$(dirname $(which emcc))/wasm-ld")
-            if "$WASM_LD" drw.o dwm.o util.o x11_stubs.o \
-                -o dwm.wasm \
-                --no-entry \
-                --export-all \
-                --allow-undefined \
-                2>&1 | tee -a build.log; then
-                echo "✅ dwm.wasm created successfully!"
-                mkdir -p ../packages
-                cp dwm.wasm ../packages/dwm.wasm 2>/dev/null || mv dwm.wasm ../packages/dwm.wasm
+        if [ -d "dwm-6.4" ]; then
+            cd dwm-6.4
+            if [ -f "x11_stubs.o" ]; then
+                echo "x11_stubs.o found, linking..."
+                # Link directly with wasm-ld to avoid Emscripten's automatic flags
+                WASM_LD=$(which wasm-ld 2>/dev/null || echo "$(dirname $(which emcc))/wasm-ld")
+                if "$WASM_LD" drw.o dwm.o util.o x11_stubs.o \
+                    -o dwm.wasm \
+                    --no-entry \
+                    --export-all \
+                    --allow-undefined \
+                    2>&1 | tee -a build.log; then
+                    echo "✅ dwm.wasm created successfully!"
+                    mkdir -p ../packages
+                    cp dwm.wasm ../packages/dwm.wasm 2>/dev/null || mv dwm.wasm ../packages/dwm.wasm
+                fi
+            else
+                echo "x11_stubs.o not found in dwm-6.4/"
             fi
+            cd ..
         else
-            echo "x11_stubs.o not found in dwm-6.4/"
+            echo "dwm-6.4 directory not found"
         fi
-        cd ..
     fi
 fi
 
