@@ -384,6 +384,11 @@ sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["
 
 # Build
 echo "Compiling dwm..."
+if [ ! -d "dwm-6.4" ]; then
+    echo "Error: dwm-6.4 directory not found"
+    exit 1
+fi
+
 cd dwm-6.4
 
 # Compile X11 stubs now that we're in dwm-6.4
