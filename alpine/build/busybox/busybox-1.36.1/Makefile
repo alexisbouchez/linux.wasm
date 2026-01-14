@@ -603,8 +603,8 @@ busybox-all  := $(core-y) $(libs-y)
 
 # Rule to link busybox - also used during CONFIG_KALLSYMS
 # May be overridden by arch/$(ARCH)/Makefile
-quiet_cmd_busybox__ ?= $(srctree)/link_wasm.sh $@ $(busybox-all)
-      cmd_busybox__ ?= $(srctree)/link_wasm.sh $@ $(busybox-all)
+quiet_cmd_busybox__ ?= LINK    $@
+      cmd_busybox__ ?= $(srctree)/scripts/trylink \
       "$@" \
       "$(CC)" \
       "$(CFLAGS) $(CFLAGS_busybox)" \
