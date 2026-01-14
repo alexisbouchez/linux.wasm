@@ -414,6 +414,7 @@ if [ ! -f "dwm" ] && [ ! -f "dwm.wasm" ]; then
             emcc -o dwm drw.o dwm.o util.o x11_stubs.o \
                 -s STANDALONE_WASM=1 \
                 -s ALLOW_MEMORY_GROWTH=1 \
+                -s EXPORTED_FUNCTIONS='[]' \
                 -Wl,--no-entry \
                 2>&1 | tee -a build.log && {
                 echo "✅ dwm.wasm created successfully!"
