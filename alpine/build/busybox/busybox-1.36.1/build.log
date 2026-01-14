@@ -1,0 +1,731 @@
+  SPLIT   include/autoconf.h -> include/config/*
+  GEN     include/bbconfigopts.h
+  GEN     include/common_bufsiz.h
+  GEN     include/embedded_scripts.h
+  HOSTCC  applets/usage
+applets/usage.c: In function 'main':
+applets/usage.c:52:17: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+   52 |                 write(STDOUT_FILENO, usage_array[i].usage, strlen(usage_array[i].usage) + 1);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  GEN     include/usage_compressed.h
+  HOSTCC  applets/applet_tables
+  GEN     include/applet_tables.h include/NUM_APPLETS.h
+  GEN     include/applet_tables.h include/NUM_APPLETS.h
+  CC      applets/applets.o
+  LD      applets/built-in.o
+  HOSTCC  applets/usage_pod
+  LD      archival/built-in.o
+  CC      archival/bbunzip.o
+  CC      archival/bzip2.o
+  CC      archival/chksum_and_xwrite_tar_header.o
+  CC      archival/cpio.o
+  CC      archival/dpkg.o
+  CC      archival/dpkg_deb.o
+  CC      archival/gzip.o
+  CC      archival/lzop.o
+  CC      archival/rpm.o
+archival/rpm.c: In function 'fileaction_setowngrp':
+archival/rpm.c:250:9: warning: ignoring return value of 'chown' declared with attribute 'warn_unused_result' [-Wunused-result]
+  250 |         chown(filename, uid, gid);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      archival/tar.o
+  CC      archival/unzip.o
+  AR      archival/lib.a
+  LD      archival/libarchive/built-in.o
+  CC      archival/libarchive/common.o
+  CC      archival/libarchive/data_align.o
+  CC      archival/libarchive/data_extract_all.o
+archival/libarchive/data_extract_all.c: In function 'data_extract_all':
+archival/libarchive/data_extract_all.c:235:25: warning: ignoring return value of 'chown' declared with attribute 'warn_unused_result' [-Wunused-result]
+  235 |                         chown(dst_name, uid, gid);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      archival/libarchive/data_extract_to_command.o
+  CC      archival/libarchive/data_extract_to_stdout.o
+  CC      archival/libarchive/data_skip.o
+  CC      archival/libarchive/decompress_bunzip2.o
+  CC      archival/libarchive/decompress_gunzip.o
+  CC      archival/libarchive/decompress_unlzma.o
+  CC      archival/libarchive/decompress_unxz.o
+  CC      archival/libarchive/filter_accept_all.o
+  CC      archival/libarchive/filter_accept_list.o
+  CC      archival/libarchive/filter_accept_list_reassign.o
+  CC      archival/libarchive/filter_accept_reject_list.o
+  CC      archival/libarchive/find_list_entry.o
+  CC      archival/libarchive/get_header_ar.o
+  CC      archival/libarchive/get_header_cpio.o
+  CC      archival/libarchive/get_header_tar.o
+  CC      archival/libarchive/get_header_tar_bz2.o
+  CC      archival/libarchive/get_header_tar_gz.o
+  CC      archival/libarchive/get_header_tar_lzma.o
+  CC      archival/libarchive/get_header_tar_xz.o
+  CC      archival/libarchive/header_list.o
+  CC      archival/libarchive/header_skip.o
+  CC      archival/libarchive/header_verbose_list.o
+  CC      archival/libarchive/init_handle.o
+  CC      archival/libarchive/lzo1x_1.o
+  CC      archival/libarchive/lzo1x_1o.o
+  CC      archival/libarchive/lzo1x_d.o
+  CC      archival/libarchive/open_transformer.o
+  CC      archival/libarchive/seek_by_jump.o
+  CC      archival/libarchive/seek_by_read.o
+  CC      archival/libarchive/unpack_ar_archive.o
+  CC      archival/libarchive/unsafe_prefix.o
+  CC      archival/libarchive/unsafe_symlink_target.o
+  AR      archival/libarchive/lib.a
+  LD      console-tools/built-in.o
+  CC      console-tools/chvt.o
+  CC      console-tools/clear.o
+  CC      console-tools/deallocvt.o
+  CC      console-tools/dumpkmap.o
+console-tools/dumpkmap.c: In function 'dumpkmap_main':
+console-tools/dumpkmap.c:67:9: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+   67 |         write(STDOUT_FILENO, flags, 7 + MAX_NR_KEYMAPS);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+console-tools/dumpkmap.c:79:41: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+   79 |                                         write(STDOUT_FILENO, &ke.kb_value, 2);
+      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      console-tools/fgconsole.o
+  CC      console-tools/kbd_mode.o
+  CC      console-tools/loadfont.o
+console-tools/loadfont.c: In function 'setfont_main':
+console-tools/loadfont.c:445:25: warning: ignoring return value of 'chdir' declared with attribute 'warn_unused_result' [-Wunused-result]
+  445 |                         chdir(CONFIG_DEFAULT_SETFONT_DIR "/consolefonts");
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+console-tools/loadfont.c:463:33: warning: ignoring return value of 'chdir' declared with attribute 'warn_unused_result' [-Wunused-result]
+  463 |                                 chdir(CONFIG_DEFAULT_SETFONT_DIR "/consoletrans");
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      console-tools/loadkmap.o
+  CC      console-tools/openvt.o
+  CC      console-tools/reset.o
+  CC      console-tools/resize.o
+console-tools/resize.c: In function 'resize_main':
+console-tools/resize.c:100:9: warning: ignoring return value of 'scanf' declared with attribute 'warn_unused_result' [-Wunused-result]
+  100 |         scanf(ESC"[%hu;%huR", &w.ws_row, &w.ws_col);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      console-tools/setconsole.o
+  CC      console-tools/setkeycodes.o
+  CC      console-tools/setlogcons.o
+  CC      console-tools/showkey.o
+  AR      console-tools/lib.a
+  LD      coreutils/built-in.o
+  CC      coreutils/basename.o
+  CC      coreutils/cat.o
+  CC      coreutils/chgrp.o
+  CC      coreutils/chmod.o
+  CC      coreutils/chown.o
+  CC      coreutils/chroot.o
+  CC      coreutils/cksum.o
+  CC      coreutils/comm.o
+  CC      coreutils/cp.o
+  CC      coreutils/cut.o
+  CC      coreutils/date.o
+  CC      coreutils/dd.o
+  CC      coreutils/df.o
+  CC      coreutils/dirname.o
+  CC      coreutils/dos2unix.o
+coreutils/dos2unix.c: In function 'convert':
+coreutils/dos2unix.c:83:17: warning: ignoring return value of 'fchown' declared with attribute 'warn_unused_result' [-Wunused-result]
+   83 |                 fchown(fd, st.st_uid, st.st_gid);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      coreutils/du.o
+  CC      coreutils/echo.o
+  CC      coreutils/env.o
+  CC      coreutils/expand.o
+  CC      coreutils/expr.o
+  CC      coreutils/factor.o
+  CC      coreutils/false.o
+  CC      coreutils/fold.o
+  CC      coreutils/head.o
+  CC      coreutils/hostid.o
+  CC      coreutils/id.o
+  CC      coreutils/install.o
+  CC      coreutils/link.o
+  CC      coreutils/ln.o
+  CC      coreutils/logname.o
+  CC      coreutils/ls.o
+  CC      coreutils/md5_sha1_sum.o
+  CC      coreutils/mkdir.o
+  CC      coreutils/mkfifo.o
+  CC      coreutils/mknod.o
+  CC      coreutils/mktemp.o
+  CC      coreutils/mv.o
+  CC      coreutils/nice.o
+  CC      coreutils/nl.o
+  CC      coreutils/nohup.o
+  CC      coreutils/nproc.o
+  CC      coreutils/od.o
+  CC      coreutils/paste.o
+  CC      coreutils/printenv.o
+  CC      coreutils/printf.o
+  CC      coreutils/pwd.o
+  CC      coreutils/readlink.o
+  CC      coreutils/realpath.o
+  CC      coreutils/rm.o
+  CC      coreutils/rmdir.o
+  CC      coreutils/seq.o
+  CC      coreutils/shred.o
+coreutils/shred.c: In function 'shred_main':
+coreutils/shred.c:104:25: warning: ignoring return value of 'ftruncate' declared with attribute 'warn_unused_result' [-Wunused-result]
+  104 |                         ftruncate(fd, 0);
+      |                         ^~~~~~~~~~~~~~~~
+  CC      coreutils/shuf.o
+  CC      coreutils/sleep.o
+  CC      coreutils/sort.o
+  CC      coreutils/split.o
+  CC      coreutils/stat.o
+  CC      coreutils/stty.o
+  CC      coreutils/sum.o
+  CC      coreutils/sync.o
+  CC      coreutils/tac.o
+  CC      coreutils/tail.o
+  CC      coreutils/tee.o
+  CC      coreutils/test.o
+  CC      coreutils/test_ptr_hack.o
+  CC      coreutils/timeout.o
+  CC      coreutils/touch.o
+  CC      coreutils/tr.o
+  CC      coreutils/true.o
+  CC      coreutils/truncate.o
+  CC      coreutils/tsort.o
+  CC      coreutils/tty.o
+  CC      coreutils/uname.o
+  CC      coreutils/uniq.o
+  CC      coreutils/unlink.o
+  CC      coreutils/usleep.o
+  CC      coreutils/uudecode.o
+  CC      coreutils/uuencode.o
+  CC      coreutils/wc.o
+  CC      coreutils/who.o
+  CC      coreutils/whoami.o
+  CC      coreutils/yes.o
+  AR      coreutils/lib.a
+  LD      coreutils/libcoreutils/built-in.o
+  CC      coreutils/libcoreutils/cp_mv_stat.o
+  CC      coreutils/libcoreutils/getopt_mk_fifo_nod.o
+  AR      coreutils/libcoreutils/lib.a
+  LD      debianutils/built-in.o
+  CC      debianutils/pipe_progress.o
+  CC      debianutils/run_parts.o
+  CC      debianutils/start_stop_daemon.o
+  CC      debianutils/which.o
+  AR      debianutils/lib.a
+  LD      klibc-utils/built-in.o
+  CC      klibc-utils/resume.o
+  AR      klibc-utils/lib.a
+  LD      e2fsprogs/built-in.o
+  CC      e2fsprogs/chattr.o
+  CC      e2fsprogs/e2fs_lib.o
+  CC      e2fsprogs/fsck.o
+  CC      e2fsprogs/lsattr.o
+  AR      e2fsprogs/lib.a
+  LD      editors/built-in.o
+  CC      editors/awk.o
+  CC      editors/cmp.o
+  CC      editors/diff.o
+  CC      editors/ed.o
+editors/ed.c: In function 'printLines':
+editors/ed.c:545:25: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+  545 |                         write(STDOUT_FILENO, lp->data, lp->len);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      editors/patch.o
+  CC      editors/sed.o
+editors/sed.c: In function 'sed_main':
+editors/sed.c:1648:25: warning: ignoring return value of 'fchown' declared with attribute 'warn_unused_result' [-Wunused-result]
+ 1648 |                         fchown(nonstdoutfd, statbuf.st_uid, statbuf.st_gid);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      editors/vi.o
+editors/vi.c: In function 'file_write':
+editors/vi.c:2373:9: warning: ignoring return value of 'ftruncate' declared with attribute 'warn_unused_result' [-Wunused-result]
+ 2373 |         ftruncate(fd, charcnt);
+      |         ^~~~~~~~~~~~~~~~~~~~~~
+  AR      editors/lib.a
+  LD      findutils/built-in.o
+  CC      findutils/find.o
+  CC      findutils/grep.o
+  CC      findutils/xargs.o
+  AR      findutils/lib.a
+  LD      init/built-in.o
+  CC      init/bootchartd.o
+init/bootchartd.c: In function 'finalize':
+init/bootchartd.c:318:9: warning: ignoring return value of 'system' declared with attribute 'warn_unused_result' [-Wunused-result]
+  318 |         system(xasprintf("tar -zcf /var/log/bootlog.tgz header %s *.log", process_accounting ? "kernel_pacct" : ""));
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      init/halt.o
+  CC      init/init.o
+  AR      init/lib.a
+  LD      libbb/built-in.o
+  CC      libbb/appletlib.o
+libbb/appletlib.c: In function 'check_suid':
+libbb/appletlib.c:637:17: warning: ignoring return value of 'setgid' declared with attribute 'warn_unused_result' [-Wunused-result]
+  637 |                 setgid(rgid);
+      |                 ^~~~~~~~~~~~
+libbb/appletlib.c:638:17: warning: ignoring return value of 'setuid' declared with attribute 'warn_unused_result' [-Wunused-result]
+  638 |                 setuid(ruid);
+      |                 ^~~~~~~~~~~~
+  CC      libbb/ask_confirmation.o
+  CC      libbb/auto_string.o
+  CC      libbb/bb_askpass.o
+  CC      libbb/bb_bswap_64.o
+  CC      libbb/bb_cat.o
+  CC      libbb/bb_do_delay.o
+  CC      libbb/bb_getgroups.o
+  CC      libbb/bb_getsockname.o
+  CC      libbb/bb_pwd.o
+  CC      libbb/bb_qsort.o
+  CC      libbb/bb_strtonum.o
+  CC      libbb/capability.o
+  CC      libbb/change_identity.o
+  CC      libbb/chomp.o
+  CC      libbb/common_bufsiz.o
+  CC      libbb/compare_string_array.o
+  CC      libbb/concat_path_file.o
+  CC      libbb/concat_subpath_file.o
+  CC      libbb/const_hack.o
+  CC      libbb/copy_file.o
+  CC      libbb/copyfd.o
+  CC      libbb/correct_password.o
+  CC      libbb/crc32.o
+  CC      libbb/default_error_retval.o
+  CC      libbb/device_open.o
+  CC      libbb/dump.o
+  CC      libbb/duration.o
+  CC      libbb/endofname.o
+  CC      libbb/executable.o
+  CC      libbb/fclose_nonstdin.o
+  CC      libbb/fflush_stdout_and_exit.o
+  CC      libbb/fgets_str.o
+  CC      libbb/find_mount_point.o
+  CC      libbb/find_pid_by_name.o
+  CC      libbb/find_root_device.o
+  CC      libbb/full_write.o
+  CC      libbb/get_console.o
+  CC      libbb/get_cpu_count.o
+  CC      libbb/get_last_path_component.o
+  CC      libbb/get_line_from_file.o
+  CC      libbb/get_shell_name.o
+  CC      libbb/get_volsize.o
+  CC      libbb/getopt32.o
+  CC      libbb/getopt_allopts.o
+  CC      libbb/getpty.o
+  CC      libbb/hash_md5_sha.o
+  AS      libbb/hash_md5_sha256_x86-32_shaNI.o
+  AS      libbb/hash_md5_sha256_x86-64_shaNI.o
+  AS      libbb/hash_md5_sha_x86-32_shaNI.o
+  AS      libbb/hash_md5_sha_x86-64.o
+  AS      libbb/hash_md5_sha_x86-64_shaNI.o
+  CC      libbb/herror_msg.o
+  CC      libbb/human_readable.o
+  CC      libbb/in_ether.o
+  CC      libbb/inet_cksum.o
+  CC      libbb/inet_common.o
+  CC      libbb/inode_hash.o
+  CC      libbb/isdirectory.o
+  CC      libbb/isqrt.o
+  CC      libbb/iterate_on_dir.o
+  CC      libbb/kernel_version.o
+  CC      libbb/last_char_is.o
+  CC      libbb/lineedit.o
+  CC      libbb/lineedit_ptr_hack.o
+  CC      libbb/llist.o
+  CC      libbb/logenv.o
+  CC      libbb/login.o
+  CC      libbb/loop.o
+  CC      libbb/make_directory.o
+  CC      libbb/makedev.o
+  CC      libbb/match_fstype.o
+  CC      libbb/messages.o
+  CC      libbb/missing_syscalls.o
+  CC      libbb/mode_string.o
+  CC      libbb/nuke_str.o
+  CC      libbb/obscure.o
+  CC      libbb/parse_config.o
+  CC      libbb/parse_mode.o
+  CC      libbb/percent_decode.o
+  CC      libbb/perror_msg.o
+  CC      libbb/perror_nomsg.o
+  CC      libbb/perror_nomsg_and_die.o
+  CC      libbb/pidfile.o
+  CC      libbb/platform.o
+  CC      libbb/print_flags.o
+  CC      libbb/print_numbered_lines.o
+  CC      libbb/printable.o
+  CC      libbb/printable_string.o
+  CC      libbb/process_escape_sequence.o
+  CC      libbb/procps.o
+  CC      libbb/progress.o
+  CC      libbb/ptr_to_globals.o
+  CC      libbb/pw_encrypt.o
+  CC      libbb/read.o
+  CC      libbb/read_key.o
+  CC      libbb/read_printf.o
+  CC      libbb/recursive_action.o
+  CC      libbb/remove_file.o
+  CC      libbb/replace.o
+  CC      libbb/rtc.o
+  CC      libbb/run_shell.o
+  CC      libbb/safe_gethostname.o
+  CC      libbb/safe_poll.o
+  CC      libbb/safe_strncpy.o
+  CC      libbb/safe_write.o
+  CC      libbb/securetty.o
+  CC      libbb/setup_environment.o
+  CC      libbb/signals.o
+  CC      libbb/simplify_path.o
+  CC      libbb/single_argv.o
+  CC      libbb/skip_whitespace.o
+  CC      libbb/speed_table.o
+  CC      libbb/str_tolower.o
+  CC      libbb/strrstr.o
+  CC      libbb/sysconf.o
+  CC      libbb/time.o
+  CC      libbb/trim.o
+  CC      libbb/u_signal_names.o
+  CC      libbb/ubi.o
+  CC      libbb/udp_io.o
+  CC      libbb/unicode.o
+  CC      libbb/update_passwd.o
+libbb/update_passwd.c: In function 'update_passwd':
+libbb/update_passwd.c:153:17: warning: ignoring return value of 'fchown' declared with attribute 'warn_unused_result' [-Wunused-result]
+  153 |                 fchown(new_fd, sb.st_uid, sb.st_gid);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      libbb/utmp.o
+  CC      libbb/uuencode.o
+  CC      libbb/verror_msg.o
+  CC      libbb/vfork_daemon_rexec.o
+  CC      libbb/warn_ignoring_args.o
+  CC      libbb/wfopen.o
+  CC      libbb/wfopen_input.o
+  CC      libbb/write.o
+  CC      libbb/xatonum.o
+  CC      libbb/xconnect.o
+  CC      libbb/xfunc_die.o
+  CC      libbb/xfuncs.o
+  CC      libbb/xfuncs_printf.o
+  CC      libbb/xgetcwd.o
+  CC      libbb/xgethostbyname.o
+  CC      libbb/xreadlink.o
+  CC      libbb/xrealloc_vector.o
+  CC      libbb/xregcomp.o
+  AR      libbb/lib.a
+  LD      libpwdgrp/built-in.o
+  CC      libpwdgrp/pwd_grp.o
+  CC      libpwdgrp/uidgid_get.o
+  AR      libpwdgrp/lib.a
+  LD      loginutils/built-in.o
+  CC      loginutils/add-remove-shell.o
+  CC      loginutils/addgroup.o
+  CC      loginutils/adduser.o
+  CC      loginutils/chpasswd.o
+  CC      loginutils/cryptpw.o
+  CC      loginutils/deluser.o
+  CC      loginutils/getty.o
+loginutils/getty.c: In function 'open_tty':
+loginutils/getty.c:224:17: warning: ignoring return value of 'fchown' declared with attribute 'warn_unused_result' [-Wunused-result]
+  224 |                 fchown(0, 0, 0);        /* 0:0 */
+      |                 ^~~~~~~~~~~~~~~
+  CC      loginutils/login.o
+loginutils/login.c: In function 'login_main':
+loginutils/login.c:558:9: warning: ignoring return value of 'fchown' declared with attribute 'warn_unused_result' [-Wunused-result]
+  558 |         fchown(0, pw->pw_uid, pw->pw_gid);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      loginutils/passwd.o
+  CC      loginutils/su.o
+  CC      loginutils/sulogin.o
+loginutils/sulogin.c: In function 'sulogin_main':
+loginutils/sulogin.c:55:17: warning: ignoring return value of 'dup' declared with attribute 'warn_unused_result' [-Wunused-result]
+   55 |                 dup(xopen(argv[0], O_RDWR));
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+loginutils/sulogin.c:57:17: warning: ignoring return value of 'dup' declared with attribute 'warn_unused_result' [-Wunused-result]
+   57 |                 dup(0);
+      |                 ^~~~~~
+  CC      loginutils/vlock.o
+  AR      loginutils/lib.a
+  LD      mailutils/built-in.o
+  CC      mailutils/mail.o
+  CC      mailutils/makemime.o
+mailutils/makemime.c: In function 'makemime_main':
+mailutils/makemime.c:204:17: warning: ignoring return value of 'freopen' declared with attribute 'warn_unused_result' [-Wunused-result]
+  204 |                 freopen(opt_output, "w", stdout);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      mailutils/popmaildir.o
+  CC      mailutils/reformime.o
+  CC      mailutils/sendmail.o
+  AR      mailutils/lib.a
+  LD      miscutils/built-in.o
+  CC      miscutils/adjtimex.o
+  CC      miscutils/ascii.o
+  CC      miscutils/bc.o
+  CC      miscutils/beep.o
+  CC      miscutils/chat.o
+  CC      miscutils/conspy.o
+  CC      miscutils/crond.o
+  CC      miscutils/crontab.o
+miscutils/crontab.c: In function 'crontab_main':
+miscutils/crontab.c:161:17: warning: ignoring return value of 'fchown' declared with attribute 'warn_unused_result' [-Wunused-result]
+  161 |                 fchown(src_fd, pas->pw_uid, pas->pw_gid);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      miscutils/devmem.o
+  CC      miscutils/fbsplash.o
+  CC      miscutils/hdparm.o
+  CC      miscutils/hexedit.o
+  CC      miscutils/i2c_tools.o
+miscutils/i2c_tools.c: In function 'list_i2c_busses_and_exit':
+miscutils/i2c_tools.c:1152:46: warning: '%s' directive output may be truncated writing up to 255 bytes into a region of size 236 [-Wformat-truncation=]
+ 1152 |                 snprintf(path, NAME_MAX, "%s/%s/name",
+      |                                              ^~
+In file included from /usr/include/stdio.h:980,
+                 from include/libbb.h:31,
+                 from miscutils/i2c_tools.c:66:
+In function 'snprintf',
+    inlined from 'list_i2c_busses_and_exit' at miscutils/i2c_tools.c:1152:3:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: '__builtin___snprintf_chk' output between 25 and 280 bytes into a destination of size 255
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+miscutils/i2c_tools.c: In function 'list_i2c_busses_and_exit':
+miscutils/i2c_tools.c:1157:38: warning: '%s' directive output may be truncated writing up to 255 bytes into a region of size 236 [-Wformat-truncation=]
+ 1157 |                                  "%s/%s/device/name",
+      |                                      ^~
+In function 'snprintf',
+    inlined from 'list_i2c_busses_and_exit' at miscutils/i2c_tools.c:1156:4:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: '__builtin___snprintf_chk' output between 32 and 287 bytes into a destination of size 255
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+miscutils/i2c_tools.c: In function 'list_i2c_busses_and_exit':
+miscutils/i2c_tools.c:1165:38: warning: '%s' directive output may be truncated writing up to 255 bytes into a region of size 236 [-Wformat-truncation=]
+ 1165 |                                  "%s/%s/device/name",
+      |                                      ^~
+In function 'snprintf',
+    inlined from 'list_i2c_busses_and_exit' at miscutils/i2c_tools.c:1164:4:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: '__builtin___snprintf_chk' output between 32 and 287 bytes into a destination of size 255
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+miscutils/i2c_tools.c: In function 'list_i2c_busses_and_exit':
+miscutils/i2c_tools.c:1177:54: warning: '%s' directive output may be truncated writing up to 255 bytes into a region of size 236 [-Wformat-truncation=]
+ 1177 |                                                  "%s/%s/device/%s/name",
+      |                                                      ^~
+In function 'snprintf',
+    inlined from 'list_i2c_busses_and_exit' at miscutils/i2c_tools.c:1176:6:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: '__builtin___snprintf_chk' output between 33 and 543 bytes into a destination of size 255
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+  CC      miscutils/less.o
+  CC      miscutils/lsscsi.o
+  CC      miscutils/makedevs.o
+  CC      miscutils/man.o
+miscutils/man.c: In function 'run_pipe':
+miscutils/man.c:160:9: warning: ignoring return value of 'system' declared with attribute 'warn_unused_result' [-Wunused-result]
+  160 |         system(cmd);
+      |         ^~~~~~~~~~~
+  CC      miscutils/microcom.o
+miscutils/microcom.c: In function 'microcom_main':
+miscutils/microcom.c:160:25: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+  160 |                         write(sfd, &c, 1);
+      |                         ^~~~~~~~~~~~~~~~~
+  CC      miscutils/mt.o
+  CC      miscutils/nandwrite.o
+  CC      miscutils/partprobe.o
+  CC      miscutils/raidautorun.o
+  CC      miscutils/readahead.o
+  CC      miscutils/runlevel.o
+  CC      miscutils/rx.o
+  CC      miscutils/seedrng.o
+  CC      miscutils/setfattr.o
+  CC      miscutils/setserial.o
+  CC      miscutils/strings.o
+  CC      miscutils/time.o
+  CC      miscutils/tree.o
+  CC      miscutils/ts.o
+  CC      miscutils/ttysize.o
+  CC      miscutils/ubi_tools.o
+  CC      miscutils/ubirename.o
+  CC      miscutils/volname.o
+  CC      miscutils/watchdog.o
+miscutils/watchdog.c: In function 'watchdog_main':
+miscutils/watchdog.c:161:17: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+  161 |                 write(3, "", 1); /* write zero byte */
+      |                 ^~~~~~~~~~~~~~~
+miscutils/watchdog.c: In function 'shutdown_watchdog':
+miscutils/watchdog.c:71:9: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+   71 |         write(3, &V, 1);  /* Magic, see watchdog-api.txt in kernel */
+      |         ^~~~~~~~~~~~~~~
+  AR      miscutils/lib.a
+  LD      modutils/built-in.o
+  CC      modutils/modinfo.o
+  CC      modutils/modprobe-small.o
+  CC      modutils/modutils.o
+modutils/modutils.c: In function 'filename2modname':
+modutils/modutils.c:115:1: warning: function may return address of local variable [-Wreturn-local-addr]
+  115 | }
+      | ^
+modutils/modutils.c:94:14: note: declared here
+   94 |         char local_modname[MODULE_NAME_LEN];
+      |              ^~~~~~~~~~~~~
+  AR      modutils/lib.a
+  LD      networking/built-in.o
+  CC      networking/arp.o
+In file included from networking/arp.c:43:
+networking/arp.c: In function 'arp_show':
+include/libbb.h:236:28: warning: ignoring return value of 'fgets_unlocked' declared with attribute 'warn_unused_result' [-Wunused-result]
+  236 | # define fgets(s,n,stream) fgets_unlocked(s,n,stream)
+      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+networking/arp.c:430:9: note: in expansion of macro 'fgets'
+  430 |         fgets(line, sizeof(line), fp);
+      |         ^~~~~
+  CC      networking/arping.o
+  CC      networking/brctl.o
+  CC      networking/dnsd.o
+  CC      networking/ether-wake.o
+  CC      networking/ftpd.o
+networking/ftpd.c: In function 'popen_ls':
+networking/ftpd.c:718:17: warning: ignoring return value of 'dup' declared with attribute 'warn_unused_result' [-Wunused-result]
+  718 |                 dup(STDOUT_FILENO); /* copy will become STDIN_FILENO */
+      |                 ^~~~~~~~~~~~~~~~~~
+  CC      networking/ftpgetput.o
+  CC      networking/hostname.o
+  CC      networking/httpd.o
+  CC      networking/ifconfig.o
+  CC      networking/ifenslave.o
+  CC      networking/ifplugd.o
+  CC      networking/ifupdown.o
+  CC      networking/inetd.o
+  CC      networking/interface.o
+In file included from networking/interface.c:33:
+networking/interface.c: In function 'if_readlist_proc':
+include/libbb.h:236:28: warning: ignoring return value of 'fgets_unlocked' declared with attribute 'warn_unused_result' [-Wunused-result]
+  236 | # define fgets(s,n,stream) fgets_unlocked(s,n,stream)
+      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+networking/interface.c:554:9: note: in expansion of macro 'fgets'
+  554 |         fgets(buf, sizeof buf, fh);     /* eat line */
+      |         ^~~~~
+include/libbb.h:236:28: warning: ignoring return value of 'fgets_unlocked' declared with attribute 'warn_unused_result' [-Wunused-result]
+  236 | # define fgets(s,n,stream) fgets_unlocked(s,n,stream)
+      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+networking/interface.c:555:9: note: in expansion of macro 'fgets'
+  555 |         fgets(buf, sizeof buf, fh);
+      |         ^~~~~
+  CC      networking/ip.o
+  CC      networking/ipcalc.o
+  CC      networking/isrv.o
+  CC      networking/isrv_identd.o
+  CC      networking/nameif.o
+  CC      networking/nbd-client.o
+networking/nbd-client.c: In function 'nbdclient_main':
+networking/nbd-client.c:281:25: warning: ignoring return value of 'daemon' declared with attribute 'warn_unused_result' [-Wunused-result]
+  281 |                         daemon(0, 0);
+      |                         ^~~~~~~~~~~~
+  CC      networking/nc.o
+  CC      networking/netstat.o
+  CC      networking/nslookup.o
+networking/nslookup.c: In function 'send_queries':
+networking/nslookup.c:622:33: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+  622 |                                 write(pfd.fd, G.query[qn].query, G.query[qn].qlen);
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      networking/ntpd.o
+  CC      networking/parse_pasv_epsv.o
+  CC      networking/ping.o
+  CC      networking/pscan.o
+  CC      networking/route.o
+  CC      networking/slattach.o
+networking/slattach.c: In function 'slattach_main':
+networking/slattach.c:225:17: warning: ignoring return value of 'system' declared with attribute 'warn_unused_result' [-Wunused-result]
+  225 |                 system(extcmd);
+      |                 ^~~~~~~~~~~~~~
+  CC      networking/ssl_client.o
+  CC      networking/tc.o
+networking/tc.c: In function 'cbq_print_opt':
+networking/tc.c:236:27: error: 'TCA_CBQ_MAX' undeclared (first use in this function); did you mean 'TCA_CBS_MAX'?
+  236 |         struct rtattr *tb[TCA_CBQ_MAX+1];
+      |                           ^~~~~~~~~~~
+      |                           TCA_CBS_MAX
+networking/tc.c:236:27: note: each undeclared identifier is reported only once for each function it appears in
+networking/tc.c:249:16: error: 'TCA_CBQ_RATE' undeclared (first use in this function); did you mean 'TCA_TBF_RATE64'?
+  249 |         if (tb[TCA_CBQ_RATE]) {
+      |                ^~~~~~~~~~~~
+      |                TCA_TBF_RATE64
+networking/tc.c:255:16: error: 'TCA_CBQ_LSSOPT' undeclared (first use in this function)
+  255 |         if (tb[TCA_CBQ_LSSOPT]) {
+      |                ^~~~~~~~~~~~~~
+networking/tc.c:256:61: error: invalid application of 'sizeof' to incomplete type 'struct tc_cbq_lssopt'
+  256 |                 if (RTA_PAYLOAD(tb[TCA_CBQ_LSSOPT]) < sizeof(*lss))
+      |                                                             ^
+networking/tc.c:261:16: error: 'TCA_CBQ_WRROPT' undeclared (first use in this function)
+  261 |         if (tb[TCA_CBQ_WRROPT]) {
+      |                ^~~~~~~~~~~~~~
+networking/tc.c:262:61: error: invalid application of 'sizeof' to incomplete type 'struct tc_cbq_wrropt'
+  262 |                 if (RTA_PAYLOAD(tb[TCA_CBQ_WRROPT]) < sizeof(*wrr))
+      |                                                             ^
+networking/tc.c:267:16: error: 'TCA_CBQ_FOPT' undeclared (first use in this function)
+  267 |         if (tb[TCA_CBQ_FOPT]) {
+      |                ^~~~~~~~~~~~
+networking/tc.c:268:59: error: invalid application of 'sizeof' to incomplete type 'struct tc_cbq_fopt'
+  268 |                 if (RTA_PAYLOAD(tb[TCA_CBQ_FOPT]) < sizeof(*fopt))
+      |                                                           ^
+networking/tc.c:273:16: error: 'TCA_CBQ_OVL_STRATEGY' undeclared (first use in this function)
+  273 |         if (tb[TCA_CBQ_OVL_STRATEGY]) {
+      |                ^~~~~~~~~~~~~~~~~~~~
+networking/tc.c:274:67: error: invalid application of 'sizeof' to incomplete type 'struct tc_cbq_ovl'
+  274 |                 if (RTA_PAYLOAD(tb[TCA_CBQ_OVL_STRATEGY]) < sizeof(*ovl))
+      |                                                                   ^
+networking/tc.c:277:50: error: invalid application of 'sizeof' to incomplete type 'struct tc_cbq_ovl'
+  277 |                                 (unsigned) sizeof(*ovl));
+      |                                                  ^
+networking/tc.c:293:23: error: invalid use of undefined type 'struct tc_cbq_lssopt'
+  293 |         if (lss && lss->flags) {
+      |                       ^~
+networking/tc.c:296:24: error: invalid use of undefined type 'struct tc_cbq_lssopt'
+  296 |                 if (lss->flags&TCF_CBQ_LSS_BOUNDED) {
+      |                        ^~
+networking/tc.c:296:32: error: 'TCF_CBQ_LSS_BOUNDED' undeclared (first use in this function)
+  296 |                 if (lss->flags&TCF_CBQ_LSS_BOUNDED) {
+      |                                ^~~~~~~~~~~~~~~~~~~
+networking/tc.c:300:24: error: invalid use of undefined type 'struct tc_cbq_lssopt'
+  300 |                 if (lss->flags&TCF_CBQ_LSS_ISOLATED) {
+      |                        ^~
+networking/tc.c:300:32: error: 'TCF_CBQ_LSS_ISOLATED' undeclared (first use in this function)
+  300 |                 if (lss->flags&TCF_CBQ_LSS_ISOLATED) {
+      |                                ^~~~~~~~~~~~~~~~~~~~
+networking/tc.c:308:24: error: invalid use of undefined type 'struct tc_cbq_wrropt'
+  308 |                 if (wrr->priority != TC_CBQ_MAXPRIO)
+      |                        ^~
+networking/tc.c:308:38: error: 'TC_CBQ_MAXPRIO' undeclared (first use in this function)
+  308 |                 if (wrr->priority != TC_CBQ_MAXPRIO)
+      |                                      ^~~~~~~~~~~~~~
+networking/tc.c:309:46: error: invalid use of undefined type 'struct tc_cbq_wrropt'
+  309 |                         printf("prio %u", wrr->priority);
+      |                                              ^~
+networking/tc.c:313:43: error: invalid use of undefined type 'struct tc_cbq_wrropt'
+  313 |                         printf("/%u ", wrr->cpriority);
+      |                                           ^~
+networking/tc.c:314:32: error: invalid use of undefined type 'struct tc_cbq_wrropt'
+  314 |                         if (wrr->weight != 1) {
+      |                                ^~
+networking/tc.c:315:65: error: invalid use of undefined type 'struct tc_cbq_wrropt'
+  315 |                                 print_rate(buf, sizeof(buf), wrr->weight);
+      |                                                                 ^~
+networking/tc.c:318:32: error: invalid use of undefined type 'struct tc_cbq_wrropt'
+  318 |                         if (wrr->allot)
+      |                                ^~
+networking/tc.c:319:57: error: invalid use of undefined type 'struct tc_cbq_wrropt'
+  319 |                                 printf("allot %ub ", wrr->allot);
+      |                                                         ^~
+networking/tc.c:236:24: warning: unused variable 'tb' [-Wunused-variable]
+  236 |         struct rtattr *tb[TCA_CBQ_MAX+1];
+      |                        ^~
+make[1]: *** [scripts/Makefile.build:198: networking/tc.o] Error 1
+make: *** [Makefile:744: networking] Error 2
