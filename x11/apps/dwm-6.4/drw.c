@@ -240,7 +240,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 {
 	int i, ty, ellipsis_x = 0;
 	unsigned int tmpw, ew, ellipsis_w = 0, ellipsis_len;
-	XftDraw *d = NULL;
+	void *d = NULL;
 	Fnt *usedfont, *curfont, *nextfont;
 	int utf8strlen, utf8charlen, render = x || y || w || h;
 	long utf8codepoint = 0;
@@ -279,7 +279,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 		while (*text) {
 			utf8charlen = utf8decode(text, &utf8codepoint, UTF_SIZ);
 			for (curfont = drw->fonts; curfont; curfont = curfont->next) {
-				charexists = charexists || XftCharExists(drw->dpy, NULL, utf8codepoint);
+				charexists = charexists || XftCharExists(drw->dpy, (void*)curfont, utf8codepoint);
 				if (charexists) {
 					drw_font_getexts(curfont, text, utf8charlen, &tmpw, NULL);
 					if (ew + ellipsis_width <= w) {
@@ -317,7 +317,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 
 		if (utf8strlen) {
 			if (render) {
-				ty = y + (h - usedfont->h) / 2 + 10 /* font ascent */;
+				ty = y + (h - usedfont->h) / 2 + usedfont->h / 2;
         /* XftDrawStringUtf8 disabled */
 			}
 			x += ew;
@@ -363,7 +363,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 
 			if (match) {
 				usedfont = xfont_create(drw, NULL, match);
-				if (usedfont && XftCharExists(drw->dpy, NULL, utf8codepoint)) {
+				if (usedfont && XftCharExists(drw->dpy, (void*)usedfont, utf8codepoint)) {
 					for (curfont = drw->fonts; curfont->next; curfont = curfont->next)
 						; /* NOP */
 					curfont->next = usedfont;
@@ -376,7 +376,7 @@ no_match:
 			}
 		}
 	}
-	if (d)
+	if (0) /* XftDraw disabled */
         /* XftDrawDestroy disabled */
 
 	return x + (render ? w : 0);

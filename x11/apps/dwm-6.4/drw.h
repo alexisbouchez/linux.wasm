@@ -1,15 +1,22 @@
 /* See LICENSE file for copyright and license details. */
 
 
-// WASM stubs for Xft
+// WASM stubs for Xft and FontConfig
 typedef struct { int ascent; int descent; } XftFont;
 typedef struct {} FcPattern;
-typedef struct { int x, y, width, height, xOff, yOff; } XGlyphInfo;
 typedef struct { unsigned long pixel; } XftColor;
 typedef unsigned char FcChar8;
 typedef int FcResult;
 #define FcResultMatch 0
 #define FcResultNoMatch 1
+typedef struct { int x, y, width, height, xOff, yOff; } XGlyphInfo;
+
+// Xft function stubs
+static inline int XftCharExists(void* dpy, void* font, unsigned int ucs4) { return 1; }
+static inline void* XftFontMatch(void* dpy, int screen, void* pattern, int* result) { if (result) *result = 0; return NULL; }
+static inline void XftTextExtentsUtf8(void* dpy, void* font, const unsigned char* text, int len, XGlyphInfo* ext) {
+    if (ext) { ext->xOff = len * 6; ext->yOff = 0; }
+}
 
 typedef struct {
 	Cursor cursor;

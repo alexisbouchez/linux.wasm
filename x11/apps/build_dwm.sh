@@ -166,7 +166,7 @@ sed -i 's/#include <fontconfig\/fontconfig.h>/\/\/ #include <fontconfig\/fontcon
 sed -i 's/#include <X11\/Xft\/Xft.h>/\/\/ #include <X11\/Xft\/Xft.h> \/\/ Disabled for WASM/g' drw.h 2>/dev/null || true
 sed -i 's/#include <fontconfig\/fontconfig.h>/\/\/ #include <fontconfig\/fontconfig.h> \/\/ Disabled for WASM/g' drw.h 2>/dev/null || true
 
-# Add stub types to drw.h
+# Add stub types and functions to drw.h
 python3 << 'PYEOF'
 import re
 
@@ -174,9 +174,9 @@ import re
 with open('drw.h', 'r') as f:
     content = f.read()
 
-# Add stub types before struct definitions
-stub_types = '''
-// WASM stubs for Xft
+# Add stub types and functions before struct definitions
+stub_defs = '''
+// WASM stubs for Xft and FontConfig
 typedef struct { int ascent; int descent; } XftFont;
 typedef struct {} FcPattern;
 typedef struct { unsigned long pixel; } XftColor;
@@ -184,15 +184,24 @@ typedef unsigned char FcChar8;
 typedef int FcResult;
 #define FcResultMatch 0
 #define FcResultNoMatch 1
+typedef struct { int x, y, width, height, xOff, yOff; } XGlyphInfo;
+
+// Xft function stubs
+static inline int XftCharExists(void* dpy, void* font, unsigned int ucs4) { return 1; }
+static inline void* XftFontMatch(void* dpy, int screen, void* pattern, int* result) { if (result) *result = 0; return NULL; }
+static inline void XftTextExtentsUtf8(void* dpy, void* font, const unsigned char* text, int len, XGlyphInfo* ext) {
+    if (ext) { ext->xOff = len * 6; ext->yOff = 0; }
+}
 '''
 
-# Insert after includes
-content = re.sub(r'(//.*Xft.*\n)', r'\1' + stub_types, content, count=1)
-if stub_types not in content:
-    # Find first struct or typedef and insert before
-    match = re.search(r'(typedef struct|struct \w+)', content)
+# Insert after includes, before any struct definitions
+if 'XftCharExists' not in content:
+    match = re.search(r'(typedef struct|struct \w+|^static)', content, re.MULTILINE)
     if match:
-        content = content[:match.start()] + stub_types + '\n' + content[match.start():]
+        content = content[:match.start()] + stub_defs + '\n' + content[match.start():]
+    else:
+        # Append at end if no match
+        content = content + '\n' + stub_defs
 
 # Replace XftFont *xfont with void *xfont
 content = re.sub(r'XftFont \*xfont', 'void *xfont', content)
@@ -257,30 +266,22 @@ if 'XGlyphInfo' not in drw_h_content:
     with open('drw.h', 'w') as f:
         f.write(drw_h_content)
 
-# Add more Xft stubs
-xft_stubs = '''
-int XftCharExists(void* dpy, void* font, unsigned int ucs4) { return 1; }
-void* XftFontMatch(void* dpy, int screen, void* pattern, int* result) { if (result) *result = 0; return NULL; }
-'''
-
-if 'XftCharExists' not in content:
-    match = re.search(r'^(static |void |int |Fnt)', content, re.MULTILINE)
-    if match:
-        content = content[:match.start()] + xft_stubs + '\n' + content[match.start():]
-
 # Replace Xft function calls - match full statements
-# XftDrawStringUtf8 - replace entire line
+# XftDrawStringUtf8 - comment out entire line
 content = re.sub(r'^\s*XftDrawStringUtf8\s*\([^;]*\)\s*;', r'        /* XftDrawStringUtf8 disabled */', content, flags=re.MULTILINE)
 
-# XftTextExtentsUtf8 - replace call and add manual ext calculation
-# Match: XftTextExtentsUtf8(...);
+# XftTextExtentsUtf8 - should be handled by inline function in drw.h, but replace if still present
 content = re.sub(r'XftTextExtentsUtf8\s*\([^)]+\)\s*;', 
-    r'/* XftTextExtentsUtf8 disabled */ ext.xOff = len * 6; ext.yOff = 0;', content)
+    r'/* XftTextExtentsUtf8 - using stub */ if (ext) { ext->xOff = len * 6; ext->yOff = 0; }', content)
 
-# Fix xfont->ascent access - xfont is void*, create stub access
-content = re.sub(r'usedfont->xfont->ascent', r'10 /* font ascent */', content)
-content = re.sub(r'curfont->xfont', r'NULL', content)
-content = re.sub(r'usedfont->xfont', r'NULL', content)
+# Fix xfont->ascent access - xfont is void*, replace with constant
+content = re.sub(r'->xfont->ascent', r'->h / 2', content)  # Use font height instead
+content = re.sub(r'usedfont->xfont', r'(void*)usedfont', content)
+content = re.sub(r'curfont->xfont', r'(void*)curfont', content)
+
+# Fix 'd' variable - XftDraw is disabled, set d to NULL
+content = re.sub(r'XftDraw\s+\*\s*d\s*=', r'void *d =', content)
+content = re.sub(r'if\s*\(\s*d\s*\)', r'if (0) /* XftDraw disabled */', content)
 
 # Ensure XGlyphInfo ext is declared
 if 'XGlyphInfo ext' in content and 'XGlyphInfo ext =' not in content:
