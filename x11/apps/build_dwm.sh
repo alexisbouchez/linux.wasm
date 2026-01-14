@@ -386,12 +386,9 @@ sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["
 # Add x11_stubs.o to the link command
 # Modify Makefile to include x11_stubs.o
 if [ -f x11_stubs.o ]; then
-    # Add x11_stubs.o to OBJ variable
-    sed -i 's|^OBJ =|OBJ = x11_stubs.o |' Makefile 2>/dev/null || sed -i '/^OBJ =/s/$/ x11_stubs.o/' Makefile 2>/dev/null || {
-        # If OBJ doesn't exist, add it
-        echo "OBJ += x11_stubs.o" >> Makefile
-    }
-    # Also modify the link line directly
+    # Modify the link line directly - OBJ is ${SRC:.c=.o}, so append x11_stubs.o
+    sed -i 's|\${CC} -o \$\@ \${OBJ} \${LDFLAGS}|\${CC} -o \$\@ \${OBJ} x11_stubs.o \${LDFLAGS}|' Makefile
+    # Also try the other order
     sed -i 's|\${CC} -o \$\@ \${OBJ}|\${CC} -o \$\@ \${OBJ} x11_stubs.o|' Makefile 2>/dev/null || true
 fi
 
