@@ -96,6 +96,7 @@ drw.c:139:35: error: no member named 'descent' in 'struct Fnt'
   139 |         font->h = xfont->ascent + xfont->descent;
       |                                   ~~~~~  ^
 fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
 In file included from dwm.c:44:
 ./drw.h:10:2: error: unknown type name 'XftFont'
    10 |         XftFont *xfont;
@@ -103,7 +104,6 @@ In file included from dwm.c:44:
 ./drw.h:11:2: error: unknown type name 'FcPattern'
    11 |         FcPattern *pattern;
       |         ^
-20 errors generated.
 ./drw.h:16:9: error: unknown type name 'XftColor'; did you mean 'XColor'?
    16 | typedef XftColor Clr;
       |         ^~~~~~~~
@@ -111,64 +111,33 @@ In file included from dwm.c:44:
 /home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/cache/sysroot/include/X11/Xlib.h:423:3: note: 'XColor' declared here
   423 | } XColor;
       |   ^
-In file included from dwm.c:273:
-./config.h:36:67: error: use of undeclared identifier 'dmenucmd'
-   36 |         { MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-      |                                                                          ^~~~~~~~
-./config.h:37:67: error: use of undeclared identifier 'termcmd'
-   37 |         { MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-      |                                                                          ^~~~~~~
 make: *** [Makefile:18: drw.o] Error 1
 make: *** Waiting for unfinished jobs....
-dwm.c:295:25: error: use of undeclared identifier 'rules'
-  295 |         for (i = 0; i < LENGTH(rules); i++) {
-      |                                ^~~~~
-dwm.c:295:25: error: use of undeclared identifier 'rules'
-  295 |         for (i = 0; i < LENGTH(rules); i++) {
-      |                                ^~~~~
-dwm.c:296:8: error: use of undeclared identifier 'rules'
-  296 |                 r = &rules[i];
-      |                      ^~~~~
-dwm.c:455:25: error: use of undeclared identifier 'buttons'
+In file included from dwm.c:273:
+./config.h:46:67: error: use of undeclared identifier 'dmenucmd'
+   46 |         { MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+      |                                                                          ^~~~~~~~
+./config.h:47:67: error: use of undeclared identifier 'termcmd'
+   47 |         { MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+      |                                                                          ^~~~~~~
+./config.h:86:80: error: use of undeclared identifier 'termcmd'
+   86 |         { ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
+      |                                                                                       ^~~~~~~
+dwm.c:455:25: error: invalid application of 'sizeof' to an incomplete type 'const Button[]'
   455 |         for (i = 0; i < LENGTH(buttons); i++)
       |                                ^~~~~~~
-dwm.c:455:25: error: use of undeclared identifier 'buttons'
-  455 |         for (i = 0; i < LENGTH(buttons); i++)
-      |                                ^~~~~~~
-dwm.c:456:16: error: use of undeclared identifier 'buttons'
-  456 |                 if (click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
-      |                              ^~~~~~~
-dwm.c:456:36: error: use of undeclared identifier 'buttons'
-  456 |                 if (click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
-      |                                                  ^~~~~~~
-dwm.c:456:55: error: use of undeclared identifier 'buttons'
-  456 |                 if (click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
-      |                                                                     ^~~~~~~
-dwm.c:457:16: error: use of undeclared identifier 'buttons'; did you mean 'Button'?
-  457 |                 && CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state))
-      |                              ^~~~~~~
-dwm.c:83:3: note: 'Button' declared here
-   83 | } Button;
-      |   ^
-dwm.c:458:4: error: unknown type name 'buttons'; did you mean 'Button'?
-  458 |                         buttons[i].func(click == ClkTagBar && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
-      |                         ^~~~~~~
-      |                         Button
-dwm.c:83:3: note: 'Button' declared here
-   83 | } Button;
-      |   ^
-dwm.c:458:4: error: expected expression
-  458 |                         buttons[i].func(click == ClkTagBar && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
-      |                         ^
-dwm.c:641:13: error: use of undeclared identifier 'mfact'
-  641 |         m->mfact = mfact;
-      |                    ^~~~~
-dwm.c:943:26: error: use of undeclared identifier 'buttons'
+dwm.c:943:26: error: invalid application of 'sizeof' to an incomplete type 'const Button[]'
   943 |                 for (i = 0; i < LENGTH(buttons); i++)
       |                                        ^~~~~~~
-dwm.c:943:26: error: use of undeclared identifier 'buttons'
-  943 |                 for (i = 0; i < LENGTH(buttons); i++)
-      |                                        ^~~~~~~
-fatal error: too many errors emitted, stopping now [-ferror-limit=]
-20 errors generated.
+dwm.c:963:26: error: invalid application of 'sizeof' to an incomplete type 'const Key[]'
+  963 |                 for (i = 0; i < LENGTH(keys); i++)
+      |                                        ^~~~
+dwm.c:999:25: error: invalid application of 'sizeof' to an incomplete type 'const Key[]'
+  999 |         for (i = 0; i < LENGTH(keys); i++)
+      |                                ^~~~
+dwm.c:1836:17: warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+ 1836 | updateclientlist()
+      |                 ^
+      |                  void
+1 warning and 10 errors generated.
 make: *** [Makefile:18: dwm.o] Error 1
