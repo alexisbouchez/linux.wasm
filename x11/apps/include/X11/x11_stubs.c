@@ -1,4 +1,5 @@
 /* X11 stub implementations for WASM */
+#define Drawable unsigned long
 #include "X11/Xlib.h"
 
 // Stub implementations

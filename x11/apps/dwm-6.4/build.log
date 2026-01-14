@@ -34,27 +34,117 @@ dwm.c:1836:17: warning: a function declaration without a prototype is deprecated
       |                  void
 6 warnings generated.
 2 warnings generated.
-emcc -o dwm drw.o dwm.o util.o 
-wasm-ld: error: drw.o: undefined symbol: XCreatePixmap
-wasm-ld: error: drw.o: undefined symbol: XCreateGC
-wasm-ld: error: drw.o: undefined symbol: XSetLineAttributes
-wasm-ld: error: drw.o: undefined symbol: XFreePixmap
-wasm-ld: error: drw.o: undefined symbol: XCreatePixmap
-wasm-ld: error: drw.o: undefined symbol: XFreePixmap
-wasm-ld: error: drw.o: undefined symbol: XFreeGC
-wasm-ld: error: drw.o: undefined symbol: XSetForeground
-wasm-ld: error: drw.o: undefined symbol: XFillRectangle
-wasm-ld: error: drw.o: undefined symbol: XDrawRectangle
-wasm-ld: error: drw.o: undefined symbol: XSetForeground
-wasm-ld: error: drw.o: undefined symbol: XFillRectangle
-wasm-ld: error: drw.o: undefined symbol: XCopyArea
-wasm-ld: error: drw.o: undefined symbol: XSync
-wasm-ld: error: drw.o: undefined symbol: XCreateFontCursor
-wasm-ld: error: drw.o: undefined symbol: XFreeCursor
-wasm-ld: error: dwm.o: undefined symbol: XSupportsLocale
-wasm-ld: error: dwm.o: undefined symbol: XSetErrorHandler
-wasm-ld: error: dwm.o: undefined symbol: XSelectInput
-wasm-ld: error: dwm.o: undefined symbol: XSync
+emcc -o dwm drw.o dwm.o util.o x11_stubs.o  x11_stubs.o
+wasm-ld: error: duplicate symbol: XOpenDisplay
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XCloseDisplay
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XCreateWindow
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XMapWindow
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XUnmapWindow
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XConfigureWindow
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XCreateGC
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XSetForeground
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XSetBackground
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XFillRectangle
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XDrawString
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XFlush
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XSync
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XNextEvent
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XSelectInput
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XRootWindow
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XDefaultScreen
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XBlackPixel
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XWhitePixel
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
+wasm-ld: error: duplicate symbol: XStoreName
+>>> defined in x11_stubs.o
+>>> defined in x11_stubs.o
+
 wasm-ld: error: too many errors emitted, stopping now (use -error-limit=0 to see all errors)
-emcc: error: '/home/alexis-bouchez/linux.wasm/emsdk/upstream/bin/wasm-ld -o dwm.wasm /tmp/tmps0sstd5ylibemscripten_js_symbols.so --strip-debug --export=emscripten_stack_get_end --export=emscripten_stack_get_free --export=emscripten_stack_get_base --export=emscripten_stack_get_current --export=emscripten_stack_init --export=_emscripten_stack_alloc --export=__wasm_call_ctors --export=_emscripten_stack_restore --export-if-defined=__start_em_asm --export-if-defined=__stop_em_asm --export-if-defined=__start_em_lib_deps --export-if-defined=__stop_em_lib_deps --export-if-defined=__start_em_js --export-if-defined=__stop_em_js --export-if-defined=main --export-if-defined=__main_argc_argv --export-if-defined=fflush --export-table -z stack-size=65536 --no-growable-memory --initial-heap=16777216 --no-entry --stack-first --table-base=1 drw.o dwm.o util.o -L/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten -L/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/src/lib -lGL-getprocaddr -lal -lhtml5 -lstubs-debug -lnoexit -lc-debug -ldlmalloc-debug -lcompiler_rt -lc++-debug-noexcept -lc++abi-debug-noexcept -lsockets -mllvm -combiner-global-alias-analysis=false -mllvm -enable-emscripten-sjlj -mllvm -disable-lsr' failed (returned 1)
+emcc: error: '/home/alexis-bouchez/linux.wasm/emsdk/upstream/bin/wasm-ld -o dwm.wasm /tmp/tmp1h_uq2telibemscripten_js_symbols.so --strip-debug --export=emscripten_stack_get_end --export=emscripten_stack_get_free --export=emscripten_stack_get_base --export=emscripten_stack_get_current --export=emscripten_stack_init --export=_emscripten_stack_alloc --export=__wasm_call_ctors --export=_emscripten_stack_restore --export-if-defined=__start_em_asm --export-if-defined=__stop_em_asm --export-if-defined=__start_em_lib_deps --export-if-defined=__stop_em_lib_deps --export-if-defined=__start_em_js --export-if-defined=__stop_em_js --export-if-defined=main --export-if-defined=__main_argc_argv --export-if-defined=fflush --export-table -z stack-size=65536 --no-growable-memory --initial-heap=16777216 --no-entry --stack-first --table-base=1 drw.o dwm.o util.o x11_stubs.o x11_stubs.o -L/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten -L/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/src/lib -lGL-getprocaddr -lal -lhtml5 -lstubs-debug -lnoexit -lc-debug -ldlmalloc-debug -lcompiler_rt -lc++-debug-noexcept -lc++abi-debug-noexcept -lsockets -mllvm -combiner-global-alias-analysis=false -mllvm -enable-emscripten-sjlj -mllvm -disable-lsr' failed (returned 1)
 make: *** [Makefile:26: dwm] Error 1
+wasm-ld: warning: function signature mismatch: XSetWMHints
+>>> defined as (i32, i32, i32) -> i32 in dwm.o
+>>> defined as (i32, i32, i32) -> void in x11_stubs.o
+
+wasm-ld: warning: function signature mismatch: XSetErrorHandler
+>>> defined as (i32) -> i32 in dwm.o
+>>> defined as (i32) -> void in x11_stubs.o
+
+wasm-ld: error: symbol exported via --export not found: main
+wasm-ld: error: dwm.o: undefined symbol: XCreateSimpleWindow
+wasm-ld: error: dwm.o: undefined symbol: XChangeProperty
+wasm-ld: error: dwm.o: undefined symbol: XChangeProperty
+wasm-ld: error: dwm.o: undefined symbol: XChangeProperty
+wasm-ld: error: dwm.o: undefined symbol: XChangeProperty
+wasm-ld: error: dwm.o: undefined symbol: XDeleteProperty
+wasm-ld: error: dwm.o: undefined symbol: XQueryTree
+wasm-ld: error: dwm.o: undefined symbol: XGetWindowAttributes
+wasm-ld: error: dwm.o: undefined symbol: XGetTransientForHint
+wasm-ld: error: dwm.o: undefined symbol: XGetWindowAttributes
+wasm-ld: error: dwm.o: undefined symbol: XGetTransientForHint
+wasm-ld: error: dwm.o: undefined symbol: XFree
+wasm-ld: error: dwm.o: undefined symbol: XUngrabKey
+wasm-ld: error: dwm.o: undefined symbol: XDestroyWindow
+wasm-ld: error: dwm.o: undefined symbol: XDestroyWindow
+wasm-ld: error: dwm.o: undefined symbol: XSetInputFocus
+wasm-ld: error: dwm.o: undefined symbol: XDeleteProperty
+wasm-ld: error: dwm.o: undefined symbol: XDefineCursor
+wasm-ld: error: dwm.o: undefined symbol: XMapRaised
+wasm-ld: error: too many errors emitted, stopping now (use -error-limit=0 to see all errors)
+emcc: error: '/home/alexis-bouchez/linux.wasm/emsdk/upstream/bin/wasm-ld -o dwm.wasm /tmp/tmpusr0sc9llibemscripten_js_symbols.so --strip-debug --export=main --export=emscripten_stack_get_end --export=emscripten_stack_get_free --export=emscripten_stack_get_base --export=emscripten_stack_get_current --export=emscripten_stack_init --export=_emscripten_stack_restore --export-if-defined=__start_em_asm --export-if-defined=__stop_em_asm --export-if-defined=__start_em_lib_deps --export-if-defined=__stop_em_lib_deps --export-if-defined=__start_em_js --export-if-defined=__stop_em_js --export-if-defined=__main_argc_argv --export-table -z stack-size=65536 --no-growable-memory --initial-heap=16777216 --entry=_initialize --stack-first --table-base=1 drw.o dwm.o util.o x11_stubs.o -L/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten -L/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/src/lib /home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten/crt1_reactor.o -lGL-getprocaddr -lal -lhtml5 -lstandalonewasm-nocatch -lstubs-debug -lnoexit -lc-debug -ldlmalloc-debug -lcompiler_rt -lc++-debug-noexcept -lc++abi-debug-noexcept -lsockets -mllvm -combiner-global-alias-analysis=false -mllvm -enable-emscripten-sjlj -mllvm -disable-lsr' failed (returned 1)
