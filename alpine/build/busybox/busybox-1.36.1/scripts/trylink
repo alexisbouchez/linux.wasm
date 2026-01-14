@@ -134,7 +134,7 @@ echo "Trying libraries: $LDLIBS"
 # "lib1 lib2 lib3" -> "-llib1 -llib2 -llib3"
 l_list=`echo " $LDLIBS $CONFIG_EXTRA_LDLIBS " | sed -e 's: \([^- ][^ ]*\): -l\1:g' -e 's/^ *//'`
 test x"$l_list" != x"" && l_list="$START_GROUP $l_list $END_GROUP"
-try $CC $CFLAGS $LDFLAGS \
+try $CC $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry \
 	-o $EXE \
 	$SORT_COMMON \
 	$SORT_SECTION \
@@ -161,7 +161,7 @@ while test "$LDLIBS"; do
 	l_list=`echo " $without_one $CONFIG_EXTRA_LDLIBS " | sed -e 's: \([^- ][^ ]*\): -l\1:g' -e 's/^ *//'`
 	test x"$l_list" != x"" && l_list="$START_GROUP $l_list $END_GROUP"
 	$debug && echo "Trying -l options: '$l_list'"
-	try $CC $CFLAGS $LDFLAGS \
+	try $CC $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry \
 		-o $EXE \
 		$SORT_COMMON \
 		$SORT_SECTION \
@@ -190,7 +190,7 @@ l_list=`echo " $LDLIBS $CONFIG_EXTRA_LDLIBS " | sed -e 's: \([^- ][^ ]*\): -l\1:
 test x"$l_list" != x"" && l_list="$START_GROUP $l_list $END_GROUP"
 # --verbose gives us gobs of info to stdout (e.g. linker script used)
 if ! test -f busybox_ldscript; then
-    try $CC $CFLAGS $LDFLAGS \
+    try $CC $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry \
 	    -o $EXE \
 	    $SORT_COMMON \
 	    $SORT_SECTION \
@@ -220,7 +220,7 @@ else
     #  . = ALIGN (0x1000); . = DATA_SEGMENT_ALIGN (0x1000, 0x1000);
     # to unconditionally align .data to the next page boundary,
     # instead of "next page, plus current offset in this page"
-    try $CC $CFLAGS $LDFLAGS \
+    try $CC $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry \
 	    -o $EXE \
 	    $SORT_COMMON \
 	    $SORT_SECTION \
@@ -252,7 +252,7 @@ if test "$CONFIG_BUILD_LIBBUSYBOX" = y; then
     test "$CONFIG_FEATURE_LIBBUSYBOX_STATIC" = y && LBB_STATIC="-Wl,-static"
 
     EXE="$sharedlib_dir/libbusybox.so.${BB_VER}_unstripped"
-    try $CC $CFLAGS $LDFLAGS \
+    try $CC $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry \
 	    -o $EXE \
 	    -shared -fPIC $LBB_STATIC \
 	    -Wl,--enable-new-dtags \
@@ -276,7 +276,7 @@ fi
 
 if test "$CONFIG_FEATURE_SHARED_BUSYBOX" = y; then
     EXE="$sharedlib_dir/busybox_unstripped"
-    try $CC $CFLAGS $LDFLAGS \
+    try $CC $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry \
 	    -o $EXE \
 	    $SORT_COMMON \
 	    $SORT_SECTION \
@@ -314,7 +314,7 @@ int main(int argc, char **argv)
 " >"$sharedlib_dir/applet.c"
 
 	EXE="$sharedlib_dir/$name"
-	try $CC $CFLAGS $LDFLAGS "$sharedlib_dir/applet.c" \
+	try $CC $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry "$sharedlib_dir/applet.c" \
 		-o $EXE \
 		$SORT_COMMON \
 		$SORT_SECTION \
