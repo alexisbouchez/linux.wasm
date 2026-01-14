@@ -28,17 +28,10 @@ drw.c:248:2: error: unknown type name 'FcCharSet'; did you mean 'FcChar8'?
 ./drw.h:8:23: note: 'FcChar8' declared here
     8 | typedef unsigned char FcChar8;
       |                       ^
-drw.c:251:2: error: unknown type name 'XftResult'; did you mean 'FcResult'?
-  251 |         XftResult result;
-      |         ^~~~~~~~~
-      |         FcResult
-./drw.h:10:13: note: 'FcResult' declared here
-   10 | typedef int FcResult;
-      |             ^
-drw.c:267:49: error: extraneous ')' before ';'
-  267 |                                   0 /* DefaultColormap stub */);
-      |                                                               ^
-1 warning and 6 errors generated.
+drw.c:267:22: error: extraneous ')' before ';'
+  267 |                                   0);
+      |                                    ^
+1 warning and 5 errors generated.
 In file included from dwm.c:44:
 ./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
     6 | typedef struct {} FcPattern;

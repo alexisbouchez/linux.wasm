@@ -8,6 +8,7 @@ typedef struct { unsigned long pixel; } XftColor;
 typedef unsigned char FcChar8;
 typedef unsigned char XftChar8;
 typedef int FcResult;
+typedef int XftResult;
 #define FcResultMatch 0
 #define FcResultNoMatch 1
 typedef struct { int x, y, width, height, xOff, yOff; } XGlyphInfo;

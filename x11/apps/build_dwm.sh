@@ -183,6 +183,7 @@ typedef struct { unsigned long pixel; } XftColor;
 typedef unsigned char FcChar8;
 typedef unsigned char XftChar8;
 typedef int FcResult;
+typedef int XftResult;
 #define FcResultMatch 0
 #define FcResultNoMatch 1
 typedef struct { int x, y, width, height, xOff, yOff; } XGlyphInfo;
@@ -278,8 +279,10 @@ content = re.sub(r'XftTextExtentsUtf8\s*\([^)]+\)\s*;',
 # Fix XftChar8 cast
 content = re.sub(r'\(XftChar8 \*\)', r'(const unsigned char *)', content)
 
-# Fix DefaultColormap macro issue - replace with 0
-content = re.sub(r'DefaultColormap\([^)]+\)', r'0 /* DefaultColormap stub */', content)
+# Fix DefaultColormap macro issue - replace with 0 and fix syntax
+content = re.sub(r'DefaultColormap\([^)]+\)', r'0', content)
+# Fix the line that has "d = NULL," followed by DefaultColormap
+content = re.sub(r'd\s*=\s*NULL\s*,\s*0\s*\);', r'd = NULL;', content)
 
 # Fix xfont->ascent access - xfont is void*, replace with constant
 content = re.sub(r'->xfont->ascent', r'->h / 2', content)  # Use font height instead
