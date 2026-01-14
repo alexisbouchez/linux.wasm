@@ -16,6 +16,7 @@ int XFillRectangle(Display *dpy, Drawable d, GC gc, int x, int y, unsigned int w
 int XDrawString(Display *dpy, Drawable d, GC gc, int x, int y, const char *string, int length) { return 0; }
 int XFlush(Display *dpy) { return 0; }
 int XSync(Display *dpy, int discard) { return 0; }
+int XSelectInput(Display *dpy, Window w, long event_mask) { return 0; }
 unsigned long XNextEvent(Display *dpy, void *event_return) { return 0; }
 int XSelectInput(Display *dpy, Window w, long event_mask) { return 0; }
 Window XRootWindow(Display *dpy, int screen) { return 1; }
@@ -37,3 +38,16 @@ int XFreeCursor(Display *dpy, Cursor cursor) { return 0; }
 int XSupportsLocale(void) { return 1; }
 Visual *DefaultVisual(Display *dpy, int screen) { return (Visual*)1; }
 Colormap DefaultColormap(Display *dpy, int screen) { return 0; }
+Window XCreateSimpleWindow(Display *dpy, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, unsigned long border, unsigned long background) { return 1; }
+int XChangeProperty(Display *dpy, Window w, unsigned long property, unsigned long type, int format, int mode, const unsigned char *data, int nelements) { return 0; }
+int XDeleteProperty(Display *dpy, Window w, unsigned long property) { return 0; }
+int XQueryTree(Display *dpy, Window w, Window *root_return, Window *parent_return, Window **children_return, unsigned int *nchildren_return) { return 0; }
+int XGetWindowAttributes(Display *dpy, Window w, void *window_attributes_return) { return 0; }
+int XGetTransientForHint(Display *dpy, Window w, Window *prop_window_return) { return 0; }
+void XFree(void *data) {}
+int XUngrabKey(Display *dpy, int keycode, unsigned int modifiers, Window grab_window) { return 0; }
+int XDestroyWindow(Display *dpy, Window w) { return 0; }
+int XSetInputFocus(Display *dpy, Window focus, int revert_to, int time) { return 0; }
+int XDefineCursor(Display *dpy, Window w, Cursor cursor) { return 0; }
+int XMapRaised(Display *dpy, Window w) { return 0; }
+void *XSetErrorHandler(void *handler) { return NULL; }
