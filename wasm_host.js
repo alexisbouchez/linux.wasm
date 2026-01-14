@@ -19,6 +19,8 @@ class LinuxWasmHost {
         this.programs = new Map();    // Loaded WASM programs
         this.stdinBuffer = [];       // Input buffer for stdin
         this.alpineIntegrated = false; // Alpine Linux integration flag
+        this.busyboxWasmModule = null; // BusyBox WASM module
+        this.busyboxWasmInstance = null; // BusyBox WASM instance
         this.setupFilesystem();
     }
 
@@ -1742,7 +1744,47 @@ class LinuxWasmHost {
     }
 
     /**
-     * Launch BusyBox applet
+     * Load and execute BusyBox WASM module
+     */
+    async launchBusyBoxWasm(path, argv, envp) {
+        console.log('[Kernel] Launching BusyBox WASM:', path);
+        
+        // Check if BusyBox WASM is already loaded
+        if (!this.busyboxWasmModule) {
+            try {
+                // Load BusyBox WASM module
+                const response = await fetch('alpine/packages/busybox.wasm');
+                if (!response.ok) {
+                    console.warn('[BusyBox] WASM file not found, falling back to JS implementation');
+                    return this.launchBusyBox(path, argv, envp);
+                }
+                
+                const bytes = await response.arrayBuffer();
+                this.busyboxWasmModule = await WebAssembly.compile(bytes);
+                console.log('[BusyBox] WASM module loaded');
+            } catch (err) {
+                console.warn('[BusyBox] Failed to load WASM, falling back to JS:', err);
+                return this.launchBusyBox(path, argv, envp);
+            }
+        }
+        
+        // Read argv to determine applet
+        const argvArray = argv ? this.readStringArray(argv) : [];
+        let applet = 'sh';
+        if (argvArray.length > 0) {
+            const programName = argvArray[0];
+            applet = programName.split('/').pop() || 'sh';
+        }
+        
+        console.log(`[BusyBox WASM] Running applet: ${applet}`);
+        
+        // For now, route to JavaScript implementation
+        // TODO: Execute actual WASM module
+        return this.launchBusyBox(path, argv, envp);
+    }
+
+    /**
+     * Launch BusyBox applet (JavaScript implementation)
      */
     launchBusyBox(path, argv, envp) {
         console.log('[Kernel] Launching BusyBox:', path);
