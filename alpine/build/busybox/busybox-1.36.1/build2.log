@@ -1,0 +1,373 @@
+scripts/kconfig/conf -s Config.in
+#
+# using defaults found in .config
+#
+  SPLIT   include/autoconf.h -> include/config/*
+  GEN     include/bbconfigopts.h
+  GEN     include/common_bufsiz.h
+  GEN     include/embedded_scripts.h
+  HOSTCC  applets/usage
+applets/usage.c: In function 'main':
+applets/usage.c:52:17: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+   52 |                 write(STDOUT_FILENO, usage_array[i].usage, strlen(usage_array[i].usage) + 1);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  GEN     include/usage_compressed.h
+  HOSTCC  applets/applet_tables
+  GEN     include/applet_tables.h include/NUM_APPLETS.h
+  GEN     include/applet_tables.h include/NUM_APPLETS.h
+  CC      applets/applets.o
+  LD      applets/built-in.o
+  HOSTCC  applets/usage_pod
+  CC      libbb/appletlib.o
+libbb/appletlib.c: In function 'check_suid':
+libbb/appletlib.c:637:17: warning: ignoring return value of 'setgid' declared with attribute 'warn_unused_result' [-Wunused-result]
+  637 |                 setgid(rgid);
+      |                 ^~~~~~~~~~~~
+libbb/appletlib.c:638:17: warning: ignoring return value of 'setuid' declared with attribute 'warn_unused_result' [-Wunused-result]
+  638 |                 setuid(ruid);
+      |                 ^~~~~~~~~~~~
+  CC      libbb/lineedit.o
+  CC      libbb/vfork_daemon_rexec.o
+  AR      libbb/lib.a
+  CC      networking/tcpudp.o
+  CC      networking/tcpudp_perhost.o
+  CC      networking/telnet.o
+  CC      networking/telnetd.o
+  CC      networking/tftp.o
+networking/tftp.c: In function 'tftpd_main':
+networking/tftp.c:886:15: warning: 'local_file' is used uninitialized [-Wuninitialized]
+  886 |         char *local_file = local_file;
+      |               ^~~~~~~~~~
+networking/tftp.c:886:15: note: 'local_file' was declared here
+  886 |         char *local_file = local_file;
+      |               ^~~~~~~~~~
+  CC      networking/tls.o
+  CC      networking/tls_aes.o
+  CC      networking/tls_aesgcm.o
+  CC      networking/tls_fe.o
+  CC      networking/tls_pstm.o
+  CC      networking/tls_pstm_montgomery_reduce.o
+  CC      networking/tls_pstm_mul_comba.o
+  CC      networking/tls_pstm_sqr_comba.o
+  CC      networking/tls_rsa.o
+  CC      networking/tls_sp_c32.o
+  CC      networking/traceroute.o
+  CC      networking/tunctl.o
+  CC      networking/vconfig.o
+  CC      networking/wget.o
+networking/wget.c: In function 'retrieve_file_data':
+networking/wget.c:1085:33: warning: ignoring return value of 'ftruncate' declared with attribute 'warn_unused_result' [-Wunused-result]
+ 1085 |                                 ftruncate(G.output_fd, pos);
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      networking/whois.o
+  CC      networking/zcip.o
+  AR      networking/lib.a
+  LD      networking/libiproute/built-in.o
+  CC      networking/libiproute/ip_parse_common_args.o
+  CC      networking/libiproute/ipaddress.o
+  CC      networking/libiproute/iplink.o
+  CC      networking/libiproute/ipneigh.o
+  CC      networking/libiproute/iproute.o
+  CC      networking/libiproute/iprule.o
+  CC      networking/libiproute/iptunnel.o
+In file included from networking/libiproute/ip_common.h:5,
+                 from networking/libiproute/iptunnel.c:64:
+networking/libiproute/iptunnel.c: In function 'do_tunnels_list':
+include/libbb.h:236:28: warning: ignoring return value of 'fgets_unlocked' declared with attribute 'warn_unused_result' [-Wunused-result]
+  236 | # define fgets(s,n,stream) fgets_unlocked(s,n,stream)
+      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+networking/libiproute/iptunnel.c:477:9: note: in expansion of macro 'fgets'
+  477 |         fgets(buf, sizeof(buf), fp);
+      |         ^~~~~
+include/libbb.h:236:28: warning: ignoring return value of 'fgets_unlocked' declared with attribute 'warn_unused_result' [-Wunused-result]
+  236 | # define fgets(s,n,stream) fgets_unlocked(s,n,stream)
+      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+networking/libiproute/iptunnel.c:478:9: note: in expansion of macro 'fgets'
+  478 |         fgets(buf, sizeof(buf), fp);
+      |         ^~~~~
+  CC      networking/libiproute/libnetlink.o
+  CC      networking/libiproute/ll_addr.o
+  CC      networking/libiproute/ll_map.o
+  CC      networking/libiproute/ll_proto.o
+  CC      networking/libiproute/ll_types.o
+  CC      networking/libiproute/rt_names.o
+  CC      networking/libiproute/rtm_map.o
+  CC      networking/libiproute/utils.o
+  AR      networking/libiproute/lib.a
+  LD      networking/udhcp/built-in.o
+  CC      networking/udhcp/arpping.o
+  CC      networking/udhcp/common.o
+  CC      networking/udhcp/d6_dhcpc.o
+  CC      networking/udhcp/d6_packet.o
+  CC      networking/udhcp/d6_socket.o
+  CC      networking/udhcp/dhcpc.o
+  CC      networking/udhcp/dhcpd.o
+  CC      networking/udhcp/dhcprelay.o
+  CC      networking/udhcp/domain_codec.o
+  CC      networking/udhcp/dumpleases.o
+  CC      networking/udhcp/packet.o
+  CC      networking/udhcp/signalpipe.o
+  CC      networking/udhcp/socket.o
+  AR      networking/udhcp/lib.a
+  LD      printutils/built-in.o
+  CC      printutils/lpd.o
+  CC      printutils/lpr.o
+printutils/lpr.c: In function 'lpqr_main':
+printutils/lpr.c:272:17: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+  272 |                 write(fd, "", 1); // send ACK
+      |                 ^~~~~~~~~~~~~~~~
+  AR      printutils/lib.a
+  LD      procps/built-in.o
+  CC      procps/free.o
+  CC      procps/fuser.o
+  CC      procps/iostat.o
+  CC      procps/kill.o
+  CC      procps/lsof.o
+  CC      procps/mpstat.o
+  CC      procps/nmeter.o
+  CC      procps/pgrep.o
+  CC      procps/pidof.o
+  CC      procps/pmap.o
+  CC      procps/powertop.o
+procps/powertop.c: In function 'read_cstate_counts':
+procps/powertop.c:181:34: warning: '%s' directive writing up to 255 bytes into a region of size 171 [-Wformat-overflow=]
+  181 |                 sprintf(buf, "%s/%s/power", "/proc/acpi/processor", d->d_name);
+      |                                  ^~
+In file included from /usr/include/stdio.h:980,
+                 from include/libbb.h:31,
+                 from procps/powertop.c:32:
+In function 'sprintf',
+    inlined from 'read_cstate_counts' at procps/powertop.c:181:3:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:30:10: note: '__builtin___sprintf_chk' output between 28 and 283 bytes into a destination of size 192
+   30 |   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   31 |                                   __glibc_objsize (__s), __fmt,
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   32 |                                   __va_arg_pack ());
+      |                                   ~~~~~~~~~~~~~~~~~
+  CC      procps/ps.o
+  CC      procps/pstree.o
+  CC      procps/pwdx.o
+  CC      procps/smemcap.o
+  CC      procps/sysctl.o
+  CC      procps/top.o
+  CC      procps/uptime.o
+  CC      procps/watch.o
+procps/watch.c: In function 'watch_main':
+procps/watch.c:115:17: warning: ignoring return value of 'system' declared with attribute 'warn_unused_result' [-Wunused-result]
+  115 |                 system(cmd);
+      |                 ^~~~~~~~~~~
+  AR      procps/lib.a
+  LD      runit/built-in.o
+  CC      runit/chpst.o
+  CC      runit/runsv.o
+runit/runsv.c: In function 's_chld_term':
+runit/runsv.c:161:9: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+  161 |         write(selfpipe.wr, "", 1);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+runit/runsv.c: In function 'update_status':
+runit/runsv.c:203:25: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+  203 |                         write(fd, spid, size);
+      |                         ^~~~~~~~~~~~~~~~~~~~~
+runit/runsv.c:244:17: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+  244 |                 write(fd, stat_buf, p - stat_buf);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      runit/runsvdir.o
+  CC      runit/sv.o
+  CC      runit/svlogd.o
+  AR      runit/lib.a
+  LD      selinux/built-in.o
+  AR      selinux/lib.a
+  LD      shell/built-in.o
+  CC      shell/ash.o
+shell/ash.c: In function 'preadfd':
+shell/ash.c:10839:25: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+10839 |                         write(STDOUT_FILENO, "^C\n", 3);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+shell/ash.c:10843:25: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+10843 |                         write(STDOUT_FILENO, "^C\n", 3);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+shell/ash.c:10865:41: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+10865 |                                         write(STDOUT_FILENO, "\n", 1);
+      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      shell/ash_ptr_hack.o
+  CC      shell/cttyhack.o
+  CC      shell/hush.o
+shell/hush.c: In function 'get_user_input':
+shell/hush.c:2694:25: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+ 2694 |                         write(STDOUT_FILENO, "^C\n", 3);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+shell/hush.c:2705:25: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+ 2705 |                         write(STDOUT_FILENO, "\n", 1);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+shell/hush.c: In function 'expand_one_var':
+shell/hush.c:6606:15: warning: 'exp_word' is used uninitialized [-Wuninitialized]
+ 6606 |         char *exp_word = exp_word; /* for compiler */
+      |               ^~~~~~~~
+shell/hush.c:6606:15: note: 'exp_word' was declared here
+ 6606 |         char *exp_word = exp_word; /* for compiler */
+      |               ^~~~~~~~
+  CC      shell/match.o
+  CC      shell/math.o
+  CC      shell/random.o
+  CC      shell/shell_common.o
+  AR      shell/lib.a
+  LD      sysklogd/built-in.o
+  CC      sysklogd/klogd.o
+  CC      sysklogd/logread.o
+  CC      sysklogd/syslogd_and_logger.o
+  AR      sysklogd/lib.a
+  LD      util-linux/built-in.o
+  CC      util-linux/acpid.o
+  CC      util-linux/blkdiscard.o
+  CC      util-linux/blkid.o
+  CC      util-linux/blockdev.o
+  CC      util-linux/cal.o
+  CC      util-linux/chrt.o
+  CC      util-linux/dmesg.o
+  CC      util-linux/eject.o
+  CC      util-linux/fallocate.o
+  CC      util-linux/fatattr.o
+  CC      util-linux/fbset.o
+  CC      util-linux/fdformat.o
+  CC      util-linux/fdisk.o
+  CC      util-linux/findfs.o
+  CC      util-linux/flock.o
+  CC      util-linux/freeramdisk.o
+  CC      util-linux/fsck_minix.o
+  CC      util-linux/fsfreeze.o
+  CC      util-linux/fstrim.o
+  CC      util-linux/getopt.o
+  CC      util-linux/hexdump.o
+  CC      util-linux/hexdump_xxd.o
+  CC      util-linux/hwclock.o
+  CC      util-linux/ionice.o
+  CC      util-linux/ipcrm.o
+  CC      util-linux/ipcs.o
+  CC      util-linux/last_fancy.o
+  CC      util-linux/losetup.o
+  CC      util-linux/lspci.o
+  CC      util-linux/lsusb.o
+  CC      util-linux/mdev.o
+util-linux/mdev.c: In function 'make_device':
+util-linux/mdev.c:787:33: warning: ignoring return value of 'chown' declared with attribute 'warn_unused_result' [-Wunused-result]
+  787 |                                 chown(node_name, rule->ugid.uid, rule->ugid.gid);
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+util-linux/mdev.c:790:33: warning: ignoring return value of 'symlink' declared with attribute 'warn_unused_result' [-Wunused-result]
+  790 |                                 symlink(node_name, "root");
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+util-linux/mdev.c:797:41: warning: ignoring return value of 'symlink' declared with attribute 'warn_unused_result' [-Wunused-result]
+  797 |                                         symlink(node_name, device_name);
+      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      util-linux/mesg.o
+  CC      util-linux/mkfs_ext2.o
+  CC      util-linux/mkfs_minix.o
+util-linux/mkfs_minix.c: In function 'get_list_blocks':
+util-linux/mkfs_minix.c:532:17: warning: ignoring return value of 'fscanf' declared with attribute 'warn_unused_result' [-Wunused-result]
+  532 |                 fscanf(listfile, "%lu\n", &blockno);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      util-linux/mkfs_vfat.o
+  CC      util-linux/mkswap.o
+  CC      util-linux/more.o
+  CC      util-linux/mount.o
+  CC      util-linux/mountpoint.o
+  CC      util-linux/nsenter.o
+  CC      util-linux/pivot_root.o
+  CC      util-linux/rdate.o
+  CC      util-linux/rdev.o
+  CC      util-linux/readprofile.o
+  CC      util-linux/renice.o
+  CC      util-linux/rev.o
+  CC      util-linux/rtcwake.o
+  CC      util-linux/script.o
+  CC      util-linux/scriptreplay.o
+  CC      util-linux/setarch.o
+  CC      util-linux/setpriv.o
+  CC      util-linux/setsid.o
+  CC      util-linux/swaponoff.o
+  CC      util-linux/switch_root.o
+  CC      util-linux/taskset.o
+  CC      util-linux/uevent.o
+  CC      util-linux/umount.o
+  CC      util-linux/unshare.o
+util-linux/unshare.c: In function 'unshare_main':
+util-linux/unshare.c:295:25: warning: ignoring return value of 'read' declared with attribute 'warn_unused_result' [-Wunused-result]
+  295 |                         read(fdp.rd, ns_ctx_list, 1); /* ...using bogus buffer */
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      util-linux/wall.o
+  AR      util-linux/lib.a
+  LD      util-linux/volume_id/built-in.o
+  CC      util-linux/volume_id/bcache.o
+  CC      util-linux/volume_id/btrfs.o
+util-linux/volume_id/btrfs.c: In function 'volume_id_probe_btrfs':
+util-linux/volume_id/btrfs.c:110:34: warning: 'sb' may be used uninitialized [-Wmaybe-uninitialized]
+  110 |         volume_id_set_uuid(id, sb->fsid, UUID_DCE);
+      |                                ~~^~~~~~
+util-linux/volume_id/btrfs.c:93:35: note: 'sb' was declared here
+   93 |         struct btrfs_super_block *sb;
+      |                                   ^~
+  CC      util-linux/volume_id/cramfs.o
+  CC      util-linux/volume_id/erofs.o
+  CC      util-linux/volume_id/exfat.o
+  CC      util-linux/volume_id/ext.o
+  CC      util-linux/volume_id/f2fs.o
+  CC      util-linux/volume_id/fat.o
+  CC      util-linux/volume_id/get_devname.o
+  CC      util-linux/volume_id/hfs.o
+  CC      util-linux/volume_id/iso9660.o
+  CC      util-linux/volume_id/jfs.o
+  CC      util-linux/volume_id/lfs.o
+  CC      util-linux/volume_id/linux_raid.o
+  CC      util-linux/volume_id/linux_swap.o
+  CC      util-linux/volume_id/luks.o
+  CC      util-linux/volume_id/minix.o
+  CC      util-linux/volume_id/nilfs.o
+  CC      util-linux/volume_id/ntfs.o
+  CC      util-linux/volume_id/ocfs2.o
+  CC      util-linux/volume_id/reiserfs.o
+  CC      util-linux/volume_id/romfs.o
+  CC      util-linux/volume_id/squashfs.o
+  CC      util-linux/volume_id/sysv.o
+  CC      util-linux/volume_id/ubifs.o
+  CC      util-linux/volume_id/udf.o
+  CC      util-linux/volume_id/util.o
+  CC      util-linux/volume_id/volume_id.o
+  CC      util-linux/volume_id/xfs.o
+  AR      util-linux/volume_id/lib.a
+  LINK    busybox_unstripped
+Trying libraries: crypt m resolv rt
+ Library crypt is not needed, excluding it
+ Library m is needed, can't exclude it (yet)
+ Library resolv is needed, can't exclude it (yet)
+ Library rt is not needed, excluding it
+ Library m is needed, can't exclude it (yet)
+ Library resolv is needed, can't exclude it (yet)
+Final link with: m resolv
+  DOC     busybox.pod
+  DOC     BusyBox.txt
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LANGUAGE = (unset),
+	LC_ALL = (unset),
+	LC_CTYPE = "UTF-8",
+	LANG = "fr_FR.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to a fallback locale ("fr_FR.UTF-8").
+  DOC     busybox.1
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LANGUAGE = (unset),
+	LC_ALL = (unset),
+	LC_CTYPE = "UTF-8",
+	LANG = "fr_FR.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to a fallback locale ("fr_FR.UTF-8").
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LANGUAGE = (unset),
+	LC_ALL = (unset),
+	LC_CTYPE = "UTF-8",
+	LANG = "fr_FR.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to a fallback locale ("fr_FR.UTF-8").
+  DOC     BusyBox.html

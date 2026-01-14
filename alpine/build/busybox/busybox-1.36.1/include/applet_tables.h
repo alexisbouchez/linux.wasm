@@ -1,16 +1,16 @@
 /* This is a generated file, don't edit */
 
-#define NUM_APPLETS 402
+#define NUM_APPLETS 401
 #define KNOWN_APPNAME_OFFSETS 8
 
 const uint16_t applet_nameofs[] ALIGN2 = {
 314,
 667,
 1007,
-1350,
-1698,
-2096,
-2422,
+1344,
+1693,
+2088,
+2419,
 };
 
 const char applet_names[] ALIGN1 = ""
@@ -345,7 +345,6 @@ const char applet_names[] ALIGN1 = ""
 "tail" "\0"
 "tar" "\0"
 "taskset" "\0"
-"tc" "\0"
 "tcpsvd" "\0"
 "tee" "\0"
 "telnet" "\0"
@@ -735,77 +734,76 @@ const char applet_names[] ALIGN1 = ""
 #define APPLET_NO_tail 328
 #define APPLET_NO_tar 329
 #define APPLET_NO_taskset 330
-#define APPLET_NO_tc 331
-#define APPLET_NO_tcpsvd 332
-#define APPLET_NO_tee 333
-#define APPLET_NO_telnet 334
-#define APPLET_NO_telnetd 335
-#define APPLET_NO_test 336
-#define APPLET_NO_tftp 337
-#define APPLET_NO_tftpd 338
-#define APPLET_NO_time 339
-#define APPLET_NO_timeout 340
-#define APPLET_NO_top 341
-#define APPLET_NO_touch 342
-#define APPLET_NO_tr 343
-#define APPLET_NO_traceroute 344
-#define APPLET_NO_traceroute6 345
-#define APPLET_NO_tree 346
-#define APPLET_NO_true 347
-#define APPLET_NO_truncate 348
-#define APPLET_NO_ts 349
-#define APPLET_NO_tsort 350
-#define APPLET_NO_tty 351
-#define APPLET_NO_ttysize 352
-#define APPLET_NO_tunctl 353
-#define APPLET_NO_ubiattach 354
-#define APPLET_NO_ubidetach 355
-#define APPLET_NO_ubimkvol 356
-#define APPLET_NO_ubirename 357
-#define APPLET_NO_ubirmvol 358
-#define APPLET_NO_ubirsvol 359
-#define APPLET_NO_ubiupdatevol 360
-#define APPLET_NO_udhcpc 361
-#define APPLET_NO_udhcpc6 362
-#define APPLET_NO_udhcpd 363
-#define APPLET_NO_udpsvd 364
-#define APPLET_NO_uevent 365
-#define APPLET_NO_umount 366
-#define APPLET_NO_uname 367
-#define APPLET_NO_unexpand 368
-#define APPLET_NO_uniq 369
-#define APPLET_NO_unix2dos 370
-#define APPLET_NO_unlink 371
-#define APPLET_NO_unlzma 372
-#define APPLET_NO_unshare 373
-#define APPLET_NO_unxz 374
-#define APPLET_NO_unzip 375
-#define APPLET_NO_uptime 376
-#define APPLET_NO_users 377
-#define APPLET_NO_usleep 378
-#define APPLET_NO_uudecode 379
-#define APPLET_NO_uuencode 380
-#define APPLET_NO_vconfig 381
-#define APPLET_NO_vi 382
-#define APPLET_NO_vlock 383
-#define APPLET_NO_volname 384
-#define APPLET_NO_w 385
-#define APPLET_NO_wall 386
-#define APPLET_NO_watch 387
-#define APPLET_NO_watchdog 388
-#define APPLET_NO_wc 389
-#define APPLET_NO_wget 390
-#define APPLET_NO_which 391
-#define APPLET_NO_who 392
-#define APPLET_NO_whoami 393
-#define APPLET_NO_whois 394
-#define APPLET_NO_xargs 395
-#define APPLET_NO_xxd 396
-#define APPLET_NO_xz 397
-#define APPLET_NO_xzcat 398
-#define APPLET_NO_yes 399
-#define APPLET_NO_zcat 400
-#define APPLET_NO_zcip 401
+#define APPLET_NO_tcpsvd 331
+#define APPLET_NO_tee 332
+#define APPLET_NO_telnet 333
+#define APPLET_NO_telnetd 334
+#define APPLET_NO_test 335
+#define APPLET_NO_tftp 336
+#define APPLET_NO_tftpd 337
+#define APPLET_NO_time 338
+#define APPLET_NO_timeout 339
+#define APPLET_NO_top 340
+#define APPLET_NO_touch 341
+#define APPLET_NO_tr 342
+#define APPLET_NO_traceroute 343
+#define APPLET_NO_traceroute6 344
+#define APPLET_NO_tree 345
+#define APPLET_NO_true 346
+#define APPLET_NO_truncate 347
+#define APPLET_NO_ts 348
+#define APPLET_NO_tsort 349
+#define APPLET_NO_tty 350
+#define APPLET_NO_ttysize 351
+#define APPLET_NO_tunctl 352
+#define APPLET_NO_ubiattach 353
+#define APPLET_NO_ubidetach 354
+#define APPLET_NO_ubimkvol 355
+#define APPLET_NO_ubirename 356
+#define APPLET_NO_ubirmvol 357
+#define APPLET_NO_ubirsvol 358
+#define APPLET_NO_ubiupdatevol 359
+#define APPLET_NO_udhcpc 360
+#define APPLET_NO_udhcpc6 361
+#define APPLET_NO_udhcpd 362
+#define APPLET_NO_udpsvd 363
+#define APPLET_NO_uevent 364
+#define APPLET_NO_umount 365
+#define APPLET_NO_uname 366
+#define APPLET_NO_unexpand 367
+#define APPLET_NO_uniq 368
+#define APPLET_NO_unix2dos 369
+#define APPLET_NO_unlink 370
+#define APPLET_NO_unlzma 371
+#define APPLET_NO_unshare 372
+#define APPLET_NO_unxz 373
+#define APPLET_NO_unzip 374
+#define APPLET_NO_uptime 375
+#define APPLET_NO_users 376
+#define APPLET_NO_usleep 377
+#define APPLET_NO_uudecode 378
+#define APPLET_NO_uuencode 379
+#define APPLET_NO_vconfig 380
+#define APPLET_NO_vi 381
+#define APPLET_NO_vlock 382
+#define APPLET_NO_volname 383
+#define APPLET_NO_w 384
+#define APPLET_NO_wall 385
+#define APPLET_NO_watch 386
+#define APPLET_NO_watchdog 387
+#define APPLET_NO_wc 388
+#define APPLET_NO_wget 389
+#define APPLET_NO_which 390
+#define APPLET_NO_who 391
+#define APPLET_NO_whoami 392
+#define APPLET_NO_whois 393
+#define APPLET_NO_xargs 394
+#define APPLET_NO_xxd 395
+#define APPLET_NO_xz 396
+#define APPLET_NO_xzcat 397
+#define APPLET_NO_yes 398
+#define APPLET_NO_zcat 399
+#define APPLET_NO_zcip 400
 
 #ifndef SKIP_applet_main
 int (*const applet_main[])(int argc, char **argv) = {
@@ -1140,7 +1138,6 @@ tac_main,
 tail_main,
 tar_main,
 taskset_main,
-tc_main,
 tcpudpsvd_main,
 tee_main,
 telnet_main,
@@ -1300,18 +1297,18 @@ const uint8_t applet_suid[] ALIGN1 = {
 0x00,
 0x00,
 0x00,
-0x00,
-0x05,
-0x00,
-0x00,
+0x40,
+0x01,
 0x00,
 0x00,
 0x00,
 0x00,
 0x00,
 0x00,
-0x80,
+0x00,
+0x00,
 0x20,
+0x08,
 0x00,
 0x00,
 0x00,
@@ -1484,40 +1481,40 @@ const uint8_t applet_install_loc[] ALIGN1 = {
 0x21,
 0x32,
 0x13,
-0x23,
 0x33,
-0x43,
 0x33,
 0x34,
-0x33,
-0x31,
-0x33,
-0x13,
-0x33,
-0x33,
-0x23,
-0x44,
-0x44,
-0x44,
-0x24,
 0x43,
-0x23,
-0x11,
-0x33,
-0x33,
-0x33,
-0x33,
-0x33,
-0x31,
-0x23,
-0x31,
 0x33,
 0x13,
+0x33,
+0x33,
+0x31,
+0x33,
+0x33,
+0x42,
+0x44,
+0x44,
+0x44,
 0x32,
+0x34,
+0x12,
+0x31,
 0x33,
 0x33,
 0x33,
+0x33,
+0x13,
+0x33,
+0x12,
 0x33,
 0x33,
 0x21,
+0x33,
+0x33,
+0x33,
+0x33,
+0x33,
+0x13,
+0x02,
 };
