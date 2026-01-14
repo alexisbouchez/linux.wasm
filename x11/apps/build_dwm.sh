@@ -305,25 +305,30 @@ content = re.sub(
 content = re.sub(r'DefaultColormap\([^)]+\)', r'0', content)
 
 # Fix the problematic line: "d = NULL,\n                  0);"
-# Manual line-by-line fix - be very specific
+# Manual line-by-line fix - handle tabs
 lines = content.split('\n')
 for i in range(len(lines)):
     line = lines[i]
-    # Look for "d = NULL," on current line
-    if re.search(r'd\s*=\s*NULL\s*,', line):
+    # Look for "d = NULL," on current line (with any whitespace)
+    if 'd = NULL,' in line or re.search(r'd\s*=\s*NULL\s*,', line):
         # Check next line
         if i + 1 < len(lines):
             next_line = lines[i + 1]
-            # If next line is just "0);" or similar, fix it
-            if re.search(r'^\s*0\s*\)\s*;?\s*$', next_line.strip()):
+            # If next line starts with whitespace and has "0);"
+            if re.search(r'^\s+0\s*\)\s*;', next_line) or next_line.strip() == '0);' or next_line.strip().startswith('0)'):
+                # Get indentation from current line
+                indent = len(line) - len(line.lstrip())
+                indent_str = line[:indent] if indent > 0 else '\t\t'
                 # Replace current line
-                lines[i] = re.sub(r'd\s*=\s*NULL\s*,.*', r'		d = NULL;', line)
+                lines[i] = indent_str + 'd = NULL;'
                 # Remove next line
                 lines[i + 1] = ''
                 break
         # Also check if it's on the same line
         if '0);' in line:
-            lines[i] = re.sub(r'd\s*=\s*NULL\s*,\s*0\s*\)\s*;', r'd = NULL;', line)
+            indent = len(line) - len(line.lstrip())
+            indent_str = line[:indent] if indent > 0 else '\t\t'
+            lines[i] = indent_str + 'd = NULL;'
             break
 content = '\n'.join(lines)
 
