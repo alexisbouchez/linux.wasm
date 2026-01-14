@@ -374,18 +374,19 @@ sed -i '/d = NULL,/{N;s/d = NULL,\n[[:space:]]*0);/d = NULL;/;}' drw.c 2>/dev/nu
     sed -i '268d' drw.c 2>/dev/null
 }
 
-# Compile X11 stubs
+# Compile X11 stubs in dwm-6.4 directory
 echo "Compiling X11 stubs..."
+cd dwm-6.4
 if [ -f "../include/X11/x11_stubs.c" ]; then
     emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>&1 || {
         echo "Warning: Could not compile X11 stubs: $?"
-        # Try with absolute path
         emcc -c -I"$(pwd)/../include" -o x11_stubs.o "$(pwd)/../include/X11/x11_stubs.c" 2>&1 || echo "Failed to compile stubs"
     }
 else
-    echo "Error: x11_stubs.c not found at ../include/X11/x11_stubs.c"
+    echo "Error: x11_stubs.c not found"
     ls -la ../include/X11/ 2>/dev/null | head -5
 fi
+cd ..
 
 # Add WASM flags and X11 stubs to LDFLAGS
 sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["_main"]'\'' --no-entry |' config.mk || echo "LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\"]' --no-entry" >> config.mk
@@ -409,11 +410,11 @@ if [ ! -f "dwm" ] && [ ! -f "dwm.wasm" ]; then
             2>&1 | tee -a build.log
     else
         echo "x11_stubs.o not found, trying to compile it..."
-        if emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>&1 | tee -a build.log; then
-            echo "x11_stubs.o compiled, linking..."
+        cd dwm-6.4
+        if [ -f "x11_stubs.o" ]; then
+            echo "x11_stubs.o found, linking..."
             # Link directly with wasm-ld to avoid Emscripten's automatic flags
-            # Use full path to wasm-ld from Emscripten
-            WASM_LD=$(which wasm-ld || echo "$(dirname $(which emcc))/wasm-ld")
+            WASM_LD=$(which wasm-ld 2>/dev/null || echo "$(dirname $(which emcc))/wasm-ld")
             if "$WASM_LD" drw.o dwm.o util.o x11_stubs.o \
                 -o dwm.wasm \
                 --no-entry \
@@ -421,22 +422,13 @@ if [ ! -f "dwm" ] && [ ! -f "dwm.wasm" ]; then
                 --allow-undefined \
                 2>&1 | tee -a build.log; then
                 echo "✅ dwm.wasm created successfully!"
-                cp dwm.wasm packages/dwm.wasm 2>/dev/null || mv dwm.wasm packages/dwm.wasm
-            else
-                echo "wasm-ld failed, trying emcc with minimal flags..."
-                if emcc drw.o dwm.o util.o x11_stubs.o \
-                    -o dwm.wasm \
-                    -Wl,--no-entry \
-                    -Wl,--export-all \
-                    -Wl,--allow-undefined \
-                    2>&1 | tee -a build.log; then
-                    echo "✅ dwm.wasm created!"
-                    cp dwm.wasm packages/dwm.wasm 2>/dev/null || mv dwm.wasm packages/dwm.wasm
-                fi
+                mkdir -p ../packages
+                cp dwm.wasm ../packages/dwm.wasm 2>/dev/null || mv dwm.wasm ../packages/dwm.wasm
             fi
         else
-            echo "Failed to compile x11_stubs.o"
+            echo "x11_stubs.o not found in dwm-6.4/"
         fi
+        cd ..
     fi
 fi
 
