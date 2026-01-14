@@ -262,10 +262,13 @@ fc_functions = [
 for func in fc_functions:
     # Replace function calls - match full call including parameters
     if func == 'FcNameParse':
-        # Special handling - need to match entire expression
-        # Match: if (!(pattern = FcNameParse(fontname)))
-        # Replace FcNameParse(fontname) with NULL, keeping the rest
-        content = re.sub(rf'FcNameParse\s*\(([^)]+)\)', r'NULL /* FcNameParse(\1) disabled */', content)
+        # Special handling - match entire call including nested parentheses
+        # Pattern: FcNameParse(...) where ... can contain nested parens
+        # Use a simple approach: match from FcNameParse to the matching closing paren
+        def replace_fcnameparse(match):
+            return 'NULL /* FcNameParse disabled */'
+        # Match: FcNameParse( followed by balanced parentheses
+        content = re.sub(rf'FcNameParse\s*\([^()]*(?:\([^()]*\)[^()]*)*\)', replace_fcnameparse, content)
     else:
         content = re.sub(rf'{func}\s*\([^)]*\)', f'/* {func} disabled */ NULL', content)
 
