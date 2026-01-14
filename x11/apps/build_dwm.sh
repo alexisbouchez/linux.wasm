@@ -283,18 +283,26 @@ content = re.sub(r'XftTextExtentsUtf8\s*\([^)]+\)\s*;',
 # Fix XftChar8 cast
 content = re.sub(r'\(XftChar8 \*\)', r'(const unsigned char *)', content)
 
-# Fix DefaultColormap and XftColorAllocName calls - match full multi-line calls
-# XftColorAllocName - replace entire call including all parameters
-content = re.sub(r'XftColorAllocName\s*\([^)]+\)', r'1 /* XftColorAllocName stub */', content, flags=re.DOTALL)
+# Fix XftColorAllocName - match entire if statement with multi-line call
+# Pattern: if (!XftColorAllocName(...multiple lines...))
+content = re.sub(
+    r'if\s*\(\s*!\s*XftColorAllocName\s*\([^)]+\)\s*\)',
+    r'if (0) /* XftColorAllocName disabled */',
+    content,
+    flags=re.DOTALL
+)
 
 # DefaultColormap - replace with 0
 content = re.sub(r'DefaultColormap\([^)]+\)', r'0', content)
 
-# Fix the problematic line: "d = NULL,\n                  DefaultColormap(...));"
-# Match: d = NULL, followed by whitespace and DefaultColormap call ending with );
-content = re.sub(r'd\s*=\s*NULL\s*,\s*\n\s*0\s*\)\s*;', r'd = NULL;', content, flags=re.MULTILINE)
-# Also handle single-line version
-content = re.sub(r'd\s*=\s*NULL\s*,\s*0\s*\)\s*;', r'd = NULL;', content)
+# Fix the problematic line: "d = NULL,\n                  0);"
+# Match the entire statement
+content = re.sub(
+    r'd\s*=\s*NULL\s*,\s*\n\s*0\s*\)\s*;',
+    r'd = NULL;',
+    content,
+    flags=re.MULTILINE
+)
 
 # Fix xfont->ascent access - xfont is void*, replace with constant
 content = re.sub(r'->xfont->ascent', r'->h / 2', content)  # Use font height instead

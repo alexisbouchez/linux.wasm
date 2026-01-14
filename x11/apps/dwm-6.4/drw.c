@@ -186,7 +186,7 @@ drw_clr_create(Drw *drw, Clr *dest, const char *clrname)
 	if (!drw || !dest || !clrname)
 		return;
 
-	if (!1 /* XftColorAllocName stub */,
+	if (!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen),
 	                       0,
 	                       clrname, dest))
 		die("error, cannot allocate color '%s'", clrname);

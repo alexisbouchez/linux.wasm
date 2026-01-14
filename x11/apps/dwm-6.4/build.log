@@ -18,19 +18,10 @@ drw.c:122:8: note: to match this '('
 drw.c:122:61: error: extraneous ')' after condition, expected a statement
   122 |                 if (!(pattern = /* FcNameParse disabled */ NULL fontname))) {
       |                                                                           ^
-drw.c:191:39: error: extraneous ')' after condition, expected a statement
-  191 |                                clrname, dest))
-      |                                              ^
-drw.c:189:6: warning: left operand of comma operator has no effect [-Wunused-value]
-  189 |         if (!1 /* XftColorAllocName stub */,
-      |             ^~
-drw.c:191:25: warning: left operand of comma operator has no effect [-Wunused-value]
-  191 |                                clrname, dest))
-      |                                ^~~~~~~
 drw.c:267:22: error: extraneous ')' before ';'
   267 |                                   0);
       |                                    ^
-3 warnings and 4 errors generated.
+1 warning and 3 errors generated.
 In file included from dwm.c:44:
 ./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
     6 | typedef struct {} FcPattern;
