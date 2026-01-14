@@ -1,0 +1,1 @@
+config.mk:26: *** Recursive variable 'LIBS' references itself (eventually).  Stop.
