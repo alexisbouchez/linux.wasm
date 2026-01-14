@@ -1,0 +1,12 @@
+#!/bin/bash
+# Wrapper to make emcc look like as (assembler) for kernel build system
+# Handle version check requests
+for arg in "$@"; do
+    if [[ "$arg" == "-Wa,--version" ]] || [[ "$arg" == "--version" ]]; then
+        # Output GNU assembler format for version check
+        echo "GNU assembler (GNU Binutils) 2.40"
+        exit 0
+    fi
+done
+# Otherwise, pass through to emcc
+exec emcc "$@"

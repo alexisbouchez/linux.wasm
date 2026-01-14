@@ -1,0 +1,24 @@
+#!/bin/bash
+# Wrapper to make emcc look like cc for kernel build system
+# Filter out unsupported target flags and replace with emscripten target
+args=()
+skip_next=0
+for arg in "$@"; do
+    if [[ "$skip_next" == "1" ]]; then
+        # Replace target value with emscripten target
+        args+=("wasm32-unknown-emscripten")
+        skip_next=0
+    elif [[ "$arg" == "-target" ]] || [[ "$arg" == "--target" ]]; then
+        args+=("$arg")
+        skip_next=1
+    elif [[ "$arg" == "--target=wasm" ]] || [[ "$arg" == "-target=wasm" ]] || [[ "$arg" == "--target"*"wasm"* ]] || [[ "$arg" == "-target"*"wasm"* ]]; then
+        # Replace any wasm target with emscripten target
+        args+=("--target=wasm32-unknown-emscripten")
+    elif [[ "$arg" == "wasm32-unknown-emscripten" ]] && [[ "$skip_next" != "1" ]]; then
+        # Skip duplicate target if already processed
+        continue
+    else
+        args+=("$arg")
+    fi
+done
+exec emcc "${args[@]}"

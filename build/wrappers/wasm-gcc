@@ -1,0 +1,3 @@
+#!/bin/bash
+# Wrapper to make emcc look like gcc for kernel build system
+exec emcc "$@"

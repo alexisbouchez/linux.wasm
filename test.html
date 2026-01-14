@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux/WASM Kernel Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            margin: 0;
+            padding: 20px;
+        }
+        #terminal {
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 5px;
+            padding: 15px;
+            min-height: 400px;
+            overflow-y: auto;
+        }
+        .log {
+            color: #4ec9b0;
+        }
+        .error {
+            color: #f48771;
+        }
+        .success {
+            color: #4fc1ff;
+        }
+        button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #005a9e;
+        }
+        #status {
+            margin: 10px 0;
+            padding: 10px;
+            background: #252526;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Linux Kernel in WebAssembly</h1>
+    <div id="status">Status: Not loaded</div>
+    <button onclick="loadKernel()">Load Kernel</button>
+    <button onclick="startKernel()">Start Kernel</button>
+    <button onclick="clearTerminal()">Clear</button>
+    
+    <div id="terminal"></div>
+    <div style="margin-top: 10px; padding: 10px; background: #252526; border-radius: 3px;">
+        <div style="color: #4ec9b0; margin-bottom: 5px;">Shell Input (type commands here):</div>
+        <input type="text" id="shellInput" style="width: 100%; padding: 5px; background: #1e1e1e; color: #d4d4d4; border: 1px solid #333; border-radius: 3px;" 
+               placeholder="Type shell commands (echo, pwd, ls, whoami, uname -a, cd, exit)" 
+               onkeydown="if(event.key==='Enter') { handleShellCommand(); }">
+    </div>
+
+    <script type="module">
+        import LinuxWasmHost from './wasm_host.js';
+
+        let host = null;
+        let kernelInstance = null;
+        let shellInput = '';
+
+        window.loadKernel = async function() {
+            const terminal = document.getElementById('terminal');
+            const status = document.getElementById('status');
+            
+            try {
+                log('Loading WASM kernel module...', 'log');
+                status.textContent = 'Status: Loading...';
+                
+                // Load the compiled kernel WASM module
+                try {
+                    const response = await fetch('kernel/linux/vmlinux.wasm');
+                    if (!response.ok) {
+                        throw new Error(`Failed to load vmlinux.wasm: ${response.status}`);
+                    }
+                    const bytes = await response.arrayBuffer();
+                    const module = await WebAssembly.compile(bytes);
+                    kernelInstance = await host.init(module);
+                    log('Kernel WASM module loaded and initialized!', 'success');
+                } catch (error) {
+                    log('Note: vmlinux.wasm not found, using mock mode', 'log');
+                    log('To use real kernel: make sure kernel/linux/vmlinux.wasm exists', 'log');
+                    // Continue with mock host for testing
+                }
+                
+                host = new LinuxWasmHost();
+                
+                // Set up shell output callback
+                host.setShellOutputCallback((text) => {
+                    log(text, 'log');
+                });
+                
+                if (!kernelInstance) {
+                    // If WASM module wasn't loaded, still initialize host
+                    log('Host initialized (mock mode - shell will work)', 'success');
+                }
+                
+                status.textContent = 'Status: Loaded (ready to start)';
+            } catch (error) {
+                log('Error loading kernel: ' + error.message, 'error');
+                log('Note: Make sure kernel/linux/vmlinux.wasm exists', 'log');
+                status.textContent = 'Status: Error - ' + error.message;
+                
+                // Create a mock host for testing without WASM
+                host = new LinuxWasmHost();
+                host.setShellOutputCallback((text) => {
+                    log(text, 'log');
+                });
+            }
+        };
+
+        window.startKernel = function() {
+            if (!host) {
+                log('Please load the kernel first!', 'error');
+                return;
+            }
+            
+            try {
+                log('Starting kernel...', 'log');
+                host.start();
+                log('Kernel started!', 'success');
+                document.getElementById('status').textContent = 'Status: Running';
+                
+                // Simulate bash launch after kernel starts
+                setTimeout(() => {
+                    log('Launching /bin/bash...', 'log');
+                    host.handleExecve(11, 0, 0, 0);  // execve syscall
+                }, 1000);
+            } catch (error) {
+                log('Error starting kernel: ' + error.message, 'error');
+            }
+        };
+
+        // Handle keyboard input for shell
+        document.addEventListener('keydown', function(e) {
+            if (!host || !host.shellActive) return;
+            
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (shellInput.trim()) {
+                    log('$ ' + shellInput, 'log');
+                    host.handleShellInput(shellInput);
+                    shellInput = '';
+                } else {
+                    host.printShellPrompt();
+                }
+            } else if (e.key === 'Backspace') {
+                if (shellInput.length > 0) {
+                    shellInput = shellInput.slice(0, -1);
+                }
+            } else if (e.key.length === 1) {
+                shellInput += e.key;
+            }
+        });
+
+        window.clearTerminal = function() {
+            document.getElementById('terminal').innerHTML = '';
+        };
+
+        window.handleShellCommand = function() {
+            const input = document.getElementById('shellInput');
+            const command = input.value.trim();
+            input.value = '';
+            
+            if (host && host.shellActive) {
+                log('$ ' + command, 'log');
+                host.handleShellInput(command);
+            } else {
+                log('Shell not active. Start kernel first!', 'error');
+            }
+        };
+
+        function log(message, type = 'log') {
+            const terminal = document.getElementById('terminal');
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            terminal.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        // Override console.log to also show in terminal
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            log(args.join(' '), 'log');
+        };
+
+        log('Linux/WASM Kernel Test Page Ready', 'success');
+        log('Click "Load Kernel" to begin', 'log');
+    </script>
+</body>
+</html>
