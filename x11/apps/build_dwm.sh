@@ -374,8 +374,19 @@ sed -i '/d = NULL,/{N;s/d = NULL,\n[[:space:]]*0);/d = NULL;/;}' drw.c 2>/dev/nu
     sed -i '268d' drw.c 2>/dev/null
 }
 
-# Add WASM flags to LDFLAGS
+# Compile X11 stubs
+echo "Compiling X11 stubs..."
+emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>/dev/null || {
+    echo "Warning: Could not compile X11 stubs, will link without them"
+}
+
+# Add WASM flags and X11 stubs to LDFLAGS
 sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["_main"]'\'' --no-entry |' config.mk || echo "LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\"]' --no-entry" >> config.mk
+
+# Add x11_stubs.o to object files if it exists
+if [ -f x11_stubs.o ]; then
+    sed -i 's|^OBJ =|OBJ = x11_stubs.o |' config.mk 2>/dev/null || echo "OBJ += x11_stubs.o" >> config.mk
+fi
 
 # Build
 echo "Compiling dwm..."
