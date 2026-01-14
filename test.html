@@ -79,28 +79,55 @@
                 log('Loading WASM kernel module...', 'log');
                 status.textContent = 'Status: Loading...';
                 
-                // Load the compiled kernel WASM module
-                try {
-                    const response = await fetch('kernel/linux/vmlinux.wasm');
-                    if (!response.ok) {
-                        throw new Error(`Failed to load vmlinux.wasm: ${response.status}`);
-                    }
-                    const bytes = await response.arrayBuffer();
-                    const module = await WebAssembly.compile(bytes);
-                    kernelInstance = await host.init(module);
-                    log('Kernel WASM module loaded and initialized!', 'success');
-                } catch (error) {
-                    log('Note: vmlinux.wasm not found, using mock mode', 'log');
-                    log('To use real kernel: make sure kernel/linux/vmlinux.wasm exists', 'log');
-                    // Continue with mock host for testing
-                }
-                
+                // Create host first
                 host = new LinuxWasmHost();
                 
                 // Set up shell output callback
                 host.setShellOutputCallback((text) => {
                     log(text, 'log');
                 });
+                
+                // Try multiple possible paths for the kernel
+                const kernelPaths = [
+                    './kernel/linux/vmlinux.wasm',
+                    'kernel/linux/vmlinux.wasm',
+                    '/kernel/linux/vmlinux.wasm',
+                    './vmlinux.wasm',
+                    'vmlinux.wasm'
+                ];
+                
+                let kernelPath = null;
+                let wasmBytes = null;
+                
+                for (const path of kernelPaths) {
+                    try {
+                        const response = await fetch(path);
+                        if (response.ok) {
+                            wasmBytes = await response.arrayBuffer();
+                            kernelPath = path;
+                            log(`Found kernel at: ${path}`, 'success');
+                            break;
+                        }
+                    } catch (e) {
+                        // Try next path
+                    }
+                }
+                
+                // Load the compiled kernel WASM module
+                if (wasmBytes) {
+                    try {
+                        const module = await WebAssembly.compile(wasmBytes);
+                        kernelInstance = await host.init(module);
+                        log('Kernel WASM module loaded and initialized!', 'success');
+                    } catch (error) {
+                        log('Error compiling/initializing kernel: ' + error.message, 'error');
+                        kernelInstance = null;
+                    }
+                } else {
+                    log('Note: vmlinux.wasm not found, using mock mode', 'log');
+                    log('To use real kernel: make sure kernel/linux/vmlinux.wasm exists', 'log');
+                    kernelInstance = null;
+                }
                 
                 // Load Alpine Linux rootfs if available
                 try {
@@ -141,17 +168,32 @@
             
             try {
                 log('Starting kernel...', 'log');
-                host.start();
-                log('Kernel started!', 'success');
+                
+                if (kernelInstance && kernelInstance.exports) {
+                    // Real kernel mode
+                    if (kernelInstance.exports.wasm_kernel_start) {
+                        kernelInstance.exports.wasm_kernel_start();
+                        log('Kernel started!', 'success');
+                    } else {
+                        log('Kernel module loaded but wasm_kernel_start not found', 'log');
+                    }
+                } else {
+                    // Mock mode - just initialize shell
+                    log('Starting in mock mode (no WASM kernel)...', 'log');
+                }
+                
                 document.getElementById('status').textContent = 'Status: Running';
                 
                 // Simulate bash launch after kernel starts
                 setTimeout(() => {
                     log('Launching /bin/bash...', 'log');
-                    host.handleExecve(11, 0, 0, 0);  // execve syscall
+                    // Create a mock execve call - argv pointing to "/bin/bash"
+                    // We'll use the shell directly instead
+                    host.launchShell('/bin/bash', null, null);
                 }, 1000);
             } catch (error) {
                 log('Error starting kernel: ' + error.message, 'error');
+                log('Stack: ' + error.stack, 'error');
             }
         };
 
