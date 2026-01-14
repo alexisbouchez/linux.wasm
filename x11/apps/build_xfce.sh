@@ -25,6 +25,19 @@ if [ -z "$EMSDK" ]; then
     fi
 fi
 
+# Check for gcc (needed for native build tools)
+if ! command -v gcc &> /dev/null; then
+    echo "Warning: gcc not found. Some build tools may need it."
+fi
+
+# Set up environment
+export CC=emcc
+export CXX=em++
+export AR=emar
+export RANLIB=emranlib
+export PKG_CONFIG=$(which pkg-config || echo "pkg-config")
+export PKG_CONFIG_PATH=""
+
 # Create build directory
 mkdir -p xfce
 cd xfce
@@ -57,6 +70,7 @@ for dep in "${DEPS[@]}"; do
     cd "$dep"
     
     # Configure for WASM
+    # Use emconfigure which sets up CC/CXX properly
     emconfigure ./configure \
         --prefix=$(pwd)/../install \
         --host=wasm32-unknown-emscripten \
@@ -64,6 +78,7 @@ for dep in "${DEPS[@]}"; do
         --enable-static \
         --disable-gtk-doc \
         --disable-introspection \
+        --with-pic \
         2>&1 | tee ../${name}_configure.log || {
         echo "  Configure failed for $name"
         cd ..
@@ -78,6 +93,9 @@ for dep in "${DEPS[@]}"; do
     }
     
     emmake make install 2>&1 | tee ../${name}_install.log
+    
+    # Update PKG_CONFIG_PATH for next dependency
+    export PKG_CONFIG_PATH="$(pwd)/../install/lib/pkgconfig:$PKG_CONFIG_PATH"
     
     cd ..
     echo "  ✓ $name built"
