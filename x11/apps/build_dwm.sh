@@ -376,9 +376,16 @@ sed -i '/d = NULL,/{N;s/d = NULL,\n[[:space:]]*0);/d = NULL;/;}' drw.c 2>/dev/nu
 
 # Compile X11 stubs
 echo "Compiling X11 stubs..."
-emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>/dev/null || {
-    echo "Warning: Could not compile X11 stubs, will link without them"
-}
+if [ -f "../include/X11/x11_stubs.c" ]; then
+    emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>&1 || {
+        echo "Warning: Could not compile X11 stubs: $?"
+        # Try with absolute path
+        emcc -c -I"$(pwd)/../include" -o x11_stubs.o "$(pwd)/../include/X11/x11_stubs.c" 2>&1 || echo "Failed to compile stubs"
+    }
+else
+    echo "Error: x11_stubs.c not found at ../include/X11/x11_stubs.c"
+    ls -la ../include/X11/ 2>/dev/null | head -5
+fi
 
 # Add WASM flags and X11 stubs to LDFLAGS
 sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["_main"]'\'' --no-entry |' config.mk || echo "LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\"]' --no-entry" >> config.mk
