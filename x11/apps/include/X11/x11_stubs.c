@@ -67,6 +67,3 @@ int XmbTextPropertyToTextList(Display *dpy, void *text_prop, char ***list_return
 void XFreeStringList(char **list) {}
 void *XGetModifierMapping(Display *dpy) { return NULL; }
 int XFreeModifierMapping(void *modmap) { return 0; }
-// Fix signature mismatches
-int XFree(void *data) { return 0; }
-int XCopyArea(Display *dpy, Drawable src, Drawable dst, GC gc, int src_x, int src_y, unsigned int width, unsigned int height, int dst_x, int dst_y) { return 0; }
