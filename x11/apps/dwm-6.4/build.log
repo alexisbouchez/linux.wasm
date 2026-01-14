@@ -18,10 +18,6 @@ drw.c:122:8: note: to match this '('
 drw.c:122:61: error: extraneous ')' after condition, expected a statement
   122 |                 if (!(pattern = /* FcNameParse disabled */ NULL fontname))) {
       |                                                                           ^
-In file included from dwm.c:44:
-./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
-    6 | typedef struct {} FcPattern;
-      |         ^
 drw.c:189:7: error: call to undeclared function 'XftColorAllocName'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
   189 |         if (!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen),
       |              ^
@@ -49,11 +45,8 @@ drw.c:266:3: error: use of undeclared identifier 'd'
   266 |                 d = NULL,
       |                 ^
 drw.c:282:32: error: call to undeclared function 'XftCharExists'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  282 |                                 charexists = charexists || XftCharExists(drw->dpy, curfont->xfont, utf8codepoint);
+  282 |                                 charexists = charexists || XftCharExists(drw->dpy, NULL, utf8codepoint);
       |                                                            ^
-drw.c:320:53: error: member reference base type 'void' is not a structure or union
-  320 |                                 ty = y + (h - usedfont->h) / 2 + usedfont->xfont->ascent;
-      |                                                                  ~~~~~~~~~~~~~~~^ ~~~~~~
 drw.c:359:12: error: call to undeclared function 'XftFontMatch'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
   359 |                         match = XftFontMatch(drw->dpy, drw->screen, fcpattern, &result);
       |                                 ^
@@ -61,15 +54,25 @@ drw.c:359:10: error: incompatible integer to pointer conversion assigning to 'Fc
   359 |                         match = XftFontMatch(drw->dpy, drw->screen, fcpattern, &result);
       |                               ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 drw.c:366:21: error: call to undeclared function 'XftCharExists'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  366 |                                 if (usedfont && XftCharExists(drw->dpy, usedfont->xfont, utf8codepoint)) {
+  366 |                                 if (usedfont && XftCharExists(drw->dpy, NULL, utf8codepoint)) {
       |                                                 ^
 drw.c:379:6: error: use of undeclared identifier 'd'
   379 |         if (d)
       |             ^
-drw.c:420:77: error: invalid suffix 'text' on integer constant
-  420 |         /* XftTextExtentsUtf8 disabled */ (void)0; ext.xOff = len * 6; ext.yOff = 0text, len, &ext);
-      |                                                                                    ^
-1 warning and 15 errors generated.
+In file included from dwm.c:44:
+./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
+    6 | typedef struct {} FcPattern;
+      |         ^
+drw.c:420:2: error: call to undeclared function 'XftTextExtentsUtf8'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  420 |         XftTextExtentsUtf8(font->dpy, font->xfont, (XftChar8 *)text, len, &ext);
+      |         ^
+drw.c:420:46: error: use of undeclared identifier 'XftChar8'
+  420 |         XftTextExtentsUtf8(font->dpy, font->xfont, (XftChar8 *)text, len, &ext);
+      |                                                     ^~~~~~~~
+drw.c:420:56: error: expected expression
+  420 |         XftTextExtentsUtf8(font->dpy, font->xfont, (XftChar8 *)text, len, &ext);
+      |                                                               ^
+1 warning and 16 errors generated.
 make: *** [Makefile:18: drw.o] Error 1
 make: *** Waiting for unfinished jobs....
 dwm.c:1836:17: warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]

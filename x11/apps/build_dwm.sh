@@ -257,14 +257,30 @@ if 'XGlyphInfo' not in drw_h_content:
     with open('drw.h', 'w') as f:
         f.write(drw_h_content)
 
-# Replace Xft function calls more carefully - handle multi-line
-# XftDrawStringUtf8 - comment out entire statement
-content = re.sub(r'XftDrawStringUtf8\s*\([^;]*\);', r'/* XftDrawStringUtf8 disabled */', content)
+# Add more Xft stubs
+xft_stubs = '''
+int XftCharExists(void* dpy, void* font, unsigned int ucs4) { return 1; }
+void* XftFontMatch(void* dpy, int screen, void* pattern, int* result) { if (result) *result = 0; return NULL; }
+'''
 
-# XftTextExtentsUtf8 - replace entire call and set ext manually
-def replace_xft_text_extents(match):
-    return '/* XftTextExtentsUtf8 disabled */ (void)0; ext.xOff = len * 6; ext.yOff = 0'
-content = re.sub(r'XftTextExtentsUtf8\s*\([^)]+\)', replace_xft_text_extents, content)
+if 'XftCharExists' not in content:
+    match = re.search(r'^(static |void |int |Fnt)', content, re.MULTILINE)
+    if match:
+        content = content[:match.start()] + xft_stubs + '\n' + content[match.start():]
+
+# Replace Xft function calls - match full statements
+# XftDrawStringUtf8 - replace entire line
+content = re.sub(r'^\s*XftDrawStringUtf8\s*\([^;]*\)\s*;', r'        /* XftDrawStringUtf8 disabled */', content, flags=re.MULTILINE)
+
+# XftTextExtentsUtf8 - replace call and add manual ext calculation
+# Match: XftTextExtentsUtf8(...);
+content = re.sub(r'XftTextExtentsUtf8\s*\([^)]+\)\s*;', 
+    r'/* XftTextExtentsUtf8 disabled */ ext.xOff = len * 6; ext.yOff = 0;', content)
+
+# Fix xfont->ascent access - xfont is void*, create stub access
+content = re.sub(r'usedfont->xfont->ascent', r'10 /* font ascent */', content)
+content = re.sub(r'curfont->xfont', r'NULL', content)
+content = re.sub(r'usedfont->xfont', r'NULL', content)
 
 # Ensure XGlyphInfo ext is declared
 if 'XGlyphInfo ext' in content and 'XGlyphInfo ext =' not in content:
