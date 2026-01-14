@@ -13,12 +13,12 @@ drw.c:267:22: error: extraneous ')' before ';'
   267 |                                   0);
       |                                    ^
 1 warning and 1 error generated.
+make: *** [Makefile:18: drw.o] Error 1
+make: *** Waiting for unfinished jobs....
 In file included from dwm.c:44:
 ./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
     6 | typedef struct {} FcPattern;
       |         ^
-make: *** [Makefile:18: drw.o] Error 1
-make: *** Waiting for unfinished jobs....
 dwm.c:1836:17: warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
  1836 | updateclientlist()
       |                 ^

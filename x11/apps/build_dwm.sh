@@ -305,21 +305,20 @@ content = re.sub(
 content = re.sub(r'DefaultColormap\([^)]+\)', r'0', content)
 
 # Fix the problematic line: "d = NULL,\n                  0);"
-# Match the entire statement - be more flexible with whitespace
-content = re.sub(
-    r'd\s*=\s*NULL\s*,\s*\n\s*0\s*\)\s*;',
-    r'd = NULL;',
-    content,
-    flags=re.MULTILINE
-)
-# Also try to find and fix the specific problematic line manually
+# Manual line-by-line fix
 lines = content.split('\n')
 for i, line in enumerate(lines):
-    if 'd = NULL,' in line and i + 1 < len(lines):
-        # Check next line
-        if '0);' in lines[i + 1] or '0)' in lines[i + 1]:
-            lines[i] = '		d = NULL;'
-            lines[i + 1] = ''  # Remove the next line
+    if 'd = NULL,' in line:
+        # Check if next line has DefaultColormap or just "0);"
+        if i + 1 < len(lines):
+            next_line = lines[i + 1].strip()
+            if '0);' in next_line or next_line == '0);' or (next_line.startswith('0') and ')' in next_line):
+                # Replace current line and remove next
+                lines[i] = '		d = NULL;'
+                lines[i + 1] = ''
+        # Also handle if it's all on one line
+        if '0);' in line or ', 0);' in line:
+            lines[i] = re.sub(r'd\s*=\s*NULL\s*,\s*0\s*\)\s*;', r'd = NULL;', line)
 content = '\n'.join(lines)
 
 # Fix xfont->ascent access - xfont is void*, replace with constant
