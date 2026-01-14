@@ -432,9 +432,6 @@ if [ ! -f "dwm" ] && [ ! -f "dwm.wasm" ]; then
                     cp dwm.wasm packages/dwm.wasm 2>/dev/null || mv dwm.wasm packages/dwm.wasm
                 fi
             fi
-                echo "✅ dwm.wasm created successfully!"
-                cp dwm packages/dwm.wasm 2>/dev/null || mv dwm packages/dwm.wasm
-            }
         else
             echo "Failed to compile x11_stubs.o"
         fi
