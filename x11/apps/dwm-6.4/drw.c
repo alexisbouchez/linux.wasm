@@ -318,7 +318,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 		if (utf8strlen) {
 			if (render) {
 				ty = y + (h - usedfont->h) / 2 + usedfont->xfont->ascent;
-        /* XftDrawStringUtf8 disabled */
+				/* XftDrawStringUtf8 disabled */
 			}
 			x += ew;
 			w -= ew;
@@ -417,7 +417,7 @@ drw_font_getexts(Fnt *font, const char *text, unsigned int len, unsigned int *w,
 	if (!font || !text)
 		return;
 
-	/* XftTextExtentsUtf8 disabled - setting ext to zero */ (void)0text, len, &ext);
+	/* XftTextExtentsUtf8 disabled */ (void)0; ext.xOff = len * 6; ext.yOff = 0text, len, &ext);
 	if (w)
 		*w = ext.xOff;
 	if (h)

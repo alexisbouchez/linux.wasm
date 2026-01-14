@@ -4,6 +4,7 @@
 // WASM stubs for Xft
 typedef struct { int ascent; int descent; } XftFont;
 typedef struct {} FcPattern;
+typedef struct { int x, y, width, height, xOff, yOff; } XGlyphInfo;
 typedef struct { unsigned long pixel; } XftColor;
 typedef unsigned char FcChar8;
 typedef int FcResult;

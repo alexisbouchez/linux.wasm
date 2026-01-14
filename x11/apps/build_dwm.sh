@@ -248,17 +248,27 @@ for func in fc_functions:
     # Replace function calls
     content = re.sub(rf'{func}\s*\([^)]*\)', f'/* {func} disabled */ NULL', content)
 
-# Add XGlyphInfo stub
-if 'XGlyphInfo' not in content:
-    content = 'typedef struct { int x, y, width, height, xOff, yOff; } XGlyphInfo;\n' + content
+# Add XGlyphInfo stub to drw.h
+with open('drw.h', 'r') as f:
+    drw_h_content = f.read()
+if 'XGlyphInfo' not in drw_h_content:
+    drw_h_content = drw_h_content.replace('typedef struct {} FcPattern;', 
+        'typedef struct {} FcPattern;\ntypedef struct { int x, y, width, height, xOff, yOff; } XGlyphInfo;')
+    with open('drw.h', 'w') as f:
+        f.write(drw_h_content)
 
-# Replace Xft function calls more carefully
-# XftDrawStringUtf8 - comment out entire line
-content = re.sub(r'^\s*XftDrawStringUtf8\([^;]*\);', r'        /* XftDrawStringUtf8 disabled */', content, flags=re.MULTILINE)
+# Replace Xft function calls more carefully - handle multi-line
+# XftDrawStringUtf8 - comment out entire statement
+content = re.sub(r'XftDrawStringUtf8\s*\([^;]*\);', r'/* XftDrawStringUtf8 disabled */', content)
 
-# XftTextExtentsUtf8 - replace with stub that sets ext to zero
-content = re.sub(r'XftTextExtentsUtf8\([^)]+\)', r'/* XftTextExtentsUtf8 disabled - setting ext to zero */ (void)0', content)
-content = re.sub(r'XGlyphInfo ext;', r'XGlyphInfo ext = {0};', content)
+# XftTextExtentsUtf8 - replace entire call and set ext manually
+def replace_xft_text_extents(match):
+    return '/* XftTextExtentsUtf8 disabled */ (void)0; ext.xOff = len * 6; ext.yOff = 0'
+content = re.sub(r'XftTextExtentsUtf8\s*\([^)]+\)', replace_xft_text_extents, content)
+
+# Ensure XGlyphInfo ext is declared
+if 'XGlyphInfo ext' in content and 'XGlyphInfo ext =' not in content:
+    content = re.sub(r'XGlyphInfo ext;', r'XGlyphInfo ext = {0};', content)
 
 # Other Xft functions
 xft_replace = {
