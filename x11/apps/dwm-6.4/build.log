@@ -1,7 +1,7 @@
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  drw.c
+dwm build options:
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  dwm.c
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  util.c
-dwm build options:
 CFLAGS   = -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION="6.4" 
 LDFLAGS  = 
 CC       = emcc
@@ -9,15 +9,15 @@ In file included from drw.c:8:
 ./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
     6 | typedef struct {} FcPattern;
       |         ^
-drw.c:122:51: error: expected ')'
-  122 |                 if (!(pattern = NULL /* FcNameParse disabled */ fontname))) {
-      |                                                                 ^
+drw.c:122:63: error: expected ')'
+  122 |                 if (!(pattern = NULL /* FcNameParse((FcChar8 *) disabled */ fontname))) {
+      |                                                                             ^
 drw.c:122:8: note: to match this '('
-  122 |                 if (!(pattern = NULL /* FcNameParse disabled */ fontname))) {
+  122 |                 if (!(pattern = NULL /* FcNameParse((FcChar8 *) disabled */ fontname))) {
       |                      ^
-drw.c:122:61: error: extraneous ')' after condition, expected a statement
-  122 |                 if (!(pattern = NULL /* FcNameParse disabled */ fontname))) {
-      |                                                                           ^
+drw.c:122:73: error: extraneous ')' after condition, expected a statement
+  122 |                 if (!(pattern = NULL /* FcNameParse((FcChar8 *) disabled */ fontname))) {
+      |                                                                                       ^
 drw.c:267:22: error: extraneous ')' before ';'
   267 |                                   0);
       |                                    ^
