@@ -1573,15 +1573,19 @@ class LinuxWasmHost {
                 return this.shellEnv[varName] || '';
             });
             const output = text + '\n';
-            console.log(output);
+            // Use callback if available, otherwise console.log
             if (this.onShellOutput) {
                 this.onShellOutput(output);
+            } else {
+                console.log(output);
             }
         } else if (command === 'pwd') {
             const output = this.currentDir + '\n';
-            console.log(output);
+            // Use callback if available, otherwise console.log
             if (this.onShellOutput) {
                 this.onShellOutput(output);
+            } else {
+                console.log(output);
             }
         } else if (command.startsWith('cd ')) {
             const dir = command.substring(3).trim() || this.shellEnv.HOME || '/';
