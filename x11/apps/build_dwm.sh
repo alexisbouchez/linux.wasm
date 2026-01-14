@@ -278,6 +278,9 @@ content = re.sub(r'XftTextExtentsUtf8\s*\([^)]+\)\s*;',
 # Fix XftChar8 cast
 content = re.sub(r'\(XftChar8 \*\)', r'(const unsigned char *)', content)
 
+# Fix DefaultColormap macro issue - replace with 0
+content = re.sub(r'DefaultColormap\([^)]+\)', r'0 /* DefaultColormap stub */', content)
+
 # Fix xfont->ascent access - xfont is void*, replace with constant
 content = re.sub(r'->xfont->ascent', r'->h / 2', content)  # Use font height instead
 content = re.sub(r'usedfont->xfont', r'(void*)usedfont', content)

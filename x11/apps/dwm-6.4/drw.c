@@ -187,7 +187,7 @@ drw_clr_create(Drw *drw, Clr *dest, const char *clrname)
 		return;
 
 	if (!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen),
-	                       DefaultColormap(drw->dpy, drw->screen),
+	                       0 /* DefaultColormap stub */,
 	                       clrname, dest))
 		die("error, cannot allocate color '%s'", clrname);
 }
@@ -264,7 +264,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 		XSetForeground(drw->dpy, drw->gc, drw->scheme[invert ? ColFg : ColBg].pixel);
 		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w, h);
 		d = NULL,
-		                  DefaultColormap(drw->dpy, drw->screen));
+		                  0 /* DefaultColormap stub */);
 		x += lpad;
 		w -= lpad;
 	}

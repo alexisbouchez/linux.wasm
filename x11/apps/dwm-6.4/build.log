@@ -1,7 +1,7 @@
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  drw.c
-dwm build options:
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  dwm.c
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  util.c
+dwm build options:
 CFLAGS   = -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION="6.4" 
 LDFLAGS  = 
 CC       = emcc
@@ -35,16 +35,10 @@ drw.c:251:2: error: unknown type name 'XftResult'; did you mean 'FcResult'?
 ./drw.h:10:13: note: 'FcResult' declared here
    10 | typedef int FcResult;
       |             ^
-drw.c:267:59: error: extraneous ')' before ';'
-  267 |                                   DefaultColormap(drw->dpy, drw->screen));
-      |                                                                         ^
-drw.c:267:21: warning: expression result unused [-Wunused-value]
-  267 |                                   DefaultColormap(drw->dpy, drw->screen));
-      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/cache/sysroot/include/X11/Xlib.h:118:61: note: expanded from macro 'DefaultColormap'
-  118 | #define DefaultColormap(dpy, scr)(ScreenOfDisplay(dpy,scr)->cmap)
-      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~  ^~~~
-2 warnings and 6 errors generated.
+drw.c:267:49: error: extraneous ')' before ';'
+  267 |                                   0 /* DefaultColormap stub */);
+      |                                                               ^
+1 warning and 6 errors generated.
 In file included from dwm.c:44:
 ./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
     6 | typedef struct {} FcPattern;
