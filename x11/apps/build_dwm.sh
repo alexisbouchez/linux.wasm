@@ -415,7 +415,15 @@ if [ ! -f "dwm" ] && [ ! -f "dwm.wasm" ]; then
                 -s STANDALONE_WASM=1 \
                 -s EXPORTED_FUNCTIONS='["_main","main"]' \
                 -s EXPORT_ES6=0 \
-                2>&1 | tee -a build.log
+                -s ALLOW_MEMORY_GROWTH=1 \
+                2>&1 | tee -a build.log || {
+                echo "Manual link failed, trying without --no-entry..."
+                emcc -o dwm drw.o dwm.o util.o x11_stubs.o \
+                    -s STANDALONE_WASM=1 \
+                    -s EXPORTED_FUNCTIONS='["_main","main"]' \
+                    -s ALLOW_MEMORY_GROWTH=1 \
+                    2>&1 | tee -a build.log
+            }
         else
             echo "Failed to compile x11_stubs.o"
         fi
