@@ -305,21 +305,26 @@ content = re.sub(
 content = re.sub(r'DefaultColormap\([^)]+\)', r'0', content)
 
 # Fix the problematic line: "d = NULL,\n                  0);"
-# Manual line-by-line fix
+# Manual line-by-line fix - be very specific
 lines = content.split('\n')
-for i, line in enumerate(lines):
-    if 'd = NULL,' in line or 'd = NULL ,' in line:
-        # Check if next line has just "0);" or similar
+for i in range(len(lines)):
+    line = lines[i]
+    # Look for "d = NULL," on current line
+    if re.search(r'd\s*=\s*NULL\s*,', line):
+        # Check next line
         if i + 1 < len(lines):
-            next_line = lines[i + 1].strip()
-            # Match patterns like "0);" or just "0)" or "                  0);"
-            if re.match(r'^\s*0\s*\)\s*;?\s*$', next_line) or next_line.endswith('0);') or next_line == '0);':
-                # Replace current line and remove next
+            next_line = lines[i + 1]
+            # If next line is just "0);" or similar, fix it
+            if re.search(r'^\s*0\s*\)\s*;?\s*$', next_line.strip()):
+                # Replace current line
                 lines[i] = re.sub(r'd\s*=\s*NULL\s*,.*', r'		d = NULL;', line)
+                # Remove next line
                 lines[i + 1] = ''
-        # Also handle if it's all on one line
-        if '0);' in line or ', 0);' in line or ', 0)' in line:
+                break
+        # Also check if it's on the same line
+        if '0);' in line:
             lines[i] = re.sub(r'd\s*=\s*NULL\s*,\s*0\s*\)\s*;', r'd = NULL;', line)
+            break
 content = '\n'.join(lines)
 
 # Fix xfont->ascent access - xfont is void*, replace with constant
