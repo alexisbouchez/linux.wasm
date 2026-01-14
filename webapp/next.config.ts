@@ -1,6 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: 'standalone',
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   webpack: (config) => {
     config.experiments = {
       ...config.experiments,
@@ -8,6 +8,6 @@ const nextConfig = {
     };
     return config;
   },
-}
+};
 
-module.exports = nextConfig
+export default nextConfig;

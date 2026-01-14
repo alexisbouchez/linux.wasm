@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 export default function Home() {
-  const canvasRef = useRef(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [status, setStatus] = useState('initializing')
 
   useEffect(() => {
@@ -15,6 +15,7 @@ export default function Home() {
         if (!canvas) return
         
         const ctx = canvas.getContext('2d')
+        if (!ctx) return
         
         // Load X11 server
         const { X11Server } = await import('/server/x11_server.js')
@@ -37,7 +38,7 @@ export default function Home() {
         setStatus('ready')
       } catch (error) {
         console.error('Init error:', error)
-        setStatus('error: ' + error.message)
+        setStatus('error: ' + (error instanceof Error ? error.message : String(error)))
       }
     }
     
