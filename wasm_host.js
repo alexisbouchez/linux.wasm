@@ -605,10 +605,13 @@ class LinuxWasmHost {
         // Resolve relative paths
         path = this.resolvePath(path);
         
+        // Resolve symlinks
+        path = this.resolveSymlink(path);
+        
         console.log(`[Kernel] open("${path}", ${flags}, ${mode})`);
         
         // Check if file exists in virtual filesystem
-        const file = this.filesystem.get(path);
+        let file = this.filesystem.get(path);
         if (!file) {
             // File doesn't exist - check if we should create it
             if (flags & 0x200) {  // O_CREAT
@@ -631,6 +634,15 @@ class LinuxWasmHost {
                 return fd;
             }
             return -2;  // ENOENT
+        }
+        
+        // Handle symlinks
+        if (file.type === 'symlink') {
+            path = this.resolveSymlink(path);
+            file = this.filesystem.get(path);
+            if (!file) {
+                return -2;  // ENOENT
+            }
         }
         
         // Check access permissions (simplified)
@@ -1529,8 +1541,8 @@ class LinuxWasmHost {
                 text = text.slice(1, -1);
             }
             // Handle environment variables
-            text = text.replace(/\$(\w+)/g, (match, var) => {
-                return this.shellEnv[var] || '';
+            text = text.replace(/\$(\w+)/g, (match, varName) => {
+                return this.shellEnv[varName] || '';
             });
             const output = text + '\n';
             console.log(output);
@@ -1692,6 +1704,599 @@ class LinuxWasmHost {
      */
     setShellOutputCallback(callback) {
         this.onShellOutput = callback;
+    }
+
+    /**
+     * Resolve symlinks in path
+     */
+    resolveSymlink(path) {
+        const visited = new Set();
+        let currentPath = path;
+        
+        while (visited.size < 100) {  // Prevent infinite loops
+            if (visited.has(currentPath)) {
+                break;  // Circular symlink
+            }
+            visited.add(currentPath);
+            
+            const file = this.filesystem.get(currentPath);
+            if (!file) {
+                return currentPath;  // File doesn't exist
+            }
+            
+            if (file.type === 'symlink') {
+                // Resolve symlink target
+                let target = file.target;
+                if (!target.startsWith('/')) {
+                    // Relative symlink - resolve relative to directory
+                    const dir = this.getParentPath(currentPath);
+                    target = this.normalizePath(dir + '/' + target);
+                }
+                currentPath = target;
+            } else {
+                return currentPath;  // Not a symlink, return resolved path
+            }
+        }
+        
+        return currentPath;  // Return last resolved path
+    }
+
+    /**
+     * Launch BusyBox applet
+     */
+    launchBusyBox(path, argv, envp) {
+        console.log('[Kernel] Launching BusyBox:', path);
+        
+        // Read argv to determine which applet to run
+        const argvArray = argv ? this.readStringArray(argv) : [];
+        
+        // BusyBox determines applet by argv[0] (program name)
+        let applet = 'sh';  // Default to shell
+        if (argvArray.length > 0) {
+            const programName = argvArray[0];
+            // Extract applet name from path (e.g., /bin/ls -> ls)
+            applet = programName.split('/').pop() || 'sh';
+        }
+        
+        console.log(`[BusyBox] Running applet: ${applet}`);
+        
+        // Route to appropriate applet handler
+        if (applet === 'init' || applet === 'sh' || applet === 'ash') {
+            if (applet === 'init') {
+                return this.launchInit(path, argv, envp);
+            } else {
+                return this.launchShell('/bin/sh', argv, envp);
+            }
+        }
+        
+        // Handle other BusyBox applets
+        return this.handleBusyBoxApplet(applet, argvArray, envp);
+    }
+
+    /**
+     * Handle BusyBox applet execution
+     */
+    handleBusyBoxApplet(applet, argv, envp) {
+        console.log(`[BusyBox] Executing applet: ${applet} with args:`, argv);
+        
+        // Map of BusyBox applets to handlers
+        const appletHandlers = {
+            'ls': () => this.busybox_ls(argv),
+            'cat': () => this.busybox_cat(argv),
+            'echo': () => this.busybox_echo(argv),
+            'pwd': () => this.busybox_pwd(argv),
+            'mkdir': () => this.busybox_mkdir(argv),
+            'rmdir': () => this.busybox_rmdir(argv),
+            'rm': () => this.busybox_rm(argv),
+            'cp': () => this.busybox_cp(argv),
+            'mv': () => this.busybox_mv(argv),
+            'touch': () => this.busybox_touch(argv),
+            'stat': () => this.busybox_stat(argv),
+            'test': () => this.busybox_test(argv),
+            '[': () => this.busybox_test(argv),
+            'true': () => 0,
+            'false': () => 1,
+            'whoami': () => this.busybox_whoami(argv),
+            'id': () => this.busybox_id(argv),
+            'uname': () => this.busybox_uname(argv),
+            'date': () => this.busybox_date(argv),
+            'hostname': () => this.busybox_hostname(argv),
+            'env': () => this.busybox_env(argv),
+            'printenv': () => this.busybox_printenv(argv),
+        };
+        
+        const handler = appletHandlers[applet];
+        if (handler) {
+            try {
+                const result = handler();
+                return result !== undefined ? result : 0;
+            } catch (err) {
+                console.error(`[BusyBox] Error in ${applet}:`, err);
+                return 1;
+            }
+        }
+        
+        console.warn(`[BusyBox] Applet not implemented: ${applet}`);
+        return 1;
+    }
+
+    /**
+     * Launch init system
+     */
+    launchInit(path, argv, envp) {
+        console.log('[Kernel] Launching init system:', path);
+        
+        // Read /etc/inittab if available
+        const inittab = this.filesystem.get('/etc/inittab');
+        let inittabContent = '';
+        if (inittab && inittab.type === 'file') {
+            inittabContent = inittab.content || '';
+        }
+        
+        console.log('[Init] inittab content:', inittabContent);
+        
+        // BusyBox init reads /etc/inittab and starts processes
+        this.initActive = true;
+        
+        // Start getty on console (tty1)
+        setTimeout(() => {
+            this.startGetty('tty1');
+        }, 100);
+        
+        return 0;
+    }
+
+    /**
+     * Start getty (login prompt)
+     */
+    startGetty(tty) {
+        console.log(`[Init] Starting getty on ${tty}`);
+        
+        // For now, just launch a shell
+        setTimeout(() => {
+            this.launchShell('/bin/sh', null, null);
+        }, 500);
+    }
+
+    // BusyBox applet implementations
+    busybox_ls(argv) {
+        const dir = argv.length > 1 ? argv[1] : this.currentDir;
+        const path = dir.startsWith('/') ? dir : (this.currentDir === '/' ? '/' + dir : this.currentDir + '/' + dir);
+        const normalized = this.normalizePath(path);
+        
+        const dirEntry = this.filesystem.get(normalized);
+        if (!dirEntry || dirEntry.type !== 'directory') {
+            const output = `ls: cannot access '${dir}': No such file or directory\n`;
+            console.log(output);
+            if (this.onShellOutput) this.onShellOutput(output);
+            return 1;
+        }
+        
+        const entries = Array.from(dirEntry.entries || []).sort();
+        const output = entries.join('  ') + '\n';
+        console.log(output);
+        if (this.onShellOutput) this.onShellOutput(output);
+        return 0;
+    }
+
+    busybox_cat(argv) {
+        if (argv.length < 2) return 0;
+        
+        for (let i = 1; i < argv.length; i++) {
+            const filepath = argv[i];
+            const path = filepath.startsWith('/') ? filepath : 
+                         (this.currentDir === '/' ? '/' + filepath : this.currentDir + '/' + filepath);
+            const normalized = this.normalizePath(path);
+            const file = this.filesystem.get(normalized);
+            
+            if (!file) {
+                const output = `cat: ${filepath}: No such file or directory\n`;
+                console.log(output);
+                if (this.onShellOutput) this.onShellOutput(output);
+                return 1;
+            }
+            
+            if (file.type === 'directory') {
+                const output = `cat: ${filepath}: Is a directory\n`;
+                console.log(output);
+                if (this.onShellOutput) this.onShellOutput(output);
+                return 1;
+            }
+            
+            const content = file.content || '';
+            const output = content + (content && !content.endsWith('\n') ? '\n' : '');
+            console.log(output);
+            if (this.onShellOutput) this.onShellOutput(output);
+        }
+        
+        return 0;
+    }
+
+    busybox_echo(argv) {
+        const args = argv.slice(1);
+        let text = args.join(' ');
+        
+        if (text.startsWith('-n ')) {
+            text = text.substring(3);
+            const output = text;
+            console.log(output);
+            if (this.onShellOutput) this.onShellOutput(output);
+            return 0;
+        }
+        
+        if (this.shellEnv) {
+            text = text.replace(/\$(\w+)/g, (match, varName) => {
+                return this.shellEnv[varName] || '';
+            });
+        }
+        
+        const output = text + '\n';
+        console.log(output);
+        if (this.onShellOutput) this.onShellOutput(output);
+        return 0;
+    }
+
+    busybox_pwd(argv) {
+        const output = this.currentDir + '\n';
+        console.log(output);
+        if (this.onShellOutput) this.onShellOutput(output);
+        return 0;
+    }
+
+    busybox_mkdir(argv) {
+        if (argv.length < 2) return 1;
+        
+        for (let i = 1; i < argv.length; i++) {
+            const dirpath = argv[i];
+            const path = dirpath.startsWith('/') ? dirpath : 
+                         (this.currentDir === '/' ? '/' + dirpath : this.currentDir + '/' + dirpath);
+            const normalized = this.normalizePath(path);
+            
+            if (this.filesystem.has(normalized)) {
+                const output = `mkdir: cannot create directory '${dirpath}': File exists\n`;
+                console.log(output);
+                if (this.onShellOutput) this.onShellOutput(output);
+                return 1;
+            }
+            
+            const parentPath = this.getParentPath(normalized);
+            const parent = this.filesystem.get(parentPath);
+            if (!parent || parent.type !== 'directory') {
+                const output = `mkdir: cannot create directory '${dirpath}': No such file or directory\n`;
+                console.log(output);
+                if (this.onShellOutput) this.onShellOutput(output);
+                return 1;
+            }
+            
+            parent.entries.add(this.getBaseName(normalized));
+            this.filesystem.set(normalized, {
+                type: 'directory',
+                mode: 0o755,
+                entries: new Set()
+            });
+        }
+        
+        return 0;
+    }
+
+    busybox_rmdir(argv) {
+        if (argv.length < 2) return 1;
+        
+        for (let i = 1; i < argv.length; i++) {
+            const dirpath = argv[i];
+            const path = dirpath.startsWith('/') ? dirpath : 
+                         (this.currentDir === '/' ? '/' + dirpath : this.currentDir + '/' + dirpath);
+            const normalized = this.normalizePath(path);
+            
+            const dir = this.filesystem.get(normalized);
+            if (!dir) {
+                const output = `rmdir: failed to remove '${dirpath}': No such file or directory\n`;
+                console.log(output);
+                if (this.onShellOutput) this.onShellOutput(output);
+                return 1;
+            }
+            
+            if (dir.type !== 'directory') {
+                const output = `rmdir: failed to remove '${dirpath}': Not a directory\n`;
+                console.log(output);
+                if (this.onShellOutput) this.onShellOutput(output);
+                return 1;
+            }
+            
+            if (dir.entries && dir.entries.size > 0) {
+                const output = `rmdir: failed to remove '${dirpath}': Directory not empty\n`;
+                console.log(output);
+                if (this.onShellOutput) this.onShellOutput(output);
+                return 1;
+            }
+            
+            const parentPath = this.getParentPath(normalized);
+            const parent = this.filesystem.get(parentPath);
+            if (parent && parent.entries) {
+                parent.entries.delete(this.getBaseName(normalized));
+            }
+            
+            this.filesystem.delete(normalized);
+        }
+        
+        return 0;
+    }
+
+    busybox_rm(argv) {
+        if (argv.length < 2) return 1;
+        
+        const recursive = argv.includes('-r') || argv.includes('-R') || argv.includes('--recursive');
+        
+        for (let i = 1; i < argv.length; i++) {
+            if (argv[i].startsWith('-')) continue;
+            
+            const filepath = argv[i];
+            const path = filepath.startsWith('/') ? filepath : 
+                         (this.currentDir === '/' ? '/' + filepath : this.currentDir + '/' + filepath);
+            const normalized = this.normalizePath(path);
+            
+            const file = this.filesystem.get(normalized);
+            if (!file) {
+                const output = `rm: cannot remove '${filepath}': No such file or directory\n`;
+                console.log(output);
+                if (this.onShellOutput) this.onShellOutput(output);
+                return 1;
+            }
+            
+            if (file.type === 'directory' && !recursive) {
+                const output = `rm: cannot remove '${filepath}': Is a directory\n`;
+                console.log(output);
+                if (this.onShellOutput) this.onShellOutput(output);
+                return 1;
+            }
+            
+            const parentPath = this.getParentPath(normalized);
+            const parent = this.filesystem.get(parentPath);
+            if (parent && parent.entries) {
+                parent.entries.delete(this.getBaseName(normalized));
+            }
+            
+            this.filesystem.delete(normalized);
+        }
+        
+        return 0;
+    }
+
+    busybox_cp(argv) {
+        if (argv.length < 3) return 1;
+        
+        const sources = argv.slice(1, -1);
+        const dest = argv[argv.length - 1];
+        
+        if (sources.length === 0) return 1;
+        
+        const sourcePath = sources[0].startsWith('/') ? sources[0] : 
+                          (this.currentDir === '/' ? '/' + sources[0] : this.currentDir + '/' + sources[0]);
+        const sourceNormalized = this.normalizePath(sourcePath);
+        const source = this.filesystem.get(sourceNormalized);
+        
+        if (!source) {
+            const output = `cp: cannot stat '${sources[0]}': No such file or directory\n`;
+            console.log(output);
+            if (this.onShellOutput) this.onShellOutput(output);
+            return 1;
+        }
+        
+        const destPath = dest.startsWith('/') ? dest : 
+                        (this.currentDir === '/' ? '/' + dest : this.currentDir + '/' + dest);
+        const destNormalized = this.normalizePath(destPath);
+        
+        const parentPath = this.getParentPath(destNormalized);
+        const parent = this.filesystem.get(parentPath);
+        if (!parent || parent.type !== 'directory') {
+            const output = `cp: cannot create regular file '${dest}': No such file or directory\n`;
+            console.log(output);
+            if (this.onShellOutput) this.onShellOutput(output);
+            return 1;
+        }
+        
+        parent.entries.add(this.getBaseName(destNormalized));
+        this.filesystem.set(destNormalized, {
+            type: 'file',
+            mode: source.mode || 0o644,
+            content: source.content || '',
+            size: source.size || 0
+        });
+        
+        return 0;
+    }
+
+    busybox_mv(argv) {
+        if (argv.length < 3) return 1;
+        
+        const source = argv[1];
+        const dest = argv[2];
+        
+        const sourcePath = source.startsWith('/') ? source : 
+                        (this.currentDir === '/' ? '/' + source : this.currentDir + '/' + source);
+        const sourceNormalized = this.normalizePath(sourcePath);
+        const sourceFile = this.filesystem.get(sourceNormalized);
+        
+        if (!sourceFile) {
+            const output = `mv: cannot stat '${source}': No such file or directory\n`;
+            console.log(output);
+            if (this.onShellOutput) this.onShellOutput(output);
+            return 1;
+        }
+        
+        const destPath = dest.startsWith('/') ? dest : 
+                        (this.currentDir === '/' ? '/' + dest : this.currentDir + '/' + dest);
+        const destNormalized = this.normalizePath(destPath);
+        
+        const sourceParent = this.getParentPath(sourceNormalized);
+        const sourceParentDir = this.filesystem.get(sourceParent);
+        if (sourceParentDir && sourceParentDir.entries) {
+            sourceParentDir.entries.delete(this.getBaseName(sourceNormalized));
+        }
+        
+        const destParent = this.getParentPath(destNormalized);
+        const destParentDir = this.filesystem.get(destParent);
+        if (destParentDir && destParentDir.entries) {
+            destParentDir.entries.add(this.getBaseName(destNormalized));
+        }
+        
+        this.filesystem.set(destNormalized, sourceFile);
+        this.filesystem.delete(sourceNormalized);
+        
+        return 0;
+    }
+
+    busybox_touch(argv) {
+        if (argv.length < 2) return 1;
+        
+        for (let i = 1; i < argv.length; i++) {
+            const filepath = argv[i];
+            const path = filepath.startsWith('/') ? filepath : 
+                        (this.currentDir === '/' ? '/' + filepath : this.currentDir + '/' + filepath);
+            const normalized = this.normalizePath(path);
+            
+            if (!this.filesystem.has(normalized)) {
+                const parentPath = this.getParentPath(normalized);
+                const parent = this.filesystem.get(parentPath);
+                if (!parent || parent.type !== 'directory') {
+                    return 1;
+                }
+                
+                parent.entries.add(this.getBaseName(normalized));
+                this.filesystem.set(normalized, {
+                    type: 'file',
+                    mode: 0o644,
+                    content: '',
+                    size: 0
+                });
+            }
+        }
+        
+        return 0;
+    }
+
+    busybox_stat(argv) {
+        if (argv.length < 2) return 1;
+        
+        const filepath = argv[1];
+        const path = filepath.startsWith('/') ? filepath : 
+                    (this.currentDir === '/' ? '/' + filepath : this.currentDir + '/' + filepath);
+        const normalized = this.normalizePath(path);
+        const file = this.filesystem.get(normalized);
+        
+        if (!file) {
+            const output = `stat: cannot stat '${filepath}': No such file or directory\n`;
+            console.log(output);
+            if (this.onShellOutput) this.onShellOutput(output);
+            return 1;
+        }
+        
+        const output = `  File: ${filepath}\n  Size: ${file.size || 0}\n`;
+        console.log(output);
+        if (this.onShellOutput) this.onShellOutput(output);
+        return 0;
+    }
+
+    busybox_test(argv) {
+        if (argv.length < 3) return 1;
+        
+        const op = argv[2];
+        const filepath = argv[3];
+        
+        if (!filepath) return 1;
+        
+        const path = filepath.startsWith('/') ? filepath : 
+                    (this.currentDir === '/' ? '/' + filepath : this.currentDir + '/' + filepath);
+        const normalized = this.normalizePath(path);
+        const file = this.filesystem.get(normalized);
+        
+        switch (op) {
+            case '-f':
+                return file && file.type === 'file' ? 0 : 1;
+            case '-d':
+                return file && file.type === 'directory' ? 0 : 1;
+            case '-e':
+                return file ? 0 : 1;
+            default:
+                return 1;
+        }
+    }
+
+    busybox_whoami(argv) {
+        const output = ((this.shellEnv && this.shellEnv.USER) || 'root') + '\n';
+        console.log(output);
+        if (this.onShellOutput) this.onShellOutput(output);
+        return 0;
+    }
+
+    busybox_id(argv) {
+        const output = `uid=0(root) gid=0(root) groups=0(root)\n`;
+        console.log(output);
+        if (this.onShellOutput) this.onShellOutput(output);
+        return 0;
+    }
+
+    busybox_uname(argv) {
+        const all = argv.includes('-a') || argv.includes('--all');
+        let output = 'Linux';
+        if (all) {
+            output = 'Linux wasm-linux 6.1.0 #1 SMP WASM wasm32 GNU/Linux\n';
+        } else {
+            output += '\n';
+        }
+        console.log(output);
+        if (this.onShellOutput) this.onShellOutput(output);
+        return 0;
+    }
+
+    busybox_date(argv) {
+        const now = new Date();
+        const output = now.toUTCString() + '\n';
+        console.log(output);
+        if (this.onShellOutput) this.onShellOutput(output);
+        return 0;
+    }
+
+    busybox_hostname(argv) {
+        const hostname = (this.shellEnv && this.shellEnv.HOSTNAME) || 'wasm-linux';
+        if (argv.length > 1 && !argv[1].startsWith('-')) {
+            if (!this.shellEnv) this.shellEnv = {};
+            this.shellEnv.HOSTNAME = argv[1];
+            return 0;
+        }
+        
+        const output = hostname + '\n';
+        console.log(output);
+        if (this.onShellOutput) this.onShellOutput(output);
+        return 0;
+    }
+
+    busybox_env(argv) {
+        if (!this.shellEnv) return 0;
+        
+        let output = '';
+        for (const [key, value] of Object.entries(this.shellEnv)) {
+            output += `${key}=${value}\n`;
+        }
+        console.log(output);
+        if (this.onShellOutput) this.onShellOutput(output);
+        return 0;
+    }
+
+    busybox_printenv(argv) {
+        if (argv.length > 1) {
+            const varName = argv[1];
+            const value = this.shellEnv && this.shellEnv[varName];
+            if (value !== undefined) {
+                const output = value + '\n';
+                console.log(output);
+                if (this.onShellOutput) this.onShellOutput(output);
+                return 0;
+            }
+            return 1;
+        }
+        
+        return this.busybox_env(argv);
     }
 }
 
