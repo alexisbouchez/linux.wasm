@@ -19,6 +19,10 @@ static inline void* XftFontMatch(void* dpy, int screen, void* pattern, int* resu
 static inline void XftTextExtentsUtf8(void* dpy, void* font, const unsigned char* text, int len, XGlyphInfo* ext) {
     if (ext) { ext->xOff = len * 6; ext->yOff = 0; }
 }
+static inline int XftColorAllocName(void* dpy, void* visual, void* colormap, const char* name, XftColor* result) {
+    if (result) result->pixel = 0xffffff; return 1;
+}
+typedef void* FcCharSet;
 
 typedef struct {
 	Cursor cursor;

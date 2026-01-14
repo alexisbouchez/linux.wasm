@@ -194,6 +194,10 @@ static inline void* XftFontMatch(void* dpy, int screen, void* pattern, int* resu
 static inline void XftTextExtentsUtf8(void* dpy, void* font, const unsigned char* text, int len, XGlyphInfo* ext) {
     if (ext) { ext->xOff = len * 6; ext->yOff = 0; }
 }
+static inline int XftColorAllocName(void* dpy, void* visual, void* colormap, const char* name, XftColor* result) {
+    if (result) result->pixel = 0xffffff; return 1;
+}
+typedef void* FcCharSet;
 '''
 
 # Insert after includes, before any struct definitions
@@ -279,9 +283,11 @@ content = re.sub(r'XftTextExtentsUtf8\s*\([^)]+\)\s*;',
 # Fix XftChar8 cast
 content = re.sub(r'\(XftChar8 \*\)', r'(const unsigned char *)', content)
 
-# Fix DefaultColormap macro issue - replace with 0 and fix syntax
+# Fix DefaultColormap and XftColorAllocName calls
 content = re.sub(r'DefaultColormap\([^)]+\)', r'0', content)
-# Fix the line that has "d = NULL," followed by DefaultColormap
+content = re.sub(r'XftColorAllocName\([^)]+\)', r'1 /* XftColorAllocName stub */', content)
+# Fix the problematic line with d = NULL, DefaultColormap
+content = re.sub(r'd\s*=\s*NULL\s*,\s*\n\s*0\s*\);', r'd = NULL;', content)
 content = re.sub(r'd\s*=\s*NULL\s*,\s*0\s*\);', r'd = NULL;', content)
 
 # Fix xfont->ascent access - xfont is void*, replace with constant
