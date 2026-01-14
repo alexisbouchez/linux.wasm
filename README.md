@@ -7,27 +7,20 @@ Linux kernel and X11 desktop environment compiled to WebAssembly.
 Run everything at once:
 
 ```bash
-# Setup and run
-./setup.sh
+./setup.sh && cd webapp && npm run dev
 ```
 
-Or manually:
+Or step by step:
 
 ```bash
-# 1. Setup Emscripten
-source emsdk/emsdk_env.sh
+# 1. Setup and build
+./setup.sh
 
-# 2. Build X11 apps
-cd x11/apps
-./build_dwm.sh
-
-# 3. Setup webapp
-cd ../../webapp
-npm install
-
-# 4. Run
-npm run dev
+# 2. Run webapp
+cd webapp && npm run dev
 ```
+
+Then open http://localhost:3000
 
 ## Overview
 
