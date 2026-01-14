@@ -88,7 +88,7 @@ LDLIBS="$7"
 CONFIG_EXTRA_LDLIBS="$8"
 
 # The --sort-section option is not supported by older versions of ld
-SORT_SECTION="-Wl,--sort-section,alignment"
+SORT_SECTION=""
 if ! CC=emcc; check_cc "-Wl,--sort-section,alignment"; then
     echo "Your linker does not support --sort-section,alignment"
     SORT_SECTION=""
@@ -101,7 +101,7 @@ INFO_OPTS() {
 }
 
 # gold may not support --sort-common (yet)
-SORT_COMMON="-Wl,--sort-common"
+SORT_COMMON=""
 if ! CC=emcc; check_cc "-Wl,--sort-common"; then
     echo "Your linker does not support --sort-common"
     SORT_COMMON=""
@@ -112,7 +112,7 @@ fi
 # See sources.redhat.com/bugzilla/show_bug.cgi?id=3400
 # Note that glibc is unsuitable for static linking anyway.
 # We are removing -Wl,--gc-sections from link command line.
-GC_SECTIONS="-Wl,--gc-sections"
+GC_SECTIONS=""
 if (. ./.config && test x"$CONFIG_STATIC" = x"y") then
     if check_libc_is_glibc; then
 	echo "Static linking against glibc, can't use --gc-sections"
@@ -134,14 +134,14 @@ LDLIBS=`echo "$LDLIBS" | xargs -n1 | sort | uniq | xargs`
 echo "Trying libraries: $LDLIBS"
 # "lib1 lib2 lib3" -> "-llib1 -llib2 -llib3"
 l_list=`echo " $LDLIBS $CONFIG_EXTRA_LDLIBS " | sed -e 's: \([^- ][^ ]*\): -l\1:g' -e 's/^ *//'`
-	emcc $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry \
+	emcc $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry -o $EXE.wasm $START_GROUP $O_FILES $A_FILES $END_GROUP \
 try emcc $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry \
 	-o $EXE \
 	$SORT_COMMON \
 	$SORT_SECTION \
 	$GC_SECTIONS \
-	$START_GROUP $O_FILES $A_FILES $END_GROUP \
 	$l_list \
+		$l_list \	$l_list \ mv $EXE.wasm $EXE
 || {
     echo "Failed: $l_list"
     cat $EXE.out
