@@ -10,6 +10,8 @@ Run everything at once:
 ./setup.sh && cd webapp && npm run dev
 ```
 
+Then open **http://localhost:3000** in your browser.
+
 Or step by step:
 
 ```bash
@@ -18,9 +20,10 @@ Or step by step:
 
 # 2. Run webapp
 cd webapp && npm run dev
-```
 
-Then open http://localhost:3000
+# 3. Open browser
+# Navigate to http://localhost:3000
+```
 
 ## Overview
 
@@ -43,9 +46,11 @@ This project compiles the Linux kernel and X11 applications (dwm, dmenu, st) to 
 ## Build
 
 ```bash
-# Build dwm
+# Build all X11 apps
 cd x11/apps
 ./build_dwm.sh
+./build_dmenu.sh
+./build_st.sh
 ```
 
 ## License
