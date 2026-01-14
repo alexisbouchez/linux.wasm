@@ -374,18 +374,7 @@ sed -i '/d = NULL,/{N;s/d = NULL,\n[[:space:]]*0);/d = NULL;/;}' drw.c 2>/dev/nu
     sed -i '268d' drw.c 2>/dev/null
 }
 
-# Compile X11 stubs after extraction
-echo "Compiling X11 stubs..."
-if [ -d "dwm-6.4" ] && [ -f "../include/X11/x11_stubs.c" ]; then
-    cd dwm-6.4
-    emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>&1 || {
-        echo "Warning: Could not compile X11 stubs: $?"
-        emcc -c -I"$(pwd)/../include" -o x11_stubs.o "$(pwd)/../include/X11/x11_stubs.c" 2>&1 || echo "Failed to compile stubs"
-    }
-    cd ..
-else
-    echo "Warning: dwm-6.4 not extracted yet or x11_stubs.c not found"
-fi
+# Compile X11 stubs will happen after we cd into dwm-6.4
 
 # Add WASM flags and X11 stubs to LDFLAGS
 sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["_main"]'\'' --no-entry |' config.mk || echo "LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\"]' --no-entry" >> config.mk
@@ -395,6 +384,18 @@ sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["
 
 # Build
 echo "Compiling dwm..."
+cd dwm-6.4
+
+# Compile X11 stubs now that we're in dwm-6.4
+echo "Compiling X11 stubs..."
+if [ -f "../include/X11/x11_stubs.c" ]; then
+    emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>&1 || {
+        echo "Warning: Could not compile X11 stubs: $?"
+    }
+else
+    echo "Warning: x11_stubs.c not found"
+fi
+
 CC=emcc CXX=em++ AR=emar LD=emcc STRIP=llvm-strip make clean 2>/dev/null || true
 CC=emcc CXX=em++ AR=emar LD=emcc STRIP=llvm-strip make -j$(nproc) 2>&1 | tee build.log
 
