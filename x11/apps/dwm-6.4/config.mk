@@ -23,7 +23,7 @@ FREETYPEINC = /usr/include/freetype2
 
 # includes and libs
 INCS = -I${X11INC} -I${FREETYPEINC}
-LIBS = -L${X11LIB}  ${LIBS} ${FREETYPELIBS}
+LIBS =
 
 # flags
 CPPFLAGS = -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"${VERSION}\" ${FLAGS}
@@ -37,5 +37,3 @@ LDFLAGS  = ${LIBS}
 
 # compiler and linker
 CC = emcc
-LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry
-LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry

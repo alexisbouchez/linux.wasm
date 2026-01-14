@@ -112,6 +112,12 @@ EOF
 # Modify Makefile for WASM
 sed -i 's/^CC =.*/CC = emcc/' config.mk 2>/dev/null || echo "CC = emcc" >> config.mk
 sed -i 's/^LD =.*/LD = emcc/' config.mk 2>/dev/null || echo "LD = emcc" >> config.mk
+
+# Fix LIBS variable to avoid recursion
+sed -i 's/^LIBS =.*/LIBS =/' config.mk
+sed -i 's/\$(LIBS)/$(LIBS)/g' config.mk || true
+
+# Remove X11 libraries
 sed -i 's/-lX11//g' config.mk
 sed -i 's/-lXinerama//g' config.mk
 sed -i 's/-lXft//g' config.mk
@@ -119,7 +125,7 @@ sed -i 's/-lfontconfig//g' config.mk
 sed -i 's/-lfreetype//g' config.mk
 
 # Add stub header include path
-sed -i "s|-I/usr/X11R6/include|-I../include -I/usr/X11R6/include|g" config.mk
+sed -i "s|-I/usr/X11R6/include|-I../include|g" config.mk
 sed -i "s|-I/usr/include/freetype2||g" config.mk
 
 # Disable Xinerama and Xft features for WASM
@@ -130,8 +136,8 @@ sed -i 's/XINERAMA//g' config.mk
 sed -i 's/#include <X11\/Xft\/Xft.h>/\/\/ #include <X11\/Xft\/Xft.h> \/\/ Disabled for WASM/g' drw.c 2>/dev/null || true
 sed -i 's/#include <X11\/extensions\/Xinerama.h>/\/\/ #include <X11\/extensions\/Xinerama.h> \/\/ Disabled for WASM/g' dwm.c 2>/dev/null || true
 
-# Add WASM flags
-echo "LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\"]' --no-entry" >> config.mk
+# Add WASM flags to LDFLAGS
+sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["_main"]'\'' --no-entry |' config.mk || echo "LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\"]' --no-entry" >> config.mk
 
 # Build
 echo "Compiling dwm..."

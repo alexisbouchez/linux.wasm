@@ -1,1 +1,98 @@
-config.mk:26: *** Recursive variable 'LIBS' references itself (eventually).  Stop.
+emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  drw.c
+emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  dwm.c
+emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  util.c
+dwm build options:
+CFLAGS   = -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION="6.4" 
+LDFLAGS  = 
+CC       = emcc
+In file included from drw.c:8:
+./drw.h:10:2: error: unknown type name 'XftFont'
+   10 |         XftFont *xfont;
+      |         ^
+./drw.h:11:2: error: unknown type name 'FcPattern'
+   11 |         FcPattern *pattern;
+      |         ^
+./drw.h:16:9: error: unknown type name 'XftColor'; did you mean 'XColor'?
+   16 | typedef XftColor Clr;
+      |         ^~~~~~~~
+      |         XColor
+/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/cache/sysroot/include/X11/Xlib.h:423:3: note: 'XColor' declared here
+  423 | } XColor;
+      |   ^
+drw.c:106:46: error: unknown type name 'FcPattern'
+  106 | xfont_create(Drw *drw, const char *fontname, FcPattern *fontpattern)
+      |                                              ^
+drw.c:109:2: error: use of undeclared identifier 'XftFont'; did you mean 'XSetFont'?
+  109 |         XftFont *xfont = NULL;
+      |         ^~~~~~~
+      |         XSetFont
+/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/cache/sysroot/include/X11/Xlib.h:3222:12: note: 'XSetFont' declared here
+ 3222 | extern int XSetFont(
+      |            ^
+drw.c:109:11: error: use of undeclared identifier 'xfont'; did you mean 'font'?
+  109 |         XftFont *xfont = NULL;
+      |                  ^~~~~
+      |                  font
+drw.c:108:7: note: 'font' declared here
+  108 |         Fnt *font;
+      |              ^
+drw.c:109:10: error: invalid operands to binary expression ('int (Display *, GC, Font)' (aka 'int (struct _XDisplay *, struct _XGC *, unsigned long)') and 'Fnt *' (aka 'struct Fnt *'))
+  109 |         XftFont *xfont = NULL;
+      |         ~~~~~~~ ^~~~~~
+drw.c:110:2: error: use of undeclared identifier 'FcPattern'
+  110 |         FcPattern *pattern = NULL;
+      |         ^~~~~~~~~
+drw.c:110:13: error: use of undeclared identifier 'pattern'
+  110 |         FcPattern *pattern = NULL;
+      |                    ^~~~~~~
+drw.c:118:9: error: use of undeclared identifier 'xfont'; did you mean 'font'?
+  118 |                 if (!(xfont = XftFontOpenName(drw->dpy, drw->screen, fontname))) {
+      |                       ^~~~~
+      |                       font
+drw.c:108:7: note: 'font' declared here
+  108 |         Fnt *font;
+      |              ^
+drw.c:118:17: error: call to undeclared function 'XftFontOpenName'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  118 |                 if (!(xfont = XftFontOpenName(drw->dpy, drw->screen, fontname))) {
+      |                               ^
+drw.c:118:15: error: incompatible integer to pointer conversion assigning to 'Fnt *' (aka 'struct Fnt *') from 'int' [-Wint-conversion]
+  118 |                 if (!(xfont = XftFontOpenName(drw->dpy, drw->screen, fontname))) {
+      |                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drw.c:122:9: error: use of undeclared identifier 'pattern'
+  122 |                 if (!(pattern = FcNameParse((FcChar8 *) fontname))) {
+      |                       ^~~~~~~
+drw.c:122:19: error: call to undeclared function 'FcNameParse'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  122 |                 if (!(pattern = FcNameParse((FcChar8 *) fontname))) {
+      |                                 ^
+drw.c:122:32: error: use of undeclared identifier 'FcChar8'
+  122 |                 if (!(pattern = FcNameParse((FcChar8 *) fontname))) {
+      |                                              ^~~~~~~
+drw.c:122:41: error: expected expression
+  122 |                 if (!(pattern = FcNameParse((FcChar8 *) fontname))) {
+      |                                                       ^
+drw.c:124:4: error: call to undeclared function 'XftFontClose'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  124 |                         XftFontClose(drw->dpy, xfont);
+      |                         ^
+drw.c:124:27: error: use of undeclared identifier 'xfont'; did you mean 'font'?
+  124 |                         XftFontClose(drw->dpy, xfont);
+      |                                                ^~~~~
+      |                                                font
+drw.c:108:7: note: 'font' declared here
+  108 |         Fnt *font;
+      |              ^
+drw.c:128:9: error: use of undeclared identifier 'xfont'; did you mean 'font'?
+  128 |                 if (!(xfont = XftFontOpenPattern(drw->dpy, fontpattern))) {
+      |                       ^~~~~
+      |                       font
+drw.c:108:7: note: 'font' declared here
+  108 |         Fnt *font;
+      |              ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+dwm.c:42:10: fatal error: 'X11/Xft/Xft.h' file not found
+   42 | #include <X11/Xft/Xft.h>
+      |          ^~~~~~~~~~~~~~~
+20 errors generated.
+make: *** [Makefile:18: drw.o] Error 1
+make: *** Waiting for unfinished jobs....
+1 error generated.
+make: *** [Makefile:18: dwm.o] Error 1
