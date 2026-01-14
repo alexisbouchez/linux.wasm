@@ -77,7 +77,7 @@ unsigned long XBlackPixel(Display *dpy, int screen);
 unsigned long XWhitePixel(Display *dpy, int screen);
 int XStoreName(Display *dpy, Window w, const char *window_name);
 int XSetWMProtocols(Display *dpy, Window w, void *protocols, int count);
-void XSetErrorHandler(void *handler);
+void *XSetErrorHandler(void *handler);
 void XSetWMHints(Display *dpy, Window w, void *hints);
 
 typedef int Drawable;

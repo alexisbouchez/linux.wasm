@@ -32,7 +32,7 @@ unsigned long XBlackPixel(Display *dpy, int screen) { return 0; }
 unsigned long XWhitePixel(Display *dpy, int screen) { return 0xffffff; }
 int XStoreName(Display *dpy, Window w, const char *window_name) { return 0; }
 int XSetWMProtocols(Display *dpy, Window w, void *protocols, int count) { return 0; }
-void *XSetErrorHandler(void *handler) { return NULL; }
+void XSetErrorHandler(void *handler) {}
 void XSetWMHints(Display *dpy, Window w, void *hints) {}
 Pixmap XCreatePixmap(Display *dpy, Drawable d, unsigned int width, unsigned int height, unsigned int depth) { return 1; }
 int XFreePixmap(Display *dpy, Pixmap pixmap) { return 0; }
