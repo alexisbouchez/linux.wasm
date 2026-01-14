@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
     };
     return config;
   },
+  turbopack: {
+    rules: {
+      "*.wasm": {
+        loaders: ["wasm-loader"],
+        as: "*.wasm",
+      },
+    },
+  },
 };
 
 export default nextConfig;
