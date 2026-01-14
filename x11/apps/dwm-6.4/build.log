@@ -1,7 +1,7 @@
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  drw.c
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  dwm.c
-emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  util.c
 dwm build options:
+emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  util.c
 CFLAGS   = -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION="6.4" 
 LDFLAGS  = 
 CC       = emcc
@@ -42,7 +42,7 @@ drw.c:251:2: error: unknown type name 'XftResult'; did you mean 'FcResult'?
     9 | typedef int FcResult;
       |             ^
 drw.c:266:3: error: use of undeclared identifier 'd'
-  266 |                 d = NULL /* XftDrawCreate disabled */,
+  266 |                 d = NULL,
       |                 ^
 drw.c:282:32: error: call to undeclared function 'XftCharExists'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
   282 |                                 charexists = charexists || XftCharExists(drw->dpy, curfont->xfont, utf8codepoint);
@@ -50,13 +50,6 @@ drw.c:282:32: error: call to undeclared function 'XftCharExists'; ISO C99 and la
 drw.c:320:53: error: member reference base type 'void' is not a structure or union
   320 |                                 ty = y + (h - usedfont->h) / 2 + usedfont->xfont->ascent;
       |                                                                  ~~~~~~~~~~~~~~~^ ~~~~~~
-drw.c:321:9: error: expected ';' after expression
-  321 |                                 NULL /* XftDrawStringUtf8 disabled */utf8str, utf8strlen);
-      |                                     ^
-      |                                     ;
-drw.c:321:61: error: extraneous ')' before ';'
-  321 |                                 NULL /* XftDrawStringUtf8 disabled */utf8str, utf8strlen);
-      |                                                                                         ^
 drw.c:359:12: error: call to undeclared function 'XftFontMatch'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
   359 |                         match = XftFontMatch(drw->dpy, drw->screen, fcpattern, &result);
       |                                 ^
@@ -69,28 +62,30 @@ drw.c:366:21: error: call to undeclared function 'XftCharExists'; ISO C99 and la
 drw.c:379:6: error: use of undeclared identifier 'd'
   379 |         if (d)
       |             ^
-drw.c:321:42: warning: left operand of comma operator has no effect [-Wunused-value]
-  321 |                                 NULL /* XftDrawStringUtf8 disabled */utf8str, utf8strlen);
-      |                                                                      ^~~~~~~
-drw.c:321:51: warning: expression result unused [-Wunused-value]
-  321 |                                 NULL /* XftDrawStringUtf8 disabled */utf8str, utf8strlen);
-      |                                                                               ^~~~~~~~~~
-drw.c:415:2: error: use of undeclared identifier 'XGlyphInfo'
-  415 |         XGlyphInfo ext;
-      |         ^~~~~~~~~~
-drw.c:420:6: error: expected ';' after expression
-  420 |         NULL /* XftTextExtentsUtf8 disabled */text, len, &ext);
-      |             ^
-      |             ;
-drw.c:420:52: error: use of undeclared identifier 'ext'
-  420 |         NULL /* XftTextExtentsUtf8 disabled */text, len, &ext);
-      |                                                           ^~~
-fatal error: too many errors emitted, stopping now [-ferror-limit=]
 In file included from dwm.c:44:
 ./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
     6 | typedef struct {} FcPattern;
       |         ^
-3 warnings and 20 errors generated.
+drw.c:415:2: error: use of undeclared identifier 'XGlyphInfo'
+  415 |         XGlyphInfo ext = {0};
+      |         ^~~~~~~~~~
+drw.c:420:65: error: invalid suffix 'text' on integer constant
+  420 |         /* XftTextExtentsUtf8 disabled - setting ext to zero */ (void)0text, len, &ext);
+      |                                                                        ^
+drw.c:420:77: error: use of undeclared identifier 'ext'
+  420 |         /* XftTextExtentsUtf8 disabled - setting ext to zero */ (void)0text, len, &ext);
+      |                                                                                    ^~~
+drw.c:422:8: error: use of undeclared identifier 'ext'; did you mean 'text'?
+  422 |                 *w = ext.xOff;
+      |                      ^~~
+      |                      text
+drw.c:413:41: note: 'text' declared here
+  413 | drw_font_getexts(Fnt *font, const char *text, unsigned int len, unsigned int *w, unsigned int *h)
+      |                                         ^
+drw.c:422:11: error: member reference base type 'const char *' is not a structure or union
+  422 |                 *w = ext.xOff;
+      |                      ~~~^~~~~
+1 warning and 19 errors generated.
 make: *** [Makefile:18: drw.o] Error 1
 make: *** Waiting for unfinished jobs....
 dwm.c:1836:17: warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]

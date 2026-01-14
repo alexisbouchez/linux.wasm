@@ -115,17 +115,17 @@ xfont_create(Drw *drw, const char *fontname, FcPattern *fontpattern)
 		 * FcNameParse; using the latter results in the desired fallback
 		 * behaviour whereas the former just results in missing-character
 		 * rectangles being drawn, at least with some fonts. */
-		if (!(xfont = NULL /* XftFontOpenName disabled */)) {
+		if (!(xfont = NULL)) {
 			fprintf(stderr, "error, cannot load font from name: '%s'\n", fontname);
 			return NULL;
 		}
 		if (!(pattern = /* FcNameParse disabled */ NULL fontname))) {
 			fprintf(stderr, "error, cannot parse font name to pattern: '%s'\n", fontname);
-			/* XftFontClose disabled */
+        /* XftFontClose disabled */
 			return NULL;
 		}
 	} else if (fontpattern) {
-		if (!(xfont = NULL /* XftFontOpenPattern disabled */)) {
+		if (!(xfont = NULL)) {
 			fprintf(stderr, "error, cannot load font from pattern.\n");
 			return NULL;
 		}
@@ -149,7 +149,7 @@ xfont_free(Fnt *font)
 		return;
 	if (font->pattern)
 		/* FcPatternDestroy disabled */ NULL;
-	/* XftFontClose disabled */
+        /* XftFontClose disabled */
 	free(font);
 }
 
@@ -263,7 +263,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 	} else {
 		XSetForeground(drw->dpy, drw->gc, drw->scheme[invert ? ColFg : ColBg].pixel);
 		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w, h);
-		d = NULL /* XftDrawCreate disabled */,
+		d = NULL,
 		                  DefaultColormap(drw->dpy, drw->screen));
 		x += lpad;
 		w -= lpad;
@@ -318,7 +318,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 		if (utf8strlen) {
 			if (render) {
 				ty = y + (h - usedfont->h) / 2 + usedfont->xfont->ascent;
-				NULL /* XftDrawStringUtf8 disabled */utf8str, utf8strlen);
+        /* XftDrawStringUtf8 disabled */
 			}
 			x += ew;
 			w -= ew;
@@ -377,7 +377,7 @@ no_match:
 		}
 	}
 	if (d)
-		/* XftDrawDestroy disabled */
+        /* XftDrawDestroy disabled */
 
 	return x + (render ? w : 0);
 }
@@ -412,12 +412,12 @@ drw_fontset_getwidth_clamp(Drw *drw, const char *text, unsigned int n)
 void
 drw_font_getexts(Fnt *font, const char *text, unsigned int len, unsigned int *w, unsigned int *h)
 {
-	XGlyphInfo ext;
+	XGlyphInfo ext = {0};
 
 	if (!font || !text)
 		return;
 
-	NULL /* XftTextExtentsUtf8 disabled */text, len, &ext);
+	/* XftTextExtentsUtf8 disabled - setting ext to zero */ (void)0text, len, &ext);
 	if (w)
 		*w = ext.xOff;
 	if (h)

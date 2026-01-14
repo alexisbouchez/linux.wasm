@@ -248,17 +248,34 @@ for func in fc_functions:
     # Replace function calls
     content = re.sub(rf'{func}\s*\([^)]*\)', f'/* {func} disabled */ NULL', content)
 
-# Replace Xft functions
-xft_functions = [
-    'XftFontOpenName', 'XftFontClose', 'XftFontOpenPattern',
-    'XftDrawCreate', 'XftDrawDestroy', 'XftDrawStringUtf8', 'XftTextExtentsUtf8'
-]
+# Add XGlyphInfo stub
+if 'XGlyphInfo' not in content:
+    content = 'typedef struct { int x, y, width, height, xOff, yOff; } XGlyphInfo;\n' + content
 
-for func in xft_functions:
-    if func.endswith('Close') or func.endswith('Destroy'):
-        content = re.sub(rf'{func}\s*\([^)]*\);', f'/* {func} disabled */', content)
+# Replace Xft function calls more carefully
+# XftDrawStringUtf8 - comment out entire line
+content = re.sub(r'^\s*XftDrawStringUtf8\([^;]*\);', r'        /* XftDrawStringUtf8 disabled */', content, flags=re.MULTILINE)
+
+# XftTextExtentsUtf8 - replace with stub that sets ext to zero
+content = re.sub(r'XftTextExtentsUtf8\([^)]+\)', r'/* XftTextExtentsUtf8 disabled - setting ext to zero */ (void)0', content)
+content = re.sub(r'XGlyphInfo ext;', r'XGlyphInfo ext = {0};', content)
+
+# Other Xft functions
+xft_replace = {
+    'XftFontOpenName': 'NULL',
+    'XftFontClose': '/* XftFontClose disabled */',
+    'XftFontOpenPattern': 'NULL',
+    'XftDrawCreate': 'NULL',
+    'XftDrawDestroy': '/* XftDrawDestroy disabled */'
+}
+
+for func, replacement in xft_replace.items():
+    if 'disabled' in replacement:
+        # For void functions, comment out the call
+        content = re.sub(rf'^\s*{func}\s*\([^;]*\);', f'        /* {func} disabled */', content, flags=re.MULTILINE)
     else:
-        content = re.sub(rf'{func}\s*\([^)]*\)', f'NULL /* {func} disabled */', content)
+        # For functions returning values
+        content = re.sub(rf'{func}\s*\([^)]+\)', replacement, content)
 
 # Write back
 with open('drw.c', 'w') as f:
