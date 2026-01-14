@@ -367,6 +367,13 @@ with open('drw.c', 'w') as f:
     f.write(content)
 PYEOF
 
+# Fix the DefaultColormap line directly with sed (more reliable)
+sed -i '/d = NULL,/{N;s/d = NULL,\n[[:space:]]*0);/d = NULL;/;}' drw.c 2>/dev/null || {
+    # Fallback: manual fix
+    sed -i '267s/.*/		d = NULL;/' drw.c 2>/dev/null
+    sed -i '268d' drw.c 2>/dev/null
+}
+
 # Add WASM flags to LDFLAGS
 sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["_main"]'\'' --no-entry |' config.mk || echo "LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\"]' --no-entry" >> config.mk
 
