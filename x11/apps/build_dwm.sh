@@ -414,6 +414,17 @@ echo "Compiling dwm..."
 CC=emcc CXX=em++ AR=emar LD=emcc STRIP=llvm-strip make clean 2>/dev/null || true
 CC=emcc CXX=em++ AR=emar LD=emcc STRIP=llvm-strip make -j$(nproc) 2>&1 | tee build.log
 
+# If build failed due to missing symbols, manually link with stubs
+if [ ! -f "dwm" ] && [ ! -f "dwm.wasm" ] && [ -f "x11_stubs.o" ]; then
+    echo "Build failed, manually linking with x11_stubs.o..."
+    CC=emcc CXX=em++ AR=emar LD=emcc STRIP=llvm-strip \
+    emcc -o dwm drw.o dwm.o util.o x11_stubs.o \
+        -s STANDALONE_WASM=1 \
+        -s EXPORTED_FUNCTIONS='["_main"]' \
+        --no-entry \
+        2>&1 | tee -a build.log
+fi
+
 # Check if build succeeded
 if [ -f "dwm" ] || [ -f "dwm.wasm" ]; then
     echo "✅ dwm compiled successfully!"
