@@ -10,13 +10,13 @@ In file included from drw.c:8:
     6 | typedef struct {} FcPattern;
       |         ^
 drw.c:122:51: error: expected ')'
-  122 |                 if (!(pattern = /* FcNameParse disabled */ NULL fontname))) {
+  122 |                 if (!(pattern = NULL /* FcNameParse disabled */ fontname))) {
       |                                                                 ^
 drw.c:122:8: note: to match this '('
-  122 |                 if (!(pattern = /* FcNameParse disabled */ NULL fontname))) {
+  122 |                 if (!(pattern = NULL /* FcNameParse disabled */ fontname))) {
       |                      ^
 drw.c:122:61: error: extraneous ')' after condition, expected a statement
-  122 |                 if (!(pattern = /* FcNameParse disabled */ NULL fontname))) {
+  122 |                 if (!(pattern = NULL /* FcNameParse disabled */ fontname))) {
       |                                                                           ^
 drw.c:267:22: error: extraneous ')' before ';'
   267 |                                   0);

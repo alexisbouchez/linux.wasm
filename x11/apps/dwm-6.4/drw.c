@@ -119,7 +119,7 @@ xfont_create(Drw *drw, const char *fontname, FcPattern *fontpattern)
 			fprintf(stderr, "error, cannot load font from name: '%s'\n", fontname);
 			return NULL;
 		}
-		if (!(pattern = /* FcNameParse disabled */ NULL fontname))) {
+		if (!(pattern = NULL /* FcNameParse disabled */ fontname))) {
 			fprintf(stderr, "error, cannot parse font name to pattern: '%s'\n", fontname);
         /* XftFontClose disabled */
 			return NULL;

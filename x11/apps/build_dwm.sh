@@ -260,8 +260,12 @@ fc_functions = [
 ]
 
 for func in fc_functions:
-    # Replace function calls
-    content = re.sub(rf'{func}\s*\([^)]*\)', f'/* {func} disabled */ NULL', content)
+    # Replace function calls - match full call including parameters
+    if func == 'FcNameParse':
+        # Special handling - pattern = FcNameParse(...)
+        content = re.sub(rf'pattern\s*=\s*FcNameParse\s*\([^)]+\)', r'pattern = NULL /* FcNameParse disabled */', content)
+    else:
+        content = re.sub(rf'{func}\s*\([^)]*\)', f'/* {func} disabled */ NULL', content)
 
 # Add XGlyphInfo stub to drw.h
 with open('drw.h', 'r') as f:
@@ -296,13 +300,22 @@ content = re.sub(
 content = re.sub(r'DefaultColormap\([^)]+\)', r'0', content)
 
 # Fix the problematic line: "d = NULL,\n                  0);"
-# Match the entire statement
+# Match the entire statement - be more flexible with whitespace
 content = re.sub(
     r'd\s*=\s*NULL\s*,\s*\n\s*0\s*\)\s*;',
     r'd = NULL;',
     content,
     flags=re.MULTILINE
 )
+# Also try to find and fix the specific problematic line manually
+lines = content.split('\n')
+for i, line in enumerate(lines):
+    if 'd = NULL,' in line and i + 1 < len(lines):
+        # Check next line
+        if '0);' in lines[i + 1] or '0)' in lines[i + 1]:
+            lines[i] = '		d = NULL;'
+            lines[i + 1] = ''  # Remove the next line
+content = '\n'.join(lines)
 
 # Fix xfont->ascent access - xfont is void*, replace with constant
 content = re.sub(r'->xfont->ascent', r'->h / 2', content)  # Use font height instead
