@@ -37,7 +37,7 @@ void XSetWMHints(Display *dpy, Window w, void *hints) {}
 Pixmap XCreatePixmap(Display *dpy, Drawable d, unsigned int width, unsigned int height, unsigned int depth) { return 1; }
 int XFreePixmap(Display *dpy, Pixmap pixmap) { return 0; }
 int XFreeGC(Display *dpy, GC gc) { return 0; }
-void XFree(void *data) {}
+int XFree(void *data) { return 0; }
 Cursor XCreateFontCursor(Display *dpy, unsigned int shape) { return 1; }
 int XFreeCursor(Display *dpy, Cursor cursor) { return 0; }
 int XDefineCursor(Display *dpy, Window w, Cursor cursor) { return 0; }
@@ -50,3 +50,23 @@ int XQueryTree(Display *dpy, Window w, Window *root_return, Window *parent_retur
 int XGetWindowAttributes(Display *dpy, Window w, void *window_attributes_return) { return 0; }
 int XGetTransientForHint(Display *dpy, Window w, Window *prop_window_return) { return 0; }
 int XUngrabKey(Display *dpy, int keycode, unsigned int modifiers, Window grab_window) { return 0; }
+int XUngrabButton(Display *dpy, unsigned int button, unsigned int modifiers, Window grab_window) { return 0; }
+int XSetClassHint(Display *dpy, Window w, void *hints) { return 0; }
+int XKeysymToKeycode(Display *dpy, unsigned long keysym) { return 0; }
+int XGrabKey(Display *dpy, int keycode, unsigned int modifiers, Window grab_window, int owner_events, int pointer_mode, int keyboard_mode) { return 0; }
+int XSetWindowBorder(Display *dpy, Window w, unsigned long border_pixel) { return 0; }
+int XGetWindowProperty(Display *dpy, Window w, unsigned long property, long long_offset, long long_length, int delete, unsigned long req_type, unsigned long *actual_type_return, int *actual_format_return, unsigned long *nitems_return, unsigned long *bytes_after_return, unsigned char **prop_return) { return 0; }
+int XGetClassHint(Display *dpy, Window w, void *hints_return) { return 0; }
+int XRaiseWindow(Display *dpy, Window w) { return 0; }
+int XMoveResizeWindow(Display *dpy, Window w, int x, int y, unsigned int width, unsigned int height) { return 0; }
+int XGrabServer(Display *dpy) { return 0; }
+int XUngrabServer(Display *dpy) { return 0; }
+int XQueryPointer(Display *dpy, Window w, Window *root_return, Window *child_return, int *root_x_return, int *root_y_return, int *win_x_return, int *win_y_return, unsigned int *mask_return) { return 0; }
+int XGetTextProperty(Display *dpy, Window w, void *text_prop_return, unsigned long property) { return 0; }
+int XmbTextPropertyToTextList(Display *dpy, void *text_prop, char ***list_return, int *count_return) { return 0; }
+void XFreeStringList(char **list) {}
+void *XGetModifierMapping(Display *dpy) { return NULL; }
+int XFreeModifierMapping(void *modmap) { return 0; }
+// Fix signature mismatches
+int XFree(void *data) { return 0; }
+int XCopyArea(Display *dpy, Drawable src, Drawable dst, GC gc, int src_x, int src_y, unsigned int width, unsigned int height, int dst_x, int dst_y) { return 0; }
