@@ -382,16 +382,7 @@ sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["
 # Don't modify Makefile - we'll link manually if needed
 # The Makefile modification was causing duplicate linking
 
-# Build
-echo "Compiling dwm..."
-if [ ! -d "dwm-6.4" ]; then
-    echo "Error: dwm-6.4 directory not found"
-    exit 1
-fi
-
-cd dwm-6.4
-
-# Compile X11 stubs now that we're in dwm-6.4
+# Compile X11 stubs (we're already in dwm-6.4 directory)
 echo "Compiling X11 stubs..."
 if [ -f "../include/X11/x11_stubs.c" ]; then
     emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>&1 || {
@@ -401,6 +392,8 @@ else
     echo "Warning: x11_stubs.c not found"
 fi
 
+# Build
+echo "Compiling dwm..."
 CC=emcc CXX=em++ AR=emar LD=emcc STRIP=llvm-strip make clean 2>/dev/null || true
 CC=emcc CXX=em++ AR=emar LD=emcc STRIP=llvm-strip make -j$(nproc) 2>&1 | tee build.log
 
