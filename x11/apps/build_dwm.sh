@@ -432,12 +432,16 @@ if [ ! -f "dwm" ] && [ ! -f "dwm.wasm" ]; then
             2>&1 | tee -a build.log
     else
         echo "x11_stubs.o not found, trying to compile it..."
-        emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c && \
-        emcc -o dwm drw.o dwm.o util.o x11_stubs.o \
-            -s STANDALONE_WASM=1 \
-            -s EXPORTED_FUNCTIONS='["_main"]' \
-            --no-entry \
-            2>&1 | tee -a build.log
+        if emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>&1 | tee -a build.log; then
+            echo "x11_stubs.o compiled, linking..."
+            emcc -o dwm drw.o dwm.o util.o x11_stubs.o \
+                -s STANDALONE_WASM=1 \
+                -s EXPORTED_FUNCTIONS='["_main"]' \
+                --no-entry \
+                2>&1 | tee -a build.log
+        else
+            echo "Failed to compile x11_stubs.o"
+        fi
     fi
 fi
 
