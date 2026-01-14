@@ -386,13 +386,13 @@ sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["
 # Add x11_stubs.o to the link command
 # Modify Makefile to include x11_stubs.o
 if [ -f x11_stubs.o ]; then
-    # Find the link command and add x11_stubs.o
-    # Pattern: $(CC) $(LDFLAGS) -o $@ $(OBJ)
-    sed -i 's|\$(CC) \$(LDFLAGS) -o \$\@ \$(OBJ)|\$(CC) \$(LDFLAGS) -o \$\@ \$(OBJ) x11_stubs.o|' Makefile
-    # Also try: emcc ... -o dwm drw.o dwm.o util.o
-    sed -i 's|\(emcc.*-o dwm.*\)drw\.o dwm\.o util\.o|\1drw.o dwm.o util.o x11_stubs.o|' Makefile 2>/dev/null || true
-    # Direct pattern match
-    sed -i 's|drw\.o dwm\.o util\.o|drw.o dwm.o util.o x11_stubs.o|' Makefile
+    # Add x11_stubs.o to OBJ variable
+    sed -i 's|^OBJ =|OBJ = x11_stubs.o |' Makefile 2>/dev/null || sed -i '/^OBJ =/s/$/ x11_stubs.o/' Makefile 2>/dev/null || {
+        # If OBJ doesn't exist, add it
+        echo "OBJ += x11_stubs.o" >> Makefile
+    }
+    # Also modify the link line directly
+    sed -i 's|\${CC} -o \$\@ \${OBJ}|\${CC} -o \$\@ \${OBJ} x11_stubs.o|' Makefile 2>/dev/null || true
 fi
 
 # Build
