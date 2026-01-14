@@ -57,6 +57,13 @@
     <button onclick="clearTerminal()">Clear</button>
     
     <div id="terminal"></div>
+    
+    <!-- X11 Display -->
+    <div style="margin-top: 10px; padding: 10px; background: #252526; border-radius: 3px;">
+        <div style="color: #4ec9b0; margin-bottom: 5px;">X11 Display:</div>
+        <canvas id="x11-canvas" style="width: 100%; max-width: 1920px; height: 600px; background: #000; border: 1px solid #333;"></canvas>
+    </div>
+    
     <div style="margin-top: 10px; padding: 10px; background: #252526; border-radius: 3px;">
         <div style="color: #4ec9b0; margin-bottom: 5px;">Shell Input (type commands here):</div>
         <input type="text" id="shellInput" style="width: 100%; padding: 5px; background: #1e1e1e; color: #d4d4d4; border: 1px solid #333; border-radius: 3px;" 
@@ -66,10 +73,12 @@
 
     <script type="module">
         import LinuxWasmHost from './wasm_host.js';
+        import X11Server from './x11/x11_server.js';
 
         let host = null;
         let kernelInstance = null;
         let shellInput = '';
+        let x11Server = null;
 
         window.loadKernel = async function() {
             const terminal = document.getElementById('terminal');
@@ -146,6 +155,20 @@
                     }
                 } catch (err) {
                     log('Alpine rootfs not available, using basic filesystem', 'log');
+                }
+                
+                // Initialize X11 server
+                try {
+                    x11Server = new X11Server('x11-canvas');
+                    log('X11 server initialized!', 'success');
+                    log('Display: ' + x11Server.getDisplayString(), 'log');
+                    
+                    // Set DISPLAY environment variable
+                    if (host.shellEnv) {
+                        host.shellEnv.DISPLAY = x11Server.getDisplayString();
+                    }
+                } catch (err) {
+                    log('X11 server initialization failed: ' + err.message, 'error');
                 }
                 
                 if (!kernelInstance) {
