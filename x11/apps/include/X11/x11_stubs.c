@@ -33,7 +33,7 @@ unsigned long XWhitePixel(Display *dpy, int screen) { return 0xffffff; }
 int XStoreName(Display *dpy, Window w, const char *window_name) { return 0; }
 int XSetWMProtocols(Display *dpy, Window w, void *protocols, int count) { return 0; }
 void *XSetErrorHandler(void *handler) { return NULL; }
-void XSetWMHints(Display *dpy, Window w, void *hints) {}
+int XSetWMHints(Display *dpy, Window w, void *hints) { return 0; }
 Pixmap XCreatePixmap(Display *dpy, Drawable d, unsigned int width, unsigned int height, unsigned int depth) { return 1; }
 int XFreePixmap(Display *dpy, Pixmap pixmap) { return 0; }
 int XFreeGC(Display *dpy, GC gc) { return 0; }
@@ -67,3 +67,16 @@ int XmbTextPropertyToTextList(Display *dpy, void *text_prop, char ***list_return
 void XFreeStringList(char **list) {}
 void *XGetModifierMapping(Display *dpy) { return NULL; }
 int XFreeModifierMapping(void *modmap) { return 0; }
+int XFreeModifiermap(void *modmap) { return 0; } // Typo in dwm source
+int XGrabButton(Display *dpy, unsigned int button, unsigned int modifiers, Window grab_window, int owner_events, unsigned int event_mask, int pointer_mode, int keyboard_mode, Window confine_to, Cursor cursor) { return 0; }
+int XGetWMHints(Display *dpy, Window w, void *hints_return) { return 0; }
+int XGetWMNormalHints(Display *dpy, Window w, void *hints_return, long *supplied_return) { return 0; }
+int XCheckMaskEvent(Display *dpy, long event_mask, void *event_return) { return 0; }
+int XSetCloseDownMode(Display *dpy, int close_mode) { return 0; }
+int XKillClient(Display *dpy, unsigned long resource) { return 0; }
+int XGetWMProtocols(Display *dpy, Window w, void **protocols_return, int *count_return) { return 0; }
+int XMoveWindow(Display *dpy, Window w, int x, int y) { return 0; }
+int XGrabPointer(Display *dpy, Window grab_window, int owner_events, unsigned int event_mask, int pointer_mode, int keyboard_mode, Window confine_to, Cursor cursor, unsigned int time) { return 0; }
+unsigned long XMaskEvent(Display *dpy, long event_mask, void *event_return) { return 0; }
+int XUngrabPointer(Display *dpy, unsigned int time) { return 0; }
+int XWarpPointer(Display *dpy, Window src_w, Window dest_w, int src_x, int src_y, unsigned int src_width, unsigned int src_height, int dest_x, int dest_y) { return 0; }
