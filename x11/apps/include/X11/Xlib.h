@@ -11,9 +11,7 @@ typedef unsigned long GC;
 typedef unsigned long Visual;
 typedef unsigned long XID;
 typedef struct _XDisplay Display;
-#ifndef Drawable
-typedef unsigned long Drawable;
-#endif
+// Drawable is defined by Emscripten's Xlib.h
 typedef struct { int x, y; } XPoint;
 typedef struct { int x, y, width, height; } XRectangle;
 
