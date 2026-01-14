@@ -118,9 +118,16 @@
                     try {
                         const module = await WebAssembly.compile(wasmBytes);
                         kernelInstance = await host.init(module);
-                        log('Kernel WASM module loaded and initialized!', 'success');
+                        if (kernelInstance && kernelInstance.exports) {
+                            log('Kernel WASM module loaded and initialized!', 'success');
+                            log('Available exports: ' + Object.keys(kernelInstance.exports).join(', '), 'log');
+                        } else {
+                            log('Kernel module loaded but no exports found', 'log');
+                            kernelInstance = null;
+                        }
                     } catch (error) {
                         log('Error compiling/initializing kernel: ' + error.message, 'error');
+                        log('Stack: ' + (error.stack || 'N/A'), 'log');
                         kernelInstance = null;
                     }
                 } else {

@@ -261,13 +261,28 @@ class LinuxWasmHost {
             }
         };
 
-        const result = await WebAssembly.instantiate(wasmModule, imports);
-        this.instance = result.instance;
-        this.memory = result.instance.exports.memory || imports.env.memory;
+        let result;
+        try {
+            result = await WebAssembly.instantiate(wasmModule, imports);
+        } catch (error) {
+            console.error('Error instantiating WASM module:', error);
+            throw error;
+        }
         
-        // Initialize kernel
-        if (this.instance && this.instance.exports && this.instance.exports.wasm_kernel_init) {
-            this.instance.exports.wasm_kernel_init();
+        // Handle both {instance, module} and direct instance return
+        this.instance = result.instance || result;
+        if (!this.instance) {
+            throw new Error('Failed to instantiate WASM module: no instance returned');
+        }
+        
+        // Get memory from instance exports or imports
+        this.memory = (this.instance.exports && this.instance.exports.memory) || imports.env.memory;
+        
+        // Initialize kernel - check if instance and exports exist
+        if (this.instance && this.instance.exports) {
+            if (this.instance.exports.wasm_kernel_init) {
+                this.instance.exports.wasm_kernel_init();
+            }
         }
         
         return this.instance;
