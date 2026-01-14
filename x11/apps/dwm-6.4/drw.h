@@ -1,5 +1,15 @@
 /* See LICENSE file for copyright and license details. */
 
+
+// WASM stubs for Xft
+typedef struct { int ascent; int descent; } XftFont;
+typedef struct {} FcPattern;
+typedef struct { unsigned long pixel; } XftColor;
+typedef unsigned char FcChar8;
+typedef int FcResult;
+#define FcResultMatch 0
+#define FcResultNoMatch 1
+
 typedef struct {
 	Cursor cursor;
 } Cur;
@@ -7,8 +17,8 @@ typedef struct {
 typedef struct Fnt {
 	Display *dpy;
 	unsigned int h;
-	XftFont *xfont;
-	FcPattern *pattern;
+	void *xfont;
+	void *pattern;
 	struct Fnt *next;
 } Fnt;
 

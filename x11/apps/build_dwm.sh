@@ -163,6 +163,45 @@ sed -i 's/#include <X11\/Xft\/Xft.h>/\/\/ #include <X11\/Xft\/Xft.h> \/\/ Disabl
 sed -i 's/#include <X11\/Xft\/Xft.h>/\/\/ #include <X11\/Xft\/Xft.h> \/\/ Disabled for WASM/g' dwm.c 2>/dev/null || true
 sed -i 's/#include <X11\/extensions\/Xinerama.h>/\/\/ #include <X11\/extensions\/Xinerama.h> \/\/ Disabled for WASM/g' dwm.c 2>/dev/null || true
 sed -i 's/#include <fontconfig\/fontconfig.h>/\/\/ #include <fontconfig\/fontconfig.h> \/\/ Disabled for WASM/g' drw.c 2>/dev/null || true
+sed -i 's/#include <X11\/Xft\/Xft.h>/\/\/ #include <X11\/Xft\/Xft.h> \/\/ Disabled for WASM/g' drw.h 2>/dev/null || true
+sed -i 's/#include <fontconfig\/fontconfig.h>/\/\/ #include <fontconfig\/fontconfig.h> \/\/ Disabled for WASM/g' drw.h 2>/dev/null || true
+
+# Add stub types to drw.h
+python3 << 'PYEOF'
+import re
+
+# Read drw.h
+with open('drw.h', 'r') as f:
+    content = f.read()
+
+# Add stub types before struct definitions
+stub_types = '''
+// WASM stubs for Xft
+typedef struct { int ascent; int descent; } XftFont;
+typedef struct {} FcPattern;
+typedef struct { unsigned long pixel; } XftColor;
+typedef unsigned char FcChar8;
+typedef int FcResult;
+#define FcResultMatch 0
+#define FcResultNoMatch 1
+'''
+
+# Insert after includes
+content = re.sub(r'(//.*Xft.*\n)', r'\1' + stub_types, content, count=1)
+if stub_types not in content:
+    # Find first struct or typedef and insert before
+    match = re.search(r'(typedef struct|struct \w+)', content)
+    if match:
+        content = content[:match.start()] + stub_types + '\n' + content[match.start():]
+
+# Replace XftFont *xfont with void *xfont
+content = re.sub(r'XftFont \*xfont', 'void *xfont', content)
+content = re.sub(r'FcPattern \*pattern', 'void *pattern', content)
+
+# Write back
+with open('drw.h', 'w') as f:
+    f.write(content)
+PYEOF
 
 # Disable Xft functions in drw.c - replace with stubs
 python3 << 'PYEOF'
