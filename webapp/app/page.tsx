@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { X11Server } from './x11_server'
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -17,20 +18,7 @@ export default function Home() {
         const ctx = canvas.getContext('2d')
         if (!ctx) return
         
-        // Dynamically import X11 server from public directory
-        const script = document.createElement('script')
-        script.src = '/server/x11_server.js'
-        script.type = 'module'
-        
-        await new Promise<void>((resolve, reject) => {
-          script.onload = () => resolve()
-          script.onerror = () => reject(new Error('Failed to load x11_server.js'))
-          document.head.appendChild(script)
-        })
-        
-        // Use dynamic import after script is loaded
-        const module = await import('/server/x11_server.js?t=' + Date.now())
-        const { X11Server } = module
+        // Initialize X11 server
         const server = new X11Server(canvas, ctx)
         await server.init()
         

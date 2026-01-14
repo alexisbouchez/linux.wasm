@@ -1,5 +1,10 @@
 export class X11Server {
-  constructor(canvas, ctx) {
+  canvas: HTMLCanvasElement
+  ctx: CanvasRenderingContext2D
+  display: { width: number; height: number; root: number } | null
+  windows: Map<number, { id: number; x: number; y: number; width: number; height: number; background: string }>
+
+  constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
     this.canvas = canvas
     this.ctx = ctx
     this.display = null
