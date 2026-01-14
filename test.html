@@ -229,7 +229,7 @@
             input.value = '';
             
             if (host && host.shellActive) {
-                log('$ ' + command, 'log');
+                // Don't log command here - shell will handle output
                 host.handleShellInput(command);
             } else {
                 log('Shell not active. Start kernel first!', 'error');
