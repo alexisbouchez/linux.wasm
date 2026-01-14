@@ -68,8 +68,11 @@ void XFreeStringList(char **list) {}
 void *XGetModifierMapping(Display *dpy) { return NULL; }
 int XFreeModifierMapping(void *modmap) { return 0; }
 int XFreeModifiermap(void *modmap) { return 0; } // Typo in dwm source
+int XKeycodeToKeysym(Display *dpy, unsigned int keycode, int index) { return 0; }
+int XAllowEvents(Display *dpy, int event_mode, unsigned int time) { return 0; }
+int XRefreshKeyboardMapping(void *event_struct) { return 0; }
 int XGrabButton(Display *dpy, unsigned int button, unsigned int modifiers, Window grab_window, int owner_events, unsigned int event_mask, int pointer_mode, int keyboard_mode, Window confine_to, Cursor cursor) { return 0; }
-int XGetWMHints(Display *dpy, Window w, void *hints_return) { return 0; }
+int XGetWMHints(Display *dpy, Window w, void *hints_return) { return 0; } // Note: dwm expects 2 params but standard is 3
 int XGetWMNormalHints(Display *dpy, Window w, void *hints_return, long *supplied_return) { return 0; }
 int XCheckMaskEvent(Display *dpy, long event_mask, void *event_return) { return 0; }
 int XSetCloseDownMode(Display *dpy, int close_mode) { return 0; }

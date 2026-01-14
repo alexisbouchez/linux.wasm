@@ -390,31 +390,8 @@ fi
 # Add WASM flags and X11 stubs to LDFLAGS
 sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["_main"]'\'' --no-entry |' config.mk || echo "LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\"]' --no-entry" >> config.mk
 
-# Add x11_stubs.o to the link command
-# Modify Makefile to include x11_stubs.o
-if [ -f x11_stubs.o ]; then
-    # Directly modify the link line - find the line with ${CC} -o $@ ${OBJ}
-    # Replace it to include x11_stubs.o
-    python3 << 'PYEOF'
-import re
-with open('Makefile', 'r') as f:
-    content = f.read()
-# Replace the link command
-content = re.sub(
-    r'(\$\{CC\}.*-o \$\@.*\$\{OBJ\})',
-    r'\1 x11_stubs.o',
-    content
-)
-# Also handle if LDFLAGS comes after
-content = re.sub(
-    r'(\$\{CC\}.*-o \$\@.*\$\{OBJ\}.*\$\{LDFLAGS\})',
-    r'\1 x11_stubs.o',
-    content
-)
-with open('Makefile', 'w') as f:
-    f.write(content)
-PYEOF
-fi
+# Don't modify Makefile - we'll link manually if needed
+# The Makefile modification was causing duplicate linking
 
 # Build
 echo "Compiling dwm..."
