@@ -386,10 +386,27 @@ sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["
 # Add x11_stubs.o to the link command
 # Modify Makefile to include x11_stubs.o
 if [ -f x11_stubs.o ]; then
-    # Modify the link line directly - OBJ is ${SRC:.c=.o}, so append x11_stubs.o
-    sed -i 's|\${CC} -o \$\@ \${OBJ} \${LDFLAGS}|\${CC} -o \$\@ \${OBJ} x11_stubs.o \${LDFLAGS}|' Makefile
-    # Also try the other order
-    sed -i 's|\${CC} -o \$\@ \${OBJ}|\${CC} -o \$\@ \${OBJ} x11_stubs.o|' Makefile 2>/dev/null || true
+    # Directly modify the link line - find the line with ${CC} -o $@ ${OBJ}
+    # Replace it to include x11_stubs.o
+    python3 << 'PYEOF'
+import re
+with open('Makefile', 'r') as f:
+    content = f.read()
+# Replace the link command
+content = re.sub(
+    r'(\$\{CC\}.*-o \$\@.*\$\{OBJ\})',
+    r'\1 x11_stubs.o',
+    content
+)
+# Also handle if LDFLAGS comes after
+content = re.sub(
+    r'(\$\{CC\}.*-o \$\@.*\$\{OBJ\}.*\$\{LDFLAGS\})',
+    r'\1 x11_stubs.o',
+    content
+)
+with open('Makefile', 'w') as f:
+    f.write(content)
+PYEOF
 fi
 
 # Build
