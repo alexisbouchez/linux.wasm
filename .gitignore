@@ -20,3 +20,6 @@ dist/
 dmenu-*/
 dwm-*/
 st-*/
+webapp/.next/
+webapp/node_modules/
+webapp/out/
