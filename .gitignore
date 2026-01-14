@@ -1,0 +1,9 @@
+*.log
+*.pyc
+*.tmp
+*~
+.DS_Store
+__pycache__/
+dmenu-*/
+dwm-*/
+st-*/
