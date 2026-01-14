@@ -50,7 +50,7 @@ export default function Home() {
               env: server.getWasmImports()
             })
             dmenuModuleRef.current = dmenuModule
-            setStatus('ready (Alt+P for dmenu)')
+            setStatus('ready (Option+P for dmenu)')
           } else {
             setStatus('ready (dmenu not found)')
           }
@@ -66,10 +66,11 @@ export default function Home() {
     init()
   }, [])
 
-  // Keyboard shortcut for dmenu (Alt+P)
+  // Keyboard shortcut for dmenu (Alt/Option+P)
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.altKey && e.key === 'p') {
+      // Alt on Windows/Linux, Option on macOS
+      if ((e.altKey || e.metaKey) && e.key === 'p') {
         e.preventDefault()
         if (dmenuModuleRef.current && serverRef.current) {
           console.log('Opening dmenu...')
@@ -94,7 +95,7 @@ export default function Home() {
         <strong>Status:</strong> {status}
       </div>
       <div style={{ marginBottom: '10px', fontSize: '12px', color: '#666' }}>
-        Press <kbd>Alt+P</kbd> to open dmenu
+        Press <kbd>Option+P</kbd> (macOS) or <kbd>Alt+P</kbd> (Windows/Linux) to open dmenu
       </div>
       <canvas
         ref={canvasRef}
