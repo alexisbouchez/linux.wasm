@@ -12,7 +12,7 @@ if [ ! -d "emsdk" ]; then
 fi
 
 # Setup Emscripten - use . instead of source for compatibility
-echo "[1/4] Setting up Emscripten..."
+echo "[1/5] Setting up Emscripten..."
 if [ -f "emsdk/emsdk_env.sh" ]; then
     . emsdk/emsdk_env.sh >/dev/null 2>&1 || true
     export PATH="$PATH:$(pwd)/emsdk:$(pwd)/emsdk/upstream/emscripten"
@@ -22,21 +22,43 @@ else
 fi
 
 # Build X11 apps
-echo "[2/4] Building X11 applications..."
+echo "[2/5] Building X11 applications..."
 cd x11/apps
+
+# Build dwm
 if [ ! -f "packages/dwm.wasm" ]; then
     if [ -f "build_dwm.sh" ]; then
-        ./build_dwm.sh || echo "Warning: dwm build failed, continuing..."
-    else
-        echo "Warning: build_dwm.sh not found, skipping..."
+        echo "  Building dwm..."
+        ./build_dwm.sh || echo "  Warning: dwm build failed, continuing..."
     fi
 else
-    echo "✓ dwm.wasm already exists"
+    echo "  ✓ dwm.wasm already exists"
 fi
+
+# Build dmenu
+if [ ! -f "packages/dmenu.wasm" ]; then
+    if [ -f "build_dmenu.sh" ]; then
+        echo "  Building dmenu..."
+        ./build_dmenu.sh || echo "  Warning: dmenu build failed, continuing..."
+    fi
+else
+    echo "  ✓ dmenu.wasm already exists"
+fi
+
+# Build st
+if [ ! -f "packages/st.wasm" ]; then
+    if [ -f "build_st.sh" ]; then
+        echo "  Building st..."
+        ./build_st.sh || echo "  Warning: st build failed, continuing..."
+    fi
+else
+    echo "  ✓ st.wasm already exists"
+fi
+
 cd ../..
 
 # Setup webapp
-echo "[3/4] Setting up webapp..."
+echo "[3/5] Setting up webapp..."
 cd webapp
 if [ ! -d "node_modules" ]; then
     npm install || {
@@ -48,20 +70,26 @@ else
 fi
 cd ..
 
-# Copy dwm.wasm to webapp
-echo "[4/4] Copying assets..."
+# Copy WASM files to webapp
+echo "[4/5] Copying assets..."
 mkdir -p webapp/public
 if [ -f "x11/apps/packages/dwm.wasm" ]; then
     cp x11/apps/packages/dwm.wasm webapp/public/ 2>/dev/null || true
-    echo "✓ dwm.wasm copied"
-else
-    echo "Warning: dwm.wasm not found"
+    echo "  ✓ dwm.wasm copied"
+fi
+if [ -f "x11/apps/packages/dmenu.wasm" ]; then
+    cp x11/apps/packages/dmenu.wasm webapp/public/ 2>/dev/null || true
+    echo "  ✓ dmenu.wasm copied"
+fi
+if [ -f "x11/apps/packages/st.wasm" ]; then
+    cp x11/apps/packages/st.wasm webapp/public/ 2>/dev/null || true
+    echo "  ✓ st.wasm copied"
 fi
 
 # Ensure X11 server exists
-mkdir -p webapp/public/server
-if [ ! -f "webapp/public/server/x11_server.js" ]; then
-    echo "Warning: x11_server.js not found"
+echo "[5/5] Checking X11 server..."
+if [ ! -f "webapp/app/x11_server.ts" ]; then
+    echo "  Warning: x11_server.ts not found"
 fi
 
 echo ""
