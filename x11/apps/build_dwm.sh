@@ -412,7 +412,9 @@ if [ ! -f "dwm" ] && [ ! -f "dwm.wasm" ]; then
         if emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>&1 | tee -a build.log; then
             echo "x11_stubs.o compiled, linking..."
             # Link directly with wasm-ld to avoid Emscripten's automatic flags
-            if wasm-ld drw.o dwm.o util.o x11_stubs.o \
+            # Use full path to wasm-ld from Emscripten
+            WASM_LD=$(which wasm-ld || echo "$(dirname $(which emcc))/wasm-ld")
+            if "$WASM_LD" drw.o dwm.o util.o x11_stubs.o \
                 -o dwm.wasm \
                 --no-entry \
                 --export-all \
