@@ -134,11 +134,14 @@ LDLIBS=`echo "$LDLIBS" | xargs -n1 | sort | uniq | xargs`
 echo "Trying libraries: $LDLIBS"
 # "lib1 lib2 lib3" -> "-llib1 -llib2 -llib3"
 l_list=`echo " $LDLIBS $CONFIG_EXTRA_LDLIBS " | sed -e 's: \([^- ][^ ]*\): -l\1:g' -e 's/^ *//'`
-test x"$l_list" != x"" && l_list="$START_GROUP $l_list $END_GROUP"
+	emcc $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry -o $EXE.wasm $START_GROUP $O_FILES $A_FILES $END_GROUP \
 try emcc $CFLAGS $LDFLAGS -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='["_main"]' --no-entry \
 	-o $EXE \
-	$START_GROUP $O_FILES $A_FILES $END_GROUP \
+	$SORT_COMMON \
+	$SORT_SECTION \
+	$GC_SECTIONS \
 	$l_list \
+		$l_list \	$l_list \ mv $EXE.wasm $EXE
 || {
     echo "Failed: $l_list"
     cat $EXE.out
