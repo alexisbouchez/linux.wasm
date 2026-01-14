@@ -102,6 +102,18 @@
                     log(text, 'log');
                 });
                 
+                // Load Alpine Linux rootfs if available
+                try {
+                    const alpineResponse = await fetch('alpine/alpine_rootfs.json');
+                    if (alpineResponse.ok) {
+                        const alpineRootfs = await alpineResponse.json();
+                        await host.integrateAlpineRootfs(alpineRootfs);
+                        log('Alpine Linux rootfs integrated!', 'success');
+                    }
+                } catch (err) {
+                    log('Alpine rootfs not available, using basic filesystem', 'log');
+                }
+                
                 if (!kernelInstance) {
                     // If WASM module wasn't loaded, still initialize host
                     log('Host initialized (mock mode - shell will work)', 'success');

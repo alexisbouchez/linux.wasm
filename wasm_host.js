@@ -18,7 +18,97 @@ class LinuxWasmHost {
         this.processes = new Map();   // Running processes
         this.programs = new Map();    // Loaded WASM programs
         this.stdinBuffer = [];       // Input buffer for stdin
+        this.alpineIntegrated = false; // Alpine Linux integration flag
         this.setupFilesystem();
+    }
+
+    /**
+     * Integrate Alpine Linux rootfs into virtual filesystem
+     */
+    async integrateAlpineRootfs(alpineRootfsData) {
+        if (this.alpineIntegrated) {
+            console.log('[Alpine] Already integrated');
+            return;
+        }
+        
+        console.log('[Alpine] Integrating Alpine Linux rootfs...');
+        
+        // Parse Alpine rootfs data (JSON or structured data)
+        if (typeof alpineRootfsData === 'string') {
+            alpineRootfsData = JSON.parse(alpineRootfsData);
+        }
+        
+        let count = 0;
+        for (const item of alpineRootfsData) {
+            const path = item.path.startsWith('/') ? item.path : '/' + item.path;
+            
+            if (item.type === 'directory') {
+                // Create directory
+                const parentPath = this.getParentPath(path);
+                const parent = this.filesystem.get(parentPath);
+                if (parent && parent.type === 'directory') {
+                    parent.entries.add(this.getBaseName(path));
+                }
+                
+                this.filesystem.set(path, {
+                    type: 'directory',
+                    mode: item.mode || 0o755,
+                    entries: new Set(item.entries || [])
+                });
+                count++;
+            } else if (item.type === 'file') {
+                // Create file
+                const parentPath = this.getParentPath(path);
+                const parent = this.filesystem.get(parentPath);
+                if (parent && parent.type === 'directory') {
+                    parent.entries.add(this.getBaseName(path));
+                }
+                
+                this.filesystem.set(path, {
+                    type: 'file',
+                    mode: item.mode || 0o644,
+                    content: item.content || '',
+                    size: item.size || 0,
+                    isBinary: item.isBinary || false
+                });
+                count++;
+            } else if (item.type === 'symlink') {
+                // Create symlink
+                const parentPath = this.getParentPath(path);
+                const parent = this.filesystem.get(parentPath);
+                if (parent && parent.type === 'directory') {
+                    parent.entries.add(this.getBaseName(path));
+                }
+                
+                this.filesystem.set(path, {
+                    type: 'symlink',
+                    target: item.target,
+                    mode: 0o777
+                });
+                count++;
+            }
+        }
+        
+        this.alpineIntegrated = true;
+        console.log(`[Alpine] Integrated ${count} files/directories from Alpine Linux`);
+    }
+
+    /**
+     * Get parent directory path
+     */
+    getParentPath(path) {
+        const parts = path.split('/').filter(p => p);
+        if (parts.length <= 1) return '/';
+        parts.pop();
+        return '/' + parts.join('/');
+    }
+
+    /**
+     * Get base name from path
+     */
+    getBaseName(path) {
+        const parts = path.split('/').filter(p => p);
+        return parts[parts.length - 1] || '';
     }
 
     /**
