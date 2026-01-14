@@ -160,6 +160,7 @@
                 // Initialize X11 server
                 try {
                     x11Server = new X11Server('x11-canvas');
+                    host.x11Server = x11Server; // Store in host for syscall access
                     log('X11 server initialized!', 'success');
                     log('Display: ' + x11Server.getDisplayString(), 'log');
                     
@@ -167,6 +168,22 @@
                     if (host.shellEnv) {
                         host.shellEnv.DISPLAY = x11Server.getDisplayString();
                     }
+                    
+                    // Create a test window
+                    setTimeout(() => {
+                        try {
+                            const testWindow = x11Server.createWindow(
+                                null, 100, 100, 400, 300, 24, 0, 1, {}
+                            );
+                            x11Server.mapWindow(testWindow);
+                            x11Server.fillRectangle(testWindow, 10, 10, 380, 280, 0x333333);
+                            x11Server.drawText(testWindow, 20, 30, 'X11 Server Ready!', '16px monospace', 0x00ff00);
+                            x11Server.render();
+                            log('Test window created!', 'success');
+                        } catch (e) {
+                            log('Failed to create test window: ' + e.message, 'error');
+                        }
+                    }, 500);
                 } catch (err) {
                     log('X11 server initialization failed: ' + err.message, 'error');
                 }

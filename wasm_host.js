@@ -21,6 +21,7 @@ class LinuxWasmHost {
         this.alpineIntegrated = false; // Alpine Linux integration flag
         this.busyboxWasmModule = null; // BusyBox WASM module
         this.busyboxWasmInstance = null; // BusyBox WASM instance
+        this.x11Server = null; // X11 display server
         this.setupFilesystem();
     }
 
