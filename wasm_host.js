@@ -217,8 +217,34 @@ class LinuxWasmHost {
      * Initialize the WASM module
      */
     async init(wasmModule) {
+        // Create memory first if not provided by module
+        let memory = null;
+        try {
+            // Try to get memory from module exports
+            const tempInstance = await WebAssembly.instantiate(wasmModule, {
+                env: {
+                    wasm_host_print: () => {},
+                    wasm_host_exit: () => {},
+                    wasm_host_syscall: () => 0,
+                    wasm_host_malloc: () => 0,
+                    wasm_host_free: () => {}
+                }
+            });
+            if (tempInstance.instance.exports.memory) {
+                memory = tempInstance.instance.exports.memory;
+            }
+        } catch (e) {
+            // Memory will be created below
+        }
+        
+        // Create memory if module doesn't provide it
+        if (!memory) {
+            memory = new WebAssembly.Memory({ initial: 16, maximum: 16384 });
+        }
+        
         const imports = {
             env: {
+                memory: memory,
                 // Memory management
                 wasm_host_print: this.print.bind(this),
                 wasm_host_exit: this.exit.bind(this),
@@ -237,10 +263,10 @@ class LinuxWasmHost {
 
         const result = await WebAssembly.instantiate(wasmModule, imports);
         this.instance = result.instance;
-        this.memory = imports.env.memory;
+        this.memory = result.instance.exports.memory || imports.env.memory;
         
         // Initialize kernel
-        if (this.instance.exports.wasm_kernel_init) {
+        if (this.instance && this.instance.exports && this.instance.exports.wasm_kernel_init) {
             this.instance.exports.wasm_kernel_init();
         }
         
