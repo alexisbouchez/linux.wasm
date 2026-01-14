@@ -181,6 +181,7 @@ typedef struct { int ascent; int descent; } XftFont;
 typedef struct {} FcPattern;
 typedef struct { unsigned long pixel; } XftColor;
 typedef unsigned char FcChar8;
+typedef unsigned char XftChar8;
 typedef int FcResult;
 #define FcResultMatch 0
 #define FcResultNoMatch 1
@@ -270,9 +271,12 @@ if 'XGlyphInfo' not in drw_h_content:
 # XftDrawStringUtf8 - comment out entire line
 content = re.sub(r'^\s*XftDrawStringUtf8\s*\([^;]*\)\s*;', r'        /* XftDrawStringUtf8 disabled */', content, flags=re.MULTILINE)
 
-# XftTextExtentsUtf8 - should be handled by inline function in drw.h, but replace if still present
+# XftTextExtentsUtf8 - replace with stub call
 content = re.sub(r'XftTextExtentsUtf8\s*\([^)]+\)\s*;', 
-    r'/* XftTextExtentsUtf8 - using stub */ if (ext) { ext->xOff = len * 6; ext->yOff = 0; }', content)
+    r'/* XftTextExtentsUtf8 stub */ if (ext) { ext->xOff = len * 6; ext->yOff = 0; }', content)
+
+# Fix XftChar8 cast
+content = re.sub(r'\(XftChar8 \*\)', r'(const unsigned char *)', content)
 
 # Fix xfont->ascent access - xfont is void*, replace with constant
 content = re.sub(r'->xfont->ascent', r'->h / 2', content)  # Use font height instead

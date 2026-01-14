@@ -1,6 +1,6 @@
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  drw.c
-emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  dwm.c
 dwm build options:
+emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  dwm.c
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  util.c
 CFLAGS   = -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION="6.4" 
 LDFLAGS  = 
@@ -32,8 +32,8 @@ drw.c:251:2: error: unknown type name 'XftResult'; did you mean 'FcResult'?
   251 |         XftResult result;
       |         ^~~~~~~~~
       |         FcResult
-./drw.h:9:13: note: 'FcResult' declared here
-    9 | typedef int FcResult;
+./drw.h:10:13: note: 'FcResult' declared here
+   10 | typedef int FcResult;
       |             ^
 drw.c:267:59: error: extraneous ')' before ';'
   267 |                                   DefaultColormap(drw->dpy, drw->screen));
@@ -44,13 +44,7 @@ drw.c:267:21: warning: expression result unused [-Wunused-value]
 /home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/cache/sysroot/include/X11/Xlib.h:118:61: note: expanded from macro 'DefaultColormap'
   118 | #define DefaultColormap(dpy, scr)(ScreenOfDisplay(dpy,scr)->cmap)
       |                                   ~~~~~~~~~~~~~~~~~~~~~~~~  ^~~~
-drw.c:420:46: error: use of undeclared identifier 'XftChar8'
-  420 |         XftTextExtentsUtf8(font->dpy, font->xfont, (XftChar8 *)text, len, &ext);
-      |                                                     ^~~~~~~~
-drw.c:420:56: error: expected expression
-  420 |         XftTextExtentsUtf8(font->dpy, font->xfont, (XftChar8 *)text, len, &ext);
-      |                                                               ^
-2 warnings and 8 errors generated.
+2 warnings and 6 errors generated.
 In file included from dwm.c:44:
 ./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
     6 | typedef struct {} FcPattern;
