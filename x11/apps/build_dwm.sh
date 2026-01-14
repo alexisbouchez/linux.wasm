@@ -383,9 +383,14 @@ emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>/dev/null || {
 # Add WASM flags and X11 stubs to LDFLAGS
 sed -i 's|^LDFLAGS =|LDFLAGS = -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='\''["_main"]'\'' --no-entry |' config.mk || echo "LDFLAGS += -s STANDALONE_WASM=1 -s EXPORTED_FUNCTIONS='[\"_main\"]' --no-entry" >> config.mk
 
-# Add x11_stubs.o to object files if it exists
+# Add x11_stubs.o to the link command
+# Modify Makefile to include x11_stubs.o
 if [ -f x11_stubs.o ]; then
-    sed -i 's|^OBJ =|OBJ = x11_stubs.o |' config.mk 2>/dev/null || echo "OBJ += x11_stubs.o" >> config.mk
+    # Add to the link line in Makefile
+    sed -i 's|^dwm:.*|dwm: $(OBJ) x11_stubs.o|' Makefile 2>/dev/null || true
+    sed -i 's|$(CC) $(LDFLAGS) -o $@ $(OBJ)|$(CC) $(LDFLAGS) -o $@ $(OBJ) x11_stubs.o|' Makefile 2>/dev/null || true
+    # Also try adding to OBJ variable
+    grep -q "x11_stubs.o" Makefile || sed -i '/^OBJ =/a x11_stubs.o' Makefile 2>/dev/null || true
 fi
 
 # Build
