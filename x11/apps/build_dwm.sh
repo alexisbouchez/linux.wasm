@@ -262,8 +262,11 @@ fc_functions = [
 for func in fc_functions:
     # Replace function calls - match full call including parameters
     if func == 'FcNameParse':
-        # Special handling - pattern = FcNameParse(...)
+        # Special handling - pattern = FcNameParse(fontname)
+        # Match: pattern = FcNameParse(...) and replace entire assignment
         content = re.sub(rf'pattern\s*=\s*FcNameParse\s*\([^)]+\)', r'pattern = NULL /* FcNameParse disabled */', content)
+        # Also handle if (!(pattern = FcNameParse(...)))
+        content = re.sub(rf'\(\s*pattern\s*=\s*FcNameParse\s*\([^)]+\)\s*\)', r'(pattern = NULL /* FcNameParse disabled */)', content)
     else:
         content = re.sub(rf'{func}\s*\([^)]*\)', f'/* {func} disabled */ NULL', content)
 
