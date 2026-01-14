@@ -412,10 +412,9 @@ if [ ! -f "dwm" ] && [ ! -f "dwm.wasm" ]; then
         if emcc -c -I../include -o x11_stubs.o ../include/X11/x11_stubs.c 2>&1 | tee -a build.log; then
             echo "x11_stubs.o compiled, linking..."
             emcc -o dwm drw.o dwm.o util.o x11_stubs.o \
-                -s STANDALONE_WASM=1 \
                 -s ALLOW_MEMORY_GROWTH=1 \
                 -s EXPORTED_FUNCTIONS='[]' \
-                -Wl,--no-entry \
+                -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
                 2>&1 | tee -a build.log && {
                 echo "✅ dwm.wasm created successfully!"
                 cp dwm packages/dwm.wasm 2>/dev/null || mv dwm packages/dwm.wasm
