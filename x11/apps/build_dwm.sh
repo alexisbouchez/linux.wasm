@@ -414,15 +414,19 @@ if [ ! -f "dwm" ] && [ ! -f "dwm.wasm" ]; then
             emcc -o dwm drw.o dwm.o util.o x11_stubs.o \
                 -s STANDALONE_WASM=1 \
                 -s EXPORTED_FUNCTIONS='["_main","main"]' \
-                -s EXPORT_ES6=0 \
                 -s ALLOW_MEMORY_GROWTH=1 \
-                2>&1 | tee -a build.log || {
-                echo "Manual link failed, trying without --no-entry..."
+                2>&1 | tee -a build.log && {
+                echo "✅ dwm.wasm created successfully!"
+                cp dwm packages/dwm.wasm 2>/dev/null || mv dwm packages/dwm.wasm
+            } || {
+                echo "Trying without main export..."
                 emcc -o dwm drw.o dwm.o util.o x11_stubs.o \
                     -s STANDALONE_WASM=1 \
-                    -s EXPORTED_FUNCTIONS='["_main","main"]' \
                     -s ALLOW_MEMORY_GROWTH=1 \
-                    2>&1 | tee -a build.log
+                    2>&1 | tee -a build.log && {
+                    echo "✅ dwm.wasm created (without main export)!"
+                    cp dwm packages/dwm.wasm 2>/dev/null || mv dwm packages/dwm.wasm
+                }
             }
         else
             echo "Failed to compile x11_stubs.o"
