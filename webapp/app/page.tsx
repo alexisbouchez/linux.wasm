@@ -17,14 +17,29 @@ export default function Home() {
         const ctx = canvas.getContext('2d')
         if (!ctx) return
         
-        // Load X11 server
-        const { X11Server } = await import('/server/x11_server.js')
+        // Dynamically import X11 server from public directory
+        const script = document.createElement('script')
+        script.src = '/server/x11_server.js'
+        script.type = 'module'
+        
+        await new Promise<void>((resolve, reject) => {
+          script.onload = () => resolve()
+          script.onerror = () => reject(new Error('Failed to load x11_server.js'))
+          document.head.appendChild(script)
+        })
+        
+        // Use dynamic import after script is loaded
+        const module = await import('/server/x11_server.js?t=' + Date.now())
+        const { X11Server } = module
         const server = new X11Server(canvas, ctx)
         await server.init()
         
         // Load dwm
         setStatus('loading dwm...')
         const dwmResponse = await fetch('/dwm.wasm')
+        if (!dwmResponse.ok) {
+          throw new Error('Failed to load dwm.wasm')
+        }
         const dwmBuffer = await dwmResponse.arrayBuffer()
         const dwmModule = await WebAssembly.instantiate(dwmBuffer, {
           env: server.getWasmImports()
