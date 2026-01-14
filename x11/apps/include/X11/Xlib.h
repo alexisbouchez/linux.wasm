@@ -11,6 +11,7 @@ typedef unsigned long GC;
 typedef unsigned long Visual;
 typedef unsigned long XID;
 typedef struct _XDisplay Display;
+typedef unsigned long Drawable;
 typedef struct { int x, y; } XPoint;
 typedef struct { int x, y, width, height; } XRectangle;
 
