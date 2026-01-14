@@ -1,0 +1,60 @@
+emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  drw.c
+emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  dwm.c
+emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  util.c
+dwm build options:
+CFLAGS   = -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION="6.4" 
+LDFLAGS  = 
+CC       = emcc
+In file included from drw.c:8:
+./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
+    6 | typedef struct {} FcPattern;
+      |         ^
+drw.c:241:9: warning: variable 'ty' set but not used [-Wunused-but-set-variable]
+  241 |         int i, ty, ellipsis_x = 0;
+      |                ^
+drw.c:243:8: warning: variable 'd' set but not used [-Wunused-but-set-variable]
+  243 |         void *d = NULL;
+      |               ^
+drw.c:247:14: warning: variable 'utf8str' set but not used [-Wunused-but-set-variable]
+  247 |         const char *utf8str;
+      |                     ^
+drw.c:248:13: warning: variable 'fccharset' set but not used [-Wunused-but-set-variable]
+  248 |         FcCharSet *fccharset;
+      |                    ^
+drw.c:382:1: warning: non-void function does not return a value in all control paths [-Wreturn-type]
+  382 | }
+      | ^
+In file included from dwm.c:44:
+./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
+    6 | typedef struct {} FcPattern;
+      |         ^
+dwm.c:1836:17: warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+ 1836 | updateclientlist()
+      |                 ^
+      |                  void
+6 warnings generated.
+2 warnings generated.
+emcc -o dwm drw.o dwm.o util.o 
+wasm-ld: error: drw.o: undefined symbol: XCreatePixmap
+wasm-ld: error: drw.o: undefined symbol: XCreateGC
+wasm-ld: error: drw.o: undefined symbol: XSetLineAttributes
+wasm-ld: error: drw.o: undefined symbol: XFreePixmap
+wasm-ld: error: drw.o: undefined symbol: XCreatePixmap
+wasm-ld: error: drw.o: undefined symbol: XFreePixmap
+wasm-ld: error: drw.o: undefined symbol: XFreeGC
+wasm-ld: error: drw.o: undefined symbol: XSetForeground
+wasm-ld: error: drw.o: undefined symbol: XFillRectangle
+wasm-ld: error: drw.o: undefined symbol: XDrawRectangle
+wasm-ld: error: drw.o: undefined symbol: XSetForeground
+wasm-ld: error: drw.o: undefined symbol: XFillRectangle
+wasm-ld: error: drw.o: undefined symbol: XCopyArea
+wasm-ld: error: drw.o: undefined symbol: XSync
+wasm-ld: error: drw.o: undefined symbol: XCreateFontCursor
+wasm-ld: error: drw.o: undefined symbol: XFreeCursor
+wasm-ld: error: dwm.o: undefined symbol: XSupportsLocale
+wasm-ld: error: dwm.o: undefined symbol: XSetErrorHandler
+wasm-ld: error: dwm.o: undefined symbol: XSelectInput
+wasm-ld: error: dwm.o: undefined symbol: XSync
+wasm-ld: error: too many errors emitted, stopping now (use -error-limit=0 to see all errors)
+emcc: error: '/home/alexis-bouchez/linux.wasm/emsdk/upstream/bin/wasm-ld -o dwm.wasm /tmp/tmpq5oia6umlibemscripten_js_symbols.so --strip-debug --export=emscripten_stack_get_end --export=emscripten_stack_get_free --export=emscripten_stack_get_base --export=emscripten_stack_get_current --export=emscripten_stack_init --export=_emscripten_stack_alloc --export=__wasm_call_ctors --export=_emscripten_stack_restore --export-if-defined=__start_em_asm --export-if-defined=__stop_em_asm --export-if-defined=__start_em_lib_deps --export-if-defined=__stop_em_lib_deps --export-if-defined=__start_em_js --export-if-defined=__stop_em_js --export-if-defined=main --export-if-defined=__main_argc_argv --export-if-defined=fflush --export-table -z stack-size=65536 --no-growable-memory --initial-heap=16777216 --no-entry --stack-first --table-base=1 drw.o dwm.o util.o -L/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten -L/home/alexis-bouchez/linux.wasm/emsdk/upstream/emscripten/src/lib -lGL-getprocaddr -lal -lhtml5 -lstubs-debug -lnoexit -lc-debug -ldlmalloc-debug -lcompiler_rt -lc++-debug-noexcept -lc++abi-debug-noexcept -lsockets -mllvm -combiner-global-alias-analysis=false -mllvm -enable-emscripten-sjlj -mllvm -disable-lsr' failed (returned 1)
+make: *** [Makefile:26: dwm] Error 1
