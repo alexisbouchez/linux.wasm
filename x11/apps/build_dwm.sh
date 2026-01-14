@@ -203,7 +203,7 @@ with open('drw.h', 'w') as f:
     f.write(content)
 PYEOF
 
-# Disable Xft functions in drw.c - replace with stubs
+# Disable Xft/FontConfig functions in drw.c - replace with stubs
 python3 << 'PYEOF'
 import re
 
@@ -211,22 +211,54 @@ import re
 with open('drw.c', 'r') as f:
     content = f.read()
 
-# Replace XftFontOpenName with stub
-content = re.sub(r'XftFontOpenName\([^)]+\)', 'NULL /* Xft disabled */', content)
-content = re.sub(r'XftFontClose\([^)]+\)', '/* Xft disabled */', content)
-content = re.sub(r'XftFontOpenPattern\([^)]+\)', 'NULL /* Xft disabled */', content)
-content = re.sub(r'FcNameParse\([^)]+\)', 'NULL /* FontConfig disabled */', content)
-content = re.sub(r'FcPatternDestroy\([^)]+\)', '/* FontConfig disabled */', content)
-content = re.sub(r'FcConfigSubstitute\([^)]+\)', '/* FontConfig disabled */', content)
-content = re.sub(r'FcDefaultSubstitute\([^)]+\)', '/* FontConfig disabled */', content)
-content = re.sub(r'FcFontMatch\([^)]+\)', 'NULL /* FontConfig disabled */', content)
-content = re.sub(r'FcPatternGet\([^)]+\)', 'FcResultNoMatch /* FontConfig disabled */', content)
+# Add FontConfig stub definitions at top
+fc_stubs = '''
+// FontConfig stubs for WASM
+#define FC_CHARSET "charset"
+#define FC_SCALABLE "scalable"
+#define FcTrue 1
+#define FcFalse 0
+typedef void* FcCharSet;
+typedef void* FcPattern;
+void* FcCharSetCreate() { return NULL; }
+void FcCharSetAddChar(void* cs, unsigned int ucs4) {}
+void* FcPatternDuplicate(void* p) { return NULL; }
+void FcPatternAddCharSet(void* p, const char* object, void* c) {}
+void FcPatternAddBool(void* p, const char* object, int b) {}
+void FcPatternDestroy(void* p) {}
+void FcCharSetDestroy(void* cs) {}
+'''
 
-# Comment out Xft drawing functions
-content = re.sub(r'XftDrawCreate\([^)]+\)', 'NULL /* Xft disabled */', content)
-content = re.sub(r'XftDrawDestroy\([^)]+\)', '/* Xft disabled */', content)
-content = re.sub(r'XftDrawStringUtf8\([^)]+\)', '/* Xft disabled */', content)
-content = re.sub(r'XftTextExtentsUtf8\([^)]+\)', '/* Xft disabled */', content)
+# Insert after includes
+if 'FcCharSetCreate' not in content:
+    # Find first function and insert before
+    match = re.search(r'^(static |void |int |Fnt)', content, re.MULTILINE)
+    if match:
+        content = content[:match.start()] + fc_stubs + '\n' + content[match.start():]
+
+# Replace all FontConfig function calls with stubs
+fc_functions = [
+    'FcCharSetCreate', 'FcCharSetAddChar', 'FcCharSetDestroy',
+    'FcPatternDuplicate', 'FcPatternAddCharSet', 'FcPatternAddBool',
+    'FcPatternDestroy', 'FcNameParse', 'FcConfigSubstitute',
+    'FcDefaultSubstitute', 'FcFontMatch', 'FcPatternGet'
+]
+
+for func in fc_functions:
+    # Replace function calls
+    content = re.sub(rf'{func}\s*\([^)]*\)', f'/* {func} disabled */ NULL', content)
+
+# Replace Xft functions
+xft_functions = [
+    'XftFontOpenName', 'XftFontClose', 'XftFontOpenPattern',
+    'XftDrawCreate', 'XftDrawDestroy', 'XftDrawStringUtf8', 'XftTextExtentsUtf8'
+]
+
+for func in xft_functions:
+    if func.endswith('Close') or func.endswith('Destroy'):
+        content = re.sub(rf'{func}\s*\([^)]*\);', f'/* {func} disabled */', content)
+    else:
+        content = re.sub(rf'{func}\s*\([^)]*\)', f'NULL /* {func} disabled */', content)
 
 # Write back
 with open('drw.c', 'w') as f:

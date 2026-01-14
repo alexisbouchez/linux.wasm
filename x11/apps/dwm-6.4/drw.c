@@ -115,17 +115,17 @@ xfont_create(Drw *drw, const char *fontname, FcPattern *fontpattern)
 		 * FcNameParse; using the latter results in the desired fallback
 		 * behaviour whereas the former just results in missing-character
 		 * rectangles being drawn, at least with some fonts. */
-		if (!(xfont = NULL /* Xft disabled */)) {
+		if (!(xfont = NULL /* XftFontOpenName disabled */)) {
 			fprintf(stderr, "error, cannot load font from name: '%s'\n", fontname);
 			return NULL;
 		}
-		if (!(pattern = NULL /* FontConfig disabled */ fontname))) {
+		if (!(pattern = /* FcNameParse disabled */ NULL fontname))) {
 			fprintf(stderr, "error, cannot parse font name to pattern: '%s'\n", fontname);
-			/* Xft disabled */;
+			/* XftFontClose disabled */
 			return NULL;
 		}
 	} else if (fontpattern) {
-		if (!(xfont = NULL /* Xft disabled */)) {
+		if (!(xfont = NULL /* XftFontOpenPattern disabled */)) {
 			fprintf(stderr, "error, cannot load font from pattern.\n");
 			return NULL;
 		}
@@ -148,8 +148,8 @@ xfont_free(Fnt *font)
 	if (!font)
 		return;
 	if (font->pattern)
-		/* FontConfig disabled */;
-	/* Xft disabled */;
+		/* FcPatternDestroy disabled */ NULL;
+	/* XftFontClose disabled */
 	free(font);
 }
 
@@ -263,7 +263,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 	} else {
 		XSetForeground(drw->dpy, drw->gc, drw->scheme[invert ? ColFg : ColBg].pixel);
 		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w, h);
-		d = NULL /* Xft disabled */,
+		d = NULL /* XftDrawCreate disabled */,
 		                  DefaultColormap(drw->dpy, drw->screen));
 		x += lpad;
 		w -= lpad;
@@ -318,7 +318,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 		if (utf8strlen) {
 			if (render) {
 				ty = y + (h - usedfont->h) / 2 + usedfont->xfont->ascent;
-				/* Xft disabled */utf8str, utf8strlen);
+				NULL /* XftDrawStringUtf8 disabled */utf8str, utf8strlen);
 			}
 			x += ew;
 			w -= ew;
@@ -342,24 +342,24 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 					goto no_match;
 			}
 
-			fccharset = FcCharSetCreate();
-			FcCharSetAddChar(fccharset, utf8codepoint);
+			fccharset = /* FcCharSetCreate disabled */ NULL;
+			/* FcCharSetAddChar disabled */ NULL;
 
 			if (!drw->fonts->pattern) {
 				/* Refer to the comment in xfont_create for more information. */
 				die("the first font in the cache must be loaded from a font string.");
 			}
 
-			fcpattern = FcPatternDuplicate(drw->fonts->pattern);
-			FcPatternAddCharSet(fcpattern, FC_CHARSET, fccharset);
-			FcPatternAddBool(fcpattern, FC_SCALABLE, FcTrue);
+			fcpattern = /* FcPatternDuplicate disabled */ NULL;
+			/* FcPatternAddCharSet disabled */ NULL;
+			/* FcPatternAddBool disabled */ NULL;
 
-			/* FontConfig disabled */;
-			/* FontConfig disabled */;
+			/* FcConfigSubstitute disabled */ NULL;
+			/* FcDefaultSubstitute disabled */ NULL;
 			match = XftFontMatch(drw->dpy, drw->screen, fcpattern, &result);
 
-			FcCharSetDestroy(fccharset);
-			/* FontConfig disabled */;
+			/* FcCharSetDestroy disabled */ NULL;
+			/* FcPatternDestroy disabled */ NULL;
 
 			if (match) {
 				usedfont = xfont_create(drw, NULL, match);
@@ -377,7 +377,7 @@ no_match:
 		}
 	}
 	if (d)
-		/* Xft disabled */;
+		/* XftDrawDestroy disabled */
 
 	return x + (render ? w : 0);
 }
@@ -417,7 +417,7 @@ drw_font_getexts(Fnt *font, const char *text, unsigned int len, unsigned int *w,
 	if (!font || !text)
 		return;
 
-	/* Xft disabled */text, len, &ext);
+	NULL /* XftTextExtentsUtf8 disabled */text, len, &ext);
 	if (w)
 		*w = ext.xOff;
 	if (h)

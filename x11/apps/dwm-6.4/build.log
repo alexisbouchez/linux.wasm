@@ -9,15 +9,15 @@ In file included from drw.c:8:
 ./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
     6 | typedef struct {} FcPattern;
       |         ^
-drw.c:122:50: error: expected ')'
-  122 |                 if (!(pattern = NULL /* FontConfig disabled */ fontname))) {
-      |                                                                ^
+drw.c:122:51: error: expected ')'
+  122 |                 if (!(pattern = /* FcNameParse disabled */ NULL fontname))) {
+      |                                                                 ^
 drw.c:122:8: note: to match this '('
-  122 |                 if (!(pattern = NULL /* FontConfig disabled */ fontname))) {
+  122 |                 if (!(pattern = /* FcNameParse disabled */ NULL fontname))) {
       |                      ^
-drw.c:122:60: error: extraneous ')' after condition, expected a statement
-  122 |                 if (!(pattern = NULL /* FontConfig disabled */ fontname))) {
-      |                                                                          ^
+drw.c:122:61: error: extraneous ')' after condition, expected a statement
+  122 |                 if (!(pattern = /* FcNameParse disabled */ NULL fontname))) {
+      |                                                                           ^
 drw.c:189:7: error: call to undeclared function 'XftColorAllocName'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
   189 |         if (!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen),
       |              ^
@@ -42,7 +42,7 @@ drw.c:251:2: error: unknown type name 'XftResult'; did you mean 'FcResult'?
     9 | typedef int FcResult;
       |             ^
 drw.c:266:3: error: use of undeclared identifier 'd'
-  266 |                 d = NULL /* Xft disabled */,
+  266 |                 d = NULL /* XftDrawCreate disabled */,
       |                 ^
 drw.c:282:32: error: call to undeclared function 'XftCharExists'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
   282 |                                 charexists = charexists || XftCharExists(drw->dpy, curfont->xfont, utf8codepoint);
@@ -50,39 +50,47 @@ drw.c:282:32: error: call to undeclared function 'XftCharExists'; ISO C99 and la
 drw.c:320:53: error: member reference base type 'void' is not a structure or union
   320 |                                 ty = y + (h - usedfont->h) / 2 + usedfont->xfont->ascent;
       |                                                                  ~~~~~~~~~~~~~~~^ ~~~~~~
-drw.c:321:42: error: extraneous ')' before ';'
-  321 |                                 /* Xft disabled */utf8str, utf8strlen);
-      |                                                                      ^
-drw.c:345:16: error: call to undeclared function 'FcCharSetCreate'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  345 |                         fccharset = FcCharSetCreate();
+drw.c:321:9: error: expected ';' after expression
+  321 |                                 NULL /* XftDrawStringUtf8 disabled */utf8str, utf8strlen);
       |                                     ^
+      |                                     ;
+drw.c:321:61: error: extraneous ')' before ';'
+  321 |                                 NULL /* XftDrawStringUtf8 disabled */utf8str, utf8strlen);
+      |                                                                                         ^
+drw.c:359:12: error: call to undeclared function 'XftFontMatch'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  359 |                         match = XftFontMatch(drw->dpy, drw->screen, fcpattern, &result);
+      |                                 ^
+drw.c:359:10: error: incompatible integer to pointer conversion assigning to 'FcPattern *' from 'int' [-Wint-conversion]
+  359 |                         match = XftFontMatch(drw->dpy, drw->screen, fcpattern, &result);
+      |                               ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drw.c:366:21: error: call to undeclared function 'XftCharExists'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  366 |                                 if (usedfont && XftCharExists(drw->dpy, usedfont->xfont, utf8codepoint)) {
+      |                                                 ^
+drw.c:379:6: error: use of undeclared identifier 'd'
+  379 |         if (d)
+      |             ^
+drw.c:321:42: warning: left operand of comma operator has no effect [-Wunused-value]
+  321 |                                 NULL /* XftDrawStringUtf8 disabled */utf8str, utf8strlen);
+      |                                                                      ^~~~~~~
+drw.c:321:51: warning: expression result unused [-Wunused-value]
+  321 |                                 NULL /* XftDrawStringUtf8 disabled */utf8str, utf8strlen);
+      |                                                                               ^~~~~~~~~~
+drw.c:415:2: error: use of undeclared identifier 'XGlyphInfo'
+  415 |         XGlyphInfo ext;
+      |         ^~~~~~~~~~
+drw.c:420:6: error: expected ';' after expression
+  420 |         NULL /* XftTextExtentsUtf8 disabled */text, len, &ext);
+      |             ^
+      |             ;
+drw.c:420:52: error: use of undeclared identifier 'ext'
+  420 |         NULL /* XftTextExtentsUtf8 disabled */text, len, &ext);
+      |                                                           ^~~
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
 In file included from dwm.c:44:
 ./drw.h:6:9: warning: empty struct is a GNU extension [-Wgnu-empty-struct]
     6 | typedef struct {} FcPattern;
       |         ^
-drw.c:345:14: error: incompatible integer to pointer conversion assigning to 'FcChar8 *' (aka 'unsigned char *') from 'int' [-Wint-conversion]
-  345 |                         fccharset = FcCharSetCreate();
-      |                                   ^ ~~~~~~~~~~~~~~~~~
-drw.c:346:4: error: call to undeclared function 'FcCharSetAddChar'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  346 |                         FcCharSetAddChar(fccharset, utf8codepoint);
-      |                         ^
-drw.c:353:16: error: call to undeclared function 'FcPatternDuplicate'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  353 |                         fcpattern = FcPatternDuplicate(drw->fonts->pattern);
-      |                                     ^
-drw.c:353:14: error: incompatible integer to pointer conversion assigning to 'FcPattern *' from 'int' [-Wint-conversion]
-  353 |                         fcpattern = FcPatternDuplicate(drw->fonts->pattern);
-      |                                   ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drw.c:354:4: error: call to undeclared function 'FcPatternAddCharSet'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  354 |                         FcPatternAddCharSet(fcpattern, FC_CHARSET, fccharset);
-      |                         ^
-drw.c:354:35: error: use of undeclared identifier 'FC_CHARSET'
-  354 |                         FcPatternAddCharSet(fcpattern, FC_CHARSET, fccharset);
-      |                                                        ^~~~~~~~~~
-drw.c:355:4: error: call to undeclared function 'FcPatternAddBool'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  355 |                         FcPatternAddBool(fcpattern, FC_SCALABLE, FcTrue);
-      |                         ^
-fatal error: too many errors emitted, stopping now [-ferror-limit=]
-1 warning and 20 errors generated.
+3 warnings and 20 errors generated.
 make: *** [Makefile:18: drw.o] Error 1
 make: *** Waiting for unfinished jobs....
 dwm.c:1836:17: warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
