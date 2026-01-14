@@ -1,7 +1,7 @@
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  drw.c
+dwm build options:
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  dwm.c
 emcc -c -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"6.4\"  util.c
-dwm build options:
 CFLAGS   = -std=c99 -pedantic -Wall -Wno-deprecated-declarations -Os -I/usr/X11R6/include -I/usr/include/freetype2 -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION="6.4" 
 LDFLAGS  = 
 CC       = emcc
@@ -96,11 +96,11 @@ drw.c:139:35: error: no member named 'descent' in 'struct Fnt'
   139 |         font->h = xfont->ascent + xfont->descent;
       |                                   ~~~~~  ^
 fatal error: too many errors emitted, stopping now [-ferror-limit=]
-20 errors generated.
 In file included from dwm.c:44:
 ./drw.h:10:2: error: unknown type name 'XftFont'
    10 |         XftFont *xfont;
       |         ^
+20 errors generated.
 ./drw.h:11:2: error: unknown type name 'FcPattern'
    11 |         FcPattern *pattern;
       |         ^
@@ -113,31 +113,9 @@ In file included from dwm.c:44:
       |   ^
 make: *** [Makefile:18: drw.o] Error 1
 make: *** Waiting for unfinished jobs....
-In file included from dwm.c:273:
-./config.h:46:67: error: use of undeclared identifier 'dmenucmd'
-   46 |         { MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-      |                                                                          ^~~~~~~~
-./config.h:47:67: error: use of undeclared identifier 'termcmd'
-   47 |         { MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-      |                                                                          ^~~~~~~
-./config.h:86:80: error: use of undeclared identifier 'termcmd'
-   86 |         { ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
-      |                                                                                       ^~~~~~~
-dwm.c:455:25: error: invalid application of 'sizeof' to an incomplete type 'const Button[]'
-  455 |         for (i = 0; i < LENGTH(buttons); i++)
-      |                                ^~~~~~~
-dwm.c:943:26: error: invalid application of 'sizeof' to an incomplete type 'const Button[]'
-  943 |                 for (i = 0; i < LENGTH(buttons); i++)
-      |                                        ^~~~~~~
-dwm.c:963:26: error: invalid application of 'sizeof' to an incomplete type 'const Key[]'
-  963 |                 for (i = 0; i < LENGTH(keys); i++)
-      |                                        ^~~~
-dwm.c:999:25: error: invalid application of 'sizeof' to an incomplete type 'const Key[]'
-  999 |         for (i = 0; i < LENGTH(keys); i++)
-      |                                ^~~~
 dwm.c:1836:17: warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
  1836 | updateclientlist()
       |                 ^
       |                  void
-1 warning and 10 errors generated.
+1 warning and 3 errors generated.
 make: *** [Makefile:18: dwm.o] Error 1

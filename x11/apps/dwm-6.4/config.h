@@ -33,6 +33,9 @@ static const Layout layouts[] = {
 	{ "[M]",      monocle },
 };
 
+static const char *termcmd[]  = { "st", NULL };
+static const char *dmenucmd[] = { "dmenu_run", NULL };
+
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
@@ -78,7 +81,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 };
 
-static const Button buttons[] = {
+static Button buttons[] = {
 	/* click                event mask      button          function        argument */
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {.v = &layouts[0]} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
@@ -92,6 +95,3 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
-
-static const char *termcmd[]  = { "st", NULL };
-static const char *dmenucmd[] = { "dmenu_run", NULL };
