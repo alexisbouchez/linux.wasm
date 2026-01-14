@@ -244,7 +244,7 @@ class LinuxWasmHost {
         
         const imports = {
             env: {
-                memory: memory,
+                memory: memory,  // Use the memory we created/obtained above
                 // Memory management
                 wasm_host_print: this.print.bind(this),
                 wasm_host_exit: this.exit.bind(this),
@@ -254,10 +254,7 @@ class LinuxWasmHost {
                 wasm_host_sleep: this.sleep.bind(this),
                 
                 // System calls
-                wasm_host_syscall: this.syscall.bind(this),
-                
-                // Memory
-                memory: new WebAssembly.Memory({ initial: 256, maximum: 2048 })  // 256MB initial, 2GB max
+                wasm_host_syscall: this.syscall.bind(this)
             }
         };
 
